@@ -1,0 +1,85 @@
+{
+  "defaults": {
+    "unitSize": 800.0,
+    "tear": {
+      "iterations": 18,
+      "minDistance": 2.0,
+      "angleVar": 4,
+      "count": 6,
+      "opacity": 0.2
+    }
+  },
+  "forms": [
+    {
+      "name": "circle-tear",
+      "base": "circle",
+      "recipe": [
+        {
+          "algorithm": "list"
+        },
+        {
+          "algorithm": "tear",
+          "params": {
+            "iterations": 10,
+            "angleVar": 4,
+            "count": 8,
+            "opacity": 0.2,
+            "colours": ["blue", "red"]
+          }
+        }
+      ]
+    },
+    {
+      "name": "shape-c",
+      "base": "circle",
+      "recipe": [
+        {
+          "algorithm": "shape"
+        }
+      ]
+    },
+    {
+      "name": "shape-spiral",
+      "base": "rectangle",
+      "recipe": [
+        {
+          "algorithm": "scale",
+          "ratio": 0.1
+        },
+        {
+          "algorithm": "random",
+          "count": 5
+        },
+        {
+          "algorithm": "goldenRatioSpiral",
+          "acceleration": 0,
+          "velocity": 5,
+          "growth": 0
+        },
+        {
+          "algorithm": "line",
+          "x0": 100,
+          "y0": 800,
+          "x1": 900,
+          "y1": 200,
+          "acceleration": 0,
+          "velocity": 5,
+          "growth": 0
+        },
+        {
+          "algorithm": "tear",
+          "params": {
+            "iterations": 10,
+            "angleVar": 3,
+            "count": 8,
+            "opacity": 0.1,
+            "colours": ["blue", "red", "orange"]
+          }
+        }
+      ]
+    }
+  ],
+  "output": [
+    "shape-spiral"
+  ]
+}

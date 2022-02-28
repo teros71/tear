@@ -1,0 +1,105 @@
+{
+  "defaults": {
+    "unitSize": 800.0,
+    "tear": {
+      "iterations": 18,
+      "minDistance": 2.0,
+      "angleVar": 4,
+      "count": 6,
+      "opacity": 0.2
+    }
+  },
+  "forms": [
+    {
+      "name": "bg",
+      "base": "ru",
+      "recipe": [
+        {
+          "algorithm": "list"
+        },
+        {
+          "algorithm": "tear",
+          "params": {
+            "iterations": 14,
+            "angleVar": 3,
+            "count": 12,
+            "opacity": 0.6,
+            "colours": ["#ffffff", "#0032A0", "#DA291C"],
+            "colours2": ["yellow", "red"]
+          }
+        }
+      ]
+    },
+    {
+      "name": "bg2",
+      "base": "ru3",
+      "recipe": [
+        {
+          "algorithm": "list"
+        },
+        {
+          "algorithm": "tear",
+          "params": {
+            "iterations": 14,
+            "angleVar": 7,
+            "count": 18,
+            "opacity": 0.1,
+            "colours": ["#ffffff", "#0032A0", "#DA291C"],
+            "colours2": ["yellow", "red"]
+          }
+        }
+      ]
+    },
+    {
+      "name": "ukb",
+      "base": "ukraine-blue",
+      "recipe": [
+        {
+          "algorithm": "scale",
+          "ratio": 1
+        },
+        { "algorithm": "list" },
+        {
+          "algorithm": "tear",
+          "params": {
+            "iterations": 12,
+            "angleVar": 4,
+            "count": 12,
+            "opacity": 0.3,
+            "colours": ["#0057b7", "#ffd700", "#0057b7", "#0057b7"],
+            "colours2": ["black", "blue", "purple", "orange"]
+          }
+        }
+      ]
+    },
+    {
+      "name": "uky",
+      "base": "ukraine-yellow",
+      "recipe": [
+        {
+          "algorithm": "scale",
+          "ratio": 1
+        },
+        { "algorithm": "list" },
+        {
+          "algorithm": "tear",
+          "params": {
+            "iterations": 12,
+            "angleVar": 4,
+            "count": 12,
+            "opacity": 0.3,
+            "colours": ["#0057b7", "#ffd700", "#ffd700", "#ffd700"],
+            "colours2": ["black", "blue", "purple", "orange"]
+          }
+        }
+      ]
+    }
+  ],
+  "output": [
+    "bg",
+    "ukb",
+    "uky",
+    "ukb",
+    "bg2"
+  ]
+}

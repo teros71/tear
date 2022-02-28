@@ -1,0 +1,113 @@
+{
+  "defaults": {
+    "iterations": 18,
+    "count": 6,
+    "opacity": 0.2,
+    "minDistance": 2.0,
+    "angleVar": 4
+  },
+  "shapes": [
+    {
+      "type": "rectangle",
+      "geometry": {
+        "xf": 100,
+        "y": 100,
+        "width": 500,
+        "height": 500
+      },
+      "tear": {
+        "iterations": 15,
+        "angleVar": 4
+      },
+      "output": {
+        "count": 14,
+        "opacity": 0.2,
+        "colours": ["aqua","springgreen"]
+      }
+    },
+    {
+      "type": "polygon",
+      "geometry": {
+        "x": 100.0,
+        "y": 100.0,
+        "points": [0,0,680,400,600,700]
+      },
+      "tear": {
+        "iterations": 15,
+        "angleVar": 10
+      },
+      "output": {
+        "count": 10,
+        "colours": ["orange","crimson"]
+      }
+    },
+    {
+      "type": "polygon",
+      "geometry": {
+        "x": 200.0,
+        "y": 200.0,
+        "points": [25,0,75,0,100,25,100,75,75,125,25,125,0,100,0,25]
+      },
+      "tear": {
+        "iterations": 10,
+        "angleVar": 5
+      },
+      "output": {
+        "colours": ["deeppink","hotpink"]
+      }
+    },
+    {
+      "type": "rectangle",
+      "geometry": {
+        "x": 350,
+        "y": 350,
+        "width": 100,
+        "height": 100
+      },
+      "tear": {
+        "iterations": 8,
+        "minDistance": 2.0,
+        "angleVar": 7
+      },
+      "output": {
+        "colours": ["black","gray"],
+        "dx": 10.0,
+        "dy": 20.0
+      }
+    },
+    {
+      "type": "rectangle",
+      "geometry": {
+        "x": 500,
+        "y": 100,
+        "width": 200,
+        "height": 300
+      },
+      "tear": {
+        "iterations": 10,
+        "minDistance": 2.0,
+        "angleVar": 8
+      },
+      "output": {
+        "opacity": 0.1,
+        "colours": ["red","blue"]
+      }
+    },
+    {
+      "type": "rectangle",
+      "geometry": {
+        "x": 10,
+        "y": 10,
+        "width": 100,
+        "height": 100
+      },
+      "tear": {
+        "iterations": 10,
+        "angleVar": 4
+      },
+      "output": {
+        "colours": ["green","yellow","orange"]
+      }
+    }
+  ]
+}

@@ -1,0 +1,154 @@
+{
+  "defaults": {
+    "unitSize": 800.0,
+    "tear": {
+      "iterations": 18,
+      "minDistance": 2.0,
+      "minDistanceFactor": 0,
+      "angleVar": 4,
+      "count": 6,
+      "opacity": 0.2
+    }
+  },
+  "forms": [
+    {
+      "name": "rec",
+      "base": "new",
+      "type": "rectangle",
+      "x": 100,
+      "y": 100,
+      "width": 1000,
+      "height": 900,
+      "recipe": [
+        {
+          "algorithm": "list"
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 12,
+            "angleVar": 40,
+            "minDistanceFactor": 0.9,
+            "count": 9,
+            "opacity": 0.35,
+            "colours": ["blue", "purple", "black"],
+            "colours2": ["yellow", "red"]
+          }
+        }
+      ]
+    },
+    {
+      "name": "cir",
+      "base": "new",
+      "type": "circle",
+      "x": 500,
+      "y": 500,
+      "r": 200,
+      "recipe": [
+        {
+          "algorithm": "set",
+          "disable": false,
+          "x": 500,
+          "y": 500,
+          "scale": 1.3
+        },
+        {
+          "algorithm": "list"
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 10,
+            "angleVar": 5,
+            "count": 14,
+            "opacity": 0.15,
+            "colours": ["black", "red"]
+          }
+        }
+      ]
+    },
+    {
+      "name": "cir2",
+      "base": "new",
+      "type": "circle",
+      "x": 500,
+      "y": 500,
+      "r": 200,
+      "recipe": [
+        {
+          "algorithm": "set",
+          "disable": true,
+          "x": 600,
+          "y": 500,
+          "scale": 0.8
+        },
+        {
+          "algorithm": "list"
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 10,
+            "angleVar": 10,
+            "count": 14,
+            "opacity": 0.15,
+            "colours": ["yellow", "white"]
+          }
+        }
+      ]
+    },
+    {
+      "name": "poly1",
+      "base": "new",
+      "type": "random",
+      "x": 800,
+      "y": 400,
+      "minR": 10,
+      "maxR": 500,
+      "count": 12,
+      "recipe": [
+        {
+          "algorithm": "random",
+          "disable": true,
+          "count": 8,
+          "x-min": 10.0,
+          "x-max": 900.0,
+          "y-min": 100,
+          "y-max": 200,
+          "scale-min": 0.5,
+          "scale-max": 2.0
+        },
+        {
+          "algorithm": "list"
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 12,
+            "angleVar": 40,
+            "count": 12,
+            "opacity": 0.30,
+            "colours": ["black", "gray"]
+          }
+        },
+        {
+          "algorithm": "set",
+          "disable": true,
+          "x": 500,
+          "y": 500,
+          "scale": 1.3
+        }
+      ]
+    }
+  ],
+  "output": [
+    "rec",
+    "cir",
+    "cir2",
+    "poly1"
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "defaults": {
+    "unitSize": 800.0,
+    "tear": {
+      "iterations": 18,
+      "minDistance": 2.0,
+      "angleVar": 4,
+      "count": 6,
+      "opacity": 0.2
+    }
+  },
+  "forms": [
+    {
+      "name": "gr-rect",
+      "base": "rectangle",
+      "recipe": [
+        {
+          "algorithm": "goldenRatioRectangles",
+          "limit": 10.0
+        }
+      ]
+    },
+    {
+      "name": "gr-rect2",
+      "base": "new",
+      "type": "rectangle",
+      "x": 0,
+      "y": 0,
+      "width": 800,
+      "height": 800,
+      "recipe": [
+        {
+          "algorithm": "goldenRatioRectangles",
+          "limit": 10.0
+        }
+      ]
+    },
+    {
+      "name": "teared-gr-rect",
+      "base": "gr-rect",
+      "recipe": [
+        {
+          "algorithm": "tear",
+          "params": {
+            "iterations": 20,
+            "angleVar": 15,
+            "randomizeBase": false,
+            "count": 24,
+            "opacity": 0.25,
+            "colours": ["lime","red", "orange", "yellow"]
+          }
+        }
+      ]
+    },
+    {
+      "name": "teared-gr-rect-2",
+      "base": "gr-rect2",
+      "recipe": [
+        {
+          "algorithm": "scaler",
+          "rangeF": [0.2, 0.8]
+        },
+        {
+          "algorithm": "tear",
+          "params": {
+            "iterations": 20,
+            "angleVar": 25,
+            "randomizeBase": false,
+            "count": 15,
+            "opacity": 0.25,
+            "colours": ["blue","white", "purple"]
+          }
+        }
+      ]
+    }
+  ],
+  "output": {
+    "background": "white",
+    "shapes": [
+      "teared-gr-rect",
+      "teared-gr-rect-2"
+    ]
+  }
+}
