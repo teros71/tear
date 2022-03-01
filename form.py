@@ -1,11 +1,14 @@
 import math
 import json
 import copy
+import itertools
 import shape
 import default
 import goldenratio
 import tear
 import random
+import polygon
+import value
 
 formTable = dict()
 algorithms = dict()
@@ -31,27 +34,35 @@ def initFormTable():
     formTable["rectangle"] = shape.Rect(
         0, 0, default.unitSize, default.unitSize)
     formTable["circle"] = shape.Circle(half, half, half)
-    p = shape.Polygon()
-    p.readPoints(man)
+    p = polygon.Polygon.fromstr(man)
     formTable["man"] = p
-    p = shape.Polygon()
-    p.readPoints(dancer)
+    p = polygon.Polygon.fromstr(dancer)
     formTable["dancer"] = p
-    p = shape.Polygon()
-    p.readPoints(ukraine)
+    p = polygon.Polygon.fromstr(ukraine)
     formTable["ukraine"] = p
-    p = shape.Polygon()
-    p.readPoints(ukraine1)
+    p = polygon.Polygon.fromstr(ukraine1)
     formTable["ukraine-blue"] = p
-    p = shape.Polygon()
-    p.readPoints(ukraine2)
+    p = polygon.Polygon.fromstr(ukraine2)
     formTable["ukraine-yellow"] = p
-    p = shape.Polygon()
-    p.readPoints(ru)
+    p = polygon.Polygon.fromstr(ru)
     formTable["ru"] = p
-    p = shape.Polygon()
-    p.readPoints(ru3)
+    p = polygon.Polygon.fromstr(ru3)
     formTable["ru3"] = p
+
+
+def makeGeneratorForm(r):
+    t = r.get('type', 'rectangle')
+    if t == 'rectangle':
+        rw = value.read(r, "rangeW")
+        rh = value.read(r, "rangeH")
+        return shape.RectGenerator(rw, rh)
+    if t == 'circle':
+        rr = value.read(r, "rangeR")
+        return shape.CircleGenerator(rr)
+    if t == 'polygon':
+        rar = value.readRange(r, "rangeR")
+        rap = value.read(r, "rangePoints")
+        return polygon.Generator(rar, rap)
 
 
 def makeNewForm(r):
@@ -63,15 +74,9 @@ def makeNewForm(r):
     if t == 'circle':
         return shape.Circle(x, y, r.get("r", 10.0))
     if t == 'polygon':
-        p = shape.Polygon()
-        p.readPoints(r.get("points", "0.0 0.0, 10.0 5.0, 5.0 10.0"))
+        p = polygon.Polygon.fromstr(
+            r.get("points", "0.0 0.0, 10.0 5.0, 5.0 10.0"))
         return p
-    if t == 'generator':
-        rar = shape.Range()
-        rar.set(r.get("rangeR", [1.0, 10.0]))
-        rap = shape.Range()
-        rap.set(r.get("rangePoints", [3, 8]))
-        return shape.Generator(rar, rap)
 
 
 def algSet(r, base):
@@ -83,6 +88,27 @@ def algSet(r, base):
     if x != -1 or y != -1:
         base.setPosition(x, y)
     return base
+
+
+def setAppearance(r, s, colour, opacity, stroke):
+    if type(s) is not list:
+        s.colour = colour.__next__()
+        s.opacity = opacity.__next__()
+        s.stroke = stroke.__next__()
+        return
+    colour.reset()
+    opacity.reset()
+    stroke.reset()
+    for ss in s:
+        setAppearance(r, ss, colour, opacity, stroke)
+
+
+def algAppearance(r, base):
+    opacity = value.read(r, 'opacity', d=1.0)
+    colour = value.read(r, 'colours', d=["black"])
+    stroke = value.read(r, 'stroke', d="none")
+    print(stroke.__next__())
+    setAppearance(r, base, colour, opacity, stroke)
 
 
 def applyAlgorithm(r, base):
@@ -151,26 +177,26 @@ def applyAlgorithm(r, base):
         print('')
         return shapes
     elif alg == 'scaler':
-        rf = shape.Range()
-        rf.set(r.get("rangeF", [1.0, 1.0]))
+        rf = value.read(r, "rangeF")
         for s in base:
-            s.scale(random.uniform(rf.min, rf.max))
+            s.scale(rf.__next__())
         return base
     elif alg == 'multiplier':
         count = r.get('count', 2)
-        shapes = []
-        for i in range(count):
-            shapes.append(base.copy(0, 0))
+        shapes = list(itertools.islice(base, count))
+#        for i in range(count):
+#            shapes.append(base.copy(0, 0))
         return shapes
     elif alg == 'spread':
-        rx = shape.Range()
-        rx.set(r.get("rangeX", [0, 10]))
-        ry = shape.Range()
-        ry.set(r.get("rangeY", [0, 10]))
+        rx = value.read(r, "rangeX")
+        ry = value.read(r, "rangeY")
         for s in base:
-            x = random.uniform(rx.min, rx.max)
-            y = random.uniform(ry.min, ry.max)
+            x = rx.__next__()
+            y = ry.__next__()
             s.setPosition(x, y)
+        return base
+    elif alg == 'appearance':
+        algAppearance(r, base)
         return base
     else:
         return base
@@ -189,47 +215,12 @@ def generateForm(f):
     name = f.get('name')
     baseName = f['base']
     base = None
-    if baseName == 'new':
+    if baseName == 'generator':
+        base = makeGeneratorForm(f)
+    elif baseName == 'new':
         base = makeNewForm(f)
     else:
         print("generating form {0} from {1}".format(name, baseName))
         base = formTable[baseName]
     newForm = applyRecipe(f.get('recipe', None), base)
     formTable[name] = newForm
-
-
-def writeSVGRecursive(f, forms):
-    if type(forms) is not list:
-        s = forms
-        if type(forms) is not shape.Shape:
-            s = shape.Shape()
-            s.points = forms.toPolygon()
-        writeSVGShape(f, s)
-        return
-    for form in forms:
-        writeSVGRecursive(f, form)
-
-
-def writeSVGShape(f, s):
-    f.write('<polygon\n')
-    f.write('points="')
-    for p in s.points:
-        f.write('{0},{1} '.format(p.x, p.y))
-    f.write('"\n')
-    f.write(
-        'style="opacity:{0};fill:{1};stroke:none;stroke-width:0" />\n'.format(s.opacity, s.colour))
-
-
-def writeSVG(fname, height, width, out):
-    bg = out.get("background", "white")
-    forms = out.get("shapes", [])
-    f = open(fname, 'w')
-    f.write(
-        '<svg style="background-color:{0}" viewBox="-200 -200 1800 1300" height="{1}" width="{2}" xmlns="http://www.w3.org/2000/svg">\n'.format(bg, height, width))
-    for fn in forms:
-        print("getting form {0}".format(fn))
-        sss = formTable.get(fn)
-        if sss is not None:
-            writeSVGRecursive(f, sss)
-    f.write('</svg>\n')
-    f.close()

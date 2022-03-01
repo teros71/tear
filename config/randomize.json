@@ -13,20 +13,20 @@
   "forms": [
     {
       "name": "poly1",
-      "base": "new",
-      "type": "generator",
-      "rangeR": [10, 200],
-      "rangePoints": [3, 12],
+      "base": "generator",
+      "type": "polygon",
+      "rangeR": "10.0-200.0",
+      "rangePoints": "3-12",
       "recipe": [
         {
           "algorithm": "multiplier",
-          "count": 70
+          "count": 10
         },
         {
           "algorithm": "spread",
           "method": "random",
-          "rangeX": [0.0, 1400.0],
-          "rangeY": [0.0, 900.0]
+          "rangeX": "0.0-1400.0",
+          "rangeY": "0.0-900.0"
         },
         {
           "algorithm": "tear",
@@ -34,21 +34,21 @@
           "params": {
             "iterations": 12,
             "angleVar": 20,
-            "count": 15,
-            "opacity": 0.25,
-            "colours": ["olivedrab", "khaki", "orange", "red"],
-            "colours2": ["red", "orange", "yellow", "blue"]
+            "count": 15
           }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": 0.25,
+          "colours": ["olivedrab", "khaki", "orange", "red"]
         }
       ]
     },
     {
       "name": "cir",
-      "base": "new",
+      "base": "generator",
       "type": "circle",
-      "x": 500,
-      "y": 500,
-      "r": 100,
+      "rangeR": "10.0-100.0",
       "recipe": [
         {
           "algorithm": "multiplier",
@@ -56,13 +56,13 @@
         },
         {
           "algorithm": "scaler",
-          "rangeF": [0.2, 1.2]
+          "rangeF": "0.2-1.2"
         },
         {
           "algorithm": "spread",
           "method": "random",
-          "rangeX": [0.0, 1400.0],
-          "rangeY": [0.0, 900.0]
+          "rangeX": "0.0-1400.0",
+          "rangeY": "0.0-900.0"
         },
         {
           "algorithm": "tear",
@@ -70,15 +70,64 @@
           "params": {
             "iterations": 10,
             "angleVar": 15,
-            "count": 8,
-            "opacity": 0.15,
-            "colours": ["blue", "red", "white"]
+            "count": 8
           }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "0.15-0.20",
+          "colours": ["blue", "red", "white"]
+        }
+      ]
+    },
+    {
+      "name": "rec",
+      "base": "generator",
+      "type": "rectangle",
+      "rangeW": "10.0-100.0",
+      "rangeH": "10.0-200.0",
+      "recipe": [
+        {
+          "algorithm": "multiplier",
+          "count": 15
+        },
+        {
+          "algorithm": "spread",
+          "method": "random",
+          "rangeX": "0.0-1400.0",
+          "rangeY": "0.0-900.0"
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 6,
+            "angleVar": 25,
+            "count": 5,
+            "randomizeBase": false
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "0.25-0.70",
+          "colours": ["green", "khaki", "blue"],
+          "stroke": "black"
         }
       ]
     }
   ],
-  "output": [
-    "poly1"
-  ]
+  "output": {
+    "background": "white",
+    "shapes": [
+      {
+        "name": "poly1"
+      },
+      {
+        "name": "cir"
+      },
+      {
+        "name": "rec"
+      }
+    ]
+  }
 }

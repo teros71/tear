@@ -2,19 +2,11 @@ import math
 import random
 import json
 import copy
-
-
-class Range:
-    def __init__(self):
-        self.min = 0
-        self.max = 0
-
-    def set(self, r):
-        self.min = r[0]
-        self.max = r[1]
+import value
 
 
 class Point:
+    # Point at x,y
     def __init__(self, x, y):
         self.x = x
         self.y = y
@@ -105,73 +97,27 @@ class Circle:
         return points
 
 
-class Polygon:
-    def __init__(self):
-        self.points = []
+class RectGenerator:
+    def __init__(self, w, h):
+        self.w = w
+        self.h = h
 
-    def toPolygon(self):
-        return self.points
+    def __iter__(self):
+        return self
 
-    def move(self, dx, dy):
-        for p in self.points:
-            p.x = p.x + dx
-            p.y = p.y + dy
-
-    def scale(self, r):
-        for p in self.points:
-            p.x = p.x * r
-            p.y = p.y * r
-
-    def setPosition(self, x, y):
-        bb = self.bBox()
-        dx = x - (bb.width / 2)
-        dy = y - (bb.height / 2)
-        if dx != 0 or dy != 0:
-            self.move(dx, dy)
-
-    def bBox(self):
-        p = self.points[0]
-        x1 = p.x
-        y1 = p.y
-        x2 = p.x
-        y2 = p.y
-        for p in self.points:
-            if p.x < x1:
-                x1 = p.x
-            if p.x > x2:
-                x2 = p.x
-            if p.y < y1:
-                y1 = p.y
-            if p.y > y2:
-                y2 = p.y
-        return Rect(x1, y1, x2 - x1, y2 - y1)
-
-    def readPoints(self, points):
-        for ps in points.split(','):
-            pl = ps.strip().split(' ')
-            if len(pl) == 2:
-                self.points.append(Point(float(pl[0]), float(pl[1])))
+    def __next__(self):
+        return Rect(0, 0, self.w.__next__(), self.h.__next__())
 
 
-class Generator():
-    def __init__(self, rangeR, rangePoints):
-        self.rangeR = rangeR
-        self.rangePoints = rangePoints
+class CircleGenerator:
+    def __init__(self, r):
+        self.r = r
 
-    def copy(self, x, y):
-        count = random.randint(self.rangePoints.min, self.rangePoints.max)
-        return randomPolygon(x, y, self.rangeR.min, self.rangeR.max, count)
+    def __iter__(self):
+        return self
 
-
-def randomPolygon(x, y, minR, maxR, count):
-    slicea = (2 * math.pi) / count
-    pol = Polygon()
-    for i in range(0, count):
-        s = i * slicea
-        a = random.uniform(s, s + slicea)
-        d = random.uniform(minR, maxR)
-        pol.points.append(Point(x + d * math.cos(a), y + d * math.sin(a)))
-    return pol
+    def __next__(self):
+        return Circle(0, 0, self.r.__next__())
 
 
 class Shape:
@@ -179,6 +125,7 @@ class Shape:
         self.points = []
         self.colour = 'black'
         self.opacity = 1
+        self.stroke = 'none'
 
     def move(self, dx, dy):
         for p in self.points:
@@ -189,24 +136,6 @@ class Shape:
         for p in self.points:
             p.x = p.x * r
             p.y = p.y * r
-
-
-class MultiShape:
-    def __init__(self):
-        self.shapes = []
-
-
-class Params:
-    def __init__(self):
-        self.minDistance = 2.0
-        self.angleVar = math.pi / 4
-
-
-class TearParams:
-    def __init__(self):
-        self.iterations = 1
-        self.minDistance = 2.0
-        self.angleVar = math.pi / 4
 
 
 class OutputParams:
@@ -216,36 +145,6 @@ class OutputParams:
         self.colours = ["black"]
         self.dx = 0.0
         self.dy = 0.0
-
-
-class Shape2:
-    def __init__(self):
-        self.output = OutputParams()
-        self.tear = TearParams()
-        self.points = []
-
-    def move(self, dx, dy):
-        for p in self.points:
-            p.x = p.x + dx
-            p.y = p.y + dy
-
-
-def goldenRects(rect, limit):
-    rs = [rect]
-    count = 1
-    while rect.width > limit:
-        r = copy.deepcopy(rect)
-        r.ratio(1 / 1.618)
-        if count % 4 == 1:
-            r.move(rect.width - r.width, 0)
-        elif count % 4 == 2:
-            r.move(rect.width - r.width, rect.height - r.height)
-        elif count % 4 == 3:
-            r.move(0, -(rect.height - r.height))
-        count = count + 1
-        rs.append(r)
-        rect = r
-    return rs
 
 
 def goldenRects2(rect, limit):

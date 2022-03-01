@@ -52,6 +52,8 @@ def randomizePoints(points, params):
         np = generatePoint(mp, p, params)
         if np is not None:
             newPoints.append(np)
+        else:
+            newPoints.append(p)
         mp = p
     return newPoints
 
@@ -98,7 +100,7 @@ def generateShape(points, params):
     for i in range(params.count):
         s = shape.Shape()
         s.points = generate(points, params)
-        s.colour = params.colours[i % len(params.colours)]
-        s.opacity = params.opacity
+#        s.colour = params.colours[i % len(params.colours)]
+#        s.opacity = params.opacity
         shapes.append(s)
     return shapes

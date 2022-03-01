@@ -45,10 +45,13 @@
             "iterations": 20,
             "angleVar": 15,
             "randomizeBase": false,
-            "count": 24,
-            "opacity": 0.25,
-            "colours": ["lime","red", "orange", "yellow"]
+            "count": 24
           }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": 0.25,
+          "colours": ["lime","red", "orange", "yellow"]
         }
       ]
     },
@@ -66,10 +69,13 @@
             "iterations": 20,
             "angleVar": 25,
             "randomizeBase": false,
-            "count": 15,
-            "opacity": 0.25,
-            "colours": ["blue","white", "purple"]
+            "count": 15
           }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": 0.25,
+          "colours": ["blue","white", "purple"]
         }
       ]
     }
@@ -77,8 +83,12 @@
   "output": {
     "background": "white",
     "shapes": [
-      "teared-gr-rect",
-      "teared-gr-rect-2"
+      {
+        "name": "teared-gr-rect"
+      },
+      {
+        "name": "teared-gr-rect-2"
+      }
     ]
   }
 }

@@ -3,6 +3,7 @@ import json
 import default
 import sys
 import getopt
+import svg
 
 
 def readConfig(fname):
@@ -29,7 +30,7 @@ def run(data, fname):
     print("write output")
     op = data.get('output')
     if op is not None:
-        form.writeSVG(fname, 900, 1400, op)
+        svg.write(fname, 900, 1400, op, form.formTable)
 
 
 def main(argv):
