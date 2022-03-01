@@ -15,18 +15,21 @@ class Params:
         self.opacity = 1.0
         self.colours = '[black]'
 
-    def read(self, p):
-        self.iterations = p.get('iterations', default.tear_iterations)
-        self.minDistance = p.get(
+    @classmethod
+    def frommap(cls, p):
+        pr = cls()
+        pr.iterations = p.get('iterations', default.tear_iterations)
+        pr.minDistance = p.get(
             'minDistance', default.tear_minDistance)
-        self.minDistanceFactor = p.get(
+        pr.minDistanceFactor = p.get(
             'minDistanceFactor', default.tear_minDistanceFactor)
-        self.angleVar = math.pi / \
+        pr.angleVar = math.pi / \
             p.get('angleVar', default.tear_angleVar)
-        self.randomizeBase = p.get('randomizeBase', default.tear_randomizeBase)
-        self.count = p.get('count', default.tear_count)
-        self.opacity = p.get('opacity', default.tear_opacity)
-        self.colours = p.get('colours', default.tear_colours)
+        pr.randomizeBase = p.get('randomizeBase', default.tear_randomizeBase)
+        pr.count = p.get('count', default.tear_count)
+        pr.opacity = p.get('opacity', default.tear_opacity)
+        pr.colours = p.get('colours', default.tear_colours)
+        return pr
 
 
 def generatePoint(p1, p2, params):

@@ -19,8 +19,8 @@
       "rangePoints": "3-12",
       "recipe": [
         {
-          "algorithm": "multiplier",
-          "count": 10
+          "algorithm": "generate",
+          "count": 40
         },
         {
           "algorithm": "spread",
@@ -51,7 +51,7 @@
       "rangeR": "10.0-100.0",
       "recipe": [
         {
-          "algorithm": "multiplier",
+          "algorithm": "generate",
           "count": 15
         },
         {
@@ -76,7 +76,7 @@
         {
           "algorithm": "appearance",
           "opacity": "0.15-0.20",
-          "colours": ["blue", "red", "white"]
+          "colours": ["orange", "red", "white"]
         }
       ]
     },
@@ -84,18 +84,20 @@
       "name": "rec",
       "base": "generator",
       "type": "rectangle",
-      "rangeW": "10.0-100.0",
-      "rangeH": "10.0-200.0",
+      "rangeW": "40.0-200.0",
+      "rangeH": "30.0-400.0",
       "recipe": [
         {
-          "algorithm": "multiplier",
-          "count": 15
+          "algorithm": "generate",
+          "count": 20
         },
         {
           "algorithm": "spread",
           "method": "random",
-          "rangeX": "0.0-1400.0",
-          "rangeY": "0.0-900.0"
+          "rangeX": "20.0@{0}+math.fabs(math.sin((math.pi/8)*{1}))*80",
+          "rangeX2": "0.0-1400.0",
+          "rangeY": "10.0@math.fabs(math.sin((math.pi/8)*{1}))*300",
+          "rangeY2": "0.0-900.0"
         },
         {
           "algorithm": "tear",

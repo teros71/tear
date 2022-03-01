@@ -2,7 +2,6 @@ import math
 import random
 import json
 import copy
-import value
 
 
 class Point:

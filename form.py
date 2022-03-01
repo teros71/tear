@@ -9,6 +9,8 @@ import tear
 import random
 import polygon
 import value
+import algo
+
 
 formTable = dict()
 algorithms = dict()
@@ -79,132 +81,9 @@ def makeNewForm(r):
         return p
 
 
-def algSet(r, base):
-    s = r.get("scale", 1)
-    if s != 1:
-        base.scale(s)
-    x = r.get("x", -1)
-    y = r.get("y", -1)
-    if x != -1 or y != -1:
-        base.setPosition(x, y)
-    return base
-
-
-def setAppearance(r, s, colour, opacity, stroke):
-    if type(s) is not list:
-        s.colour = colour.__next__()
-        s.opacity = opacity.__next__()
-        s.stroke = stroke.__next__()
-        return
-    colour.reset()
-    opacity.reset()
-    stroke.reset()
-    for ss in s:
-        setAppearance(r, ss, colour, opacity, stroke)
-
-
-def algAppearance(r, base):
-    opacity = value.read(r, 'opacity', d=1.0)
-    colour = value.read(r, 'colours', d=["black"])
-    stroke = value.read(r, 'stroke', d="none")
-    print(stroke.__next__())
-    setAppearance(r, base, colour, opacity, stroke)
-
-
-def applyAlgorithm(r, base):
-    if r.get('disable', False):
-        return base
-    alg = r.get('algorithm', None)
-    print("algorithm {0}".format(alg))
-    if alg == 'list':
-        return [base]
-    elif alg == 'shape':
-        s = shape.Shape()
-        s.points = base.toPolygon()
-        s.opacity = 0.2
-        return [[s]]
-    elif alg == 'set':
-        return algSet(r, base)
-    elif alg == 'random':
-        res = [base]
-        for i in range(r.get("count", 1)):
-            nbase = copy.deepcopy(base)
-#            dx = random.uniform(r.get("x-min", 0.0), r.get('x-max', 1.0))
-#            dy = random.uniform(r.get("y-min", 0.0), r.get('y-max', 1.0))
-            vrange = r.get('x-max', 1.0) - r.get("x-min", 0.0)
-            dx = random.normalvariate(vrange / 2, vrange / 4)
-            vrange = r.get('y-max', 1.0) - r.get("y-min", 0.0)
-            dy = random.normalvariate(vrange / 2, vrange / 4)
-            scale = random.uniform(
-                r.get("scale-min", 1.0), r.get('scale-max', 1.0))
-            nbase.scale(scale)
-            nbase.move(dx, dy)
-            res.append(nbase)
-        return res
-    elif alg == 'multiply':
-        res = [base]
-        xstep = r.get('x-step', 10.0)
-        for i in range(r.get('count', 1)):
-            nbase = copy.deepcopy(base)
-            dx = i * xstep
-            dy = 0
-            nbase.move(dx, dy)
-            res.append(nbase)
-        return res
-    elif alg == 'goldenRatioRectangles':
-        limit = r.get('limit', 10)
-        # base is a rectangle, result is a list of rectangles
-        return goldenratio.spiralOfRectangles(base, limit)
-    elif alg == 'goldenRatioSpiral':
-        return goldenratio.toPath(base)
-#    elif alg == 'line':
-#        return lineUp(base)
-    elif alg == 'tear':
-        params = tear.Params()
-        p = r.get('params')
-        params.read(p)
-        shapes = []
-        # base is a list of forms, result is a list of shapes
-#        print(base)
-        print("tearing shapes;count={0}".format(len(base)), end='', flush=True)
-        for b in base:
-            print(".", end='', flush=True)
-            # take point list
-            pl = b.toPolygon()
-            s = tear.generateShape(pl, params)
-            if s is not None:
-                shapes.append(s)
-        print('')
-        return shapes
-    elif alg == 'scaler':
-        rf = value.read(r, "rangeF")
-        for s in base:
-            s.scale(rf.__next__())
-        return base
-    elif alg == 'multiplier':
-        count = r.get('count', 2)
-        shapes = list(itertools.islice(base, count))
-#        for i in range(count):
-#            shapes.append(base.copy(0, 0))
-        return shapes
-    elif alg == 'spread':
-        rx = value.read(r, "rangeX")
-        ry = value.read(r, "rangeY")
-        for s in base:
-            x = rx.__next__()
-            y = ry.__next__()
-            s.setPosition(x, y)
-        return base
-    elif alg == 'appearance':
-        algAppearance(r, base)
-        return base
-    else:
-        return base
-
-
 def applyRecipe(recipe, base):
     for r in recipe:
-        base = applyAlgorithm(r, base)
+        base = algo.applyAlgorithm(r, base)
     return base
 
 

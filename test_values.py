@@ -23,8 +23,8 @@ class TestValues(unittest.TestCase):
         self.assertIsInstance(v, value.Single)
         self.assertEqual(v.__next__(), 1.2)
         v = value.make("42")
-        self.assertIsInstance(v, str)
-        v = value.make("1-5")
+        self.assertIsInstance(v, value.Single)
+        v = value.make("2-5")
         self.assertIsInstance(v, value.Random)
         print(v.__next__())
         self.assertLessEqual(v.__next__(), 5)
@@ -38,6 +38,15 @@ class TestValues(unittest.TestCase):
         self.assertIsInstance(v, value.Round)
         self.assertEqual(len(v.lst), 4)
         print(list(itertools.islice(v, 5)))
+
+    def test_eval(self):
+        v = value.make("1.0@{0}*1.6")
+        self.assertIsInstance(v, value.Eval)
+        self.assertEqual(v.x, 1.0)
+        print(list(itertools.islice(v, 5)))
+        v = value.make("20.0@{0}+math.fabs(math.sin((math.pi/8)*{1}))*20")
+        self.assertIsInstance(v, value.Eval)
+        print(list(itertools.islice(v, 30)))
 
 
 tf = {
