@@ -6,10 +6,10 @@ import default
 
 class Params:
     def __init__(self):
-        self.iterations = default.tear_iterations
-        self.minDistance = default.tear_minDistance
+        self.iterations = default.TEAR_ITERATIONS
+        self.minDistance = default.TEAR_MINDISTANCE
         self.minDistanceFactor = 0
-        self.angleVar = math.pi / default.tear_angleVar
+        self.angleVar = math.pi / default.TEAR_ANGLEVAR
         self.randomizeBase = True
         self.count = 1
         self.opacity = 1.0
@@ -18,17 +18,17 @@ class Params:
     @classmethod
     def frommap(cls, p):
         pr = cls()
-        pr.iterations = p.get('iterations', default.tear_iterations)
+        pr.iterations = p.get('iterations', default.TEAR_ITERATIONS)
         pr.minDistance = p.get(
-            'minDistance', default.tear_minDistance)
+            'minDistance', default.TEAR_MINDISTANCE)
         pr.minDistanceFactor = p.get(
-            'minDistanceFactor', default.tear_minDistanceFactor)
+            'minDistanceFactor', default.TEAR_MINDISTANCEFACTOR)
         pr.angleVar = math.pi / \
-            p.get('angleVar', default.tear_angleVar)
-        pr.randomizeBase = p.get('randomizeBase', default.tear_randomizeBase)
-        pr.count = p.get('count', default.tear_count)
-        pr.opacity = p.get('opacity', default.tear_opacity)
-        pr.colours = p.get('colours', default.tear_colours)
+            p.get('angleVar', default.TEAR_ANGLEVAR)
+        pr.randomizeBase = p.get('randomizeBase', default.TEAR_RANDOMIZEBASE)
+        pr.count = p.get('count', default.TEAR_COUNT)
+        pr.opacity = p.get('opacity', default.TEAR_OPACITY)
+        pr.colours = p.get('colours', default.TEAR_COLOURS)
         return pr
 
 

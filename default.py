@@ -1,36 +1,34 @@
+"""default config values"""
+
 unitSize = 1000.0
-tear_iterations = 18
-tear_minDistance = 2.0
-tear_minDistanceFactor = 0.0
-tear_angleVar = 4
-tear_randomizeBase = True
-tear_count = 6
-tear_opacity = 0.2
-tear_colours = '[black]'
+TEAR_ITERATIONS = 18
+TEAR_MINDISTANCE = 2.0
+TEAR_MINDISTANCEFACTOR = 0.0
+TEAR_ANGLEVAR = 4
+TEAR_RANDOMIZEBASE = True
+TEAR_COUNT = 6
+TEAR_OPACITY = 0.2
+TEAR_COLOURS = '[black]'
 
 
-def read(d):
+def read(config):
+    """read defaults"""
     global unitSize
-    global tear_iterations
-    global tear_minDistance
-    global tear_minDistanceFactor
-    global tear_angleVar
-    global tear_randomizeBase
-    global tear_count
-    global tear_opacity
-    global tear_colours
-    unitSize = d.get('unitSize', unitSize)
+    global TEAR_ITERATIONS
+    global TEAR_MINDISTANCE
+    global TEAR_MINDISTANCEFACTOR
+    global TEAR_ANGLEVAR
+    global TEAR_RANDOMIZEBASE
+    global TEAR_COUNT
+    global TEAR_OPACITY
+    global TEAR_COLOURS
+    unitSize = config.get('unitSize', unitSize)
     print(unitSize)
-    t = d.get('tear', None)
+    t = config.get('tear', None)
     if t is not None:
-        tear_iterations = t.get('iterations', tear_iterations)
-        tear_minDistance = t.get('minDistance', tear_minDistance)
-        tear_minDistanceFactor = t.get(
-            'minDistanceFactor', tear_minDistanceFactor)
-        tear_angleVar = t.get('angleVar', tear_angleVar)
-        tear_randomizeBase = t.get('randomizeBase', tear_randomizeBase)
-    t = d.get('multitear', None)
-    if t is not None:
-        tear_count = t.get('count', tear_count)
-        tear_opacity = t.get('opacity', tear_opacity)
-        tear_colours = t.get('colours', tear_colours)
+        TEAR_ITERATIONS = t.get('iterations', TEAR_ITERATIONS)
+        TEAR_MINDISTANCE = t.get('minDistance', TEAR_MINDISTANCE)
+        TEAR_MINDISTANCEFACTOR = t.get(
+            'minDistanceFactor', TEAR_MINDISTANCEFACTOR)
+        TEAR_ANGLEVAR = t.get('angleVar', TEAR_ANGLEVAR)
+        TEAR_RANDOMIZEBASE = t.get('randomizeBase', TEAR_RANDOMIZEBASE)

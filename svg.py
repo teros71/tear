@@ -1,48 +1,67 @@
+"""svg writing"""
+
 import shape
+import forms
 
 
-def writeSVGRecursive(f, forms):
-    if type(forms) is not list:
-        s = forms
-        if type(forms) is not shape.Shape:
-            s = shape.Shape()
-            s.points = forms.toPolygon()
-        writeSVGShape(f, s)
+def write_svg_recursive(file, shapes):
+    """write recursive form"""
+    if not isinstance(shapes, list):
+        single = shapes
+        if not isinstance(shapes, shape.Shape):
+            shap = shape.Shape()
+            shap.points = shapes.toPolygon()
+        write_svg_shape(file, single)
         return
-    for form in forms:
-        writeSVGRecursive(f, form)
+    for shap in shapes:
+        write_svg_recursive(file, shap)
 
 
-def writeSVGShape(f, s):
-    f.write('<polygon\n')
-    f.write('points="')
-    for p in s.points:
-        f.write('{0},{1} '.format(p.x, p.y))
-    f.write('"\n')
+def write_svg_shape(file, single):
+    """write shape"""
+    if isinstance(single, shape.Rect):
+        file.write(f'<rect x="{single.x}" y="{single.y}" '
+                   f'height="{single.height}" width="{single.width}" ')
+        sw = 0
+        if single.stroke != 'none':
+            sw = 1
+        file.write(
+            f'style="opacity:{single.opacity};'
+            f'fill:{single.colour};stroke:{single.stroke};stroke-width:{sw}" />\n')
+        return
+    file.write('<polygon\n')
+    file.write('points="')
+    for p in single.points:
+        file.write(f'{p.x},{p.y} ')
+    file.write('"\n')
     sw = 0
-    if s.stroke != 'none':
+    if single.stroke != 'none':
         sw = 1
-    f.write(
-        'style="opacity:{0};fill:{1};stroke:{2};stroke-width:{3}" />\n'.format(s.opacity, s.colour, s.stroke, sw))
+    file.write(
+        f'style="opacity:{single.opacity};'
+        f'fill:{single.colour};stroke:{single.stroke};stroke-width:{sw}" />\n')
 
 
-def writeForm(f, fn, shapeTable):
-    name = fn.get('name')
+def write_form(file, config):
+    """write a form"""
+    name = config.get('name')
     if name is None:
         return
-    print("getting form {0}".format(name))
-    sss = shapeTable.get(name)
+    print(f"getting form {name}")
+    sss = forms.get(name)
     if sss is not None:
-        writeSVGRecursive(f, sss)
+        write_svg_recursive(file, sss)
 
 
-def write(fname, height, width, out, shapeTable):
-    bg = out.get("background", "white")
-    forms = out.get("shapes", [])
-    f = open(fname, 'w')
-    f.write(
-        '<svg style="background-color:{0}" viewBox="-200 -200 1800 1300" height="{1}" width="{2}" xmlns="http://www.w3.org/2000/svg">\n'.format(bg, height, width))
-    for fn in forms:
-        writeForm(f, fn, shapeTable)
-    f.write('</svg>\n')
-    f.close()
+def write(fname, height, width, config):
+    bg = config.get("background", "white")
+    shapes = config.get("shapes", [])
+    with open(fname, 'w', encoding="utf-8") as file:
+        file.write(
+            f'<svg style="background-color:{bg}" '
+            f'viewBox="-200 -200 1800 1300" '
+            f'height="{height}" width="{width}" '
+            f'xmlns="http://www.w3.org/2000/svg">\n')
+        for fn in shapes:
+            write_form(file, fn)
+        file.write('</svg>\n')

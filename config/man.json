@@ -1,0 +1,178 @@
+{
+  "defaults": {
+    "unitSize": 800.0,
+    "tear": {
+      "iterations": 18,
+      "minDistance": 2.0,
+      "minDistanceFactor": 0,
+      "angleVar": 4,
+      "count": 6,
+      "opacity": 0.2
+    }
+  },
+  "forms": [
+    {
+      "name": "bg",
+      "base": "new",
+      "type": "rectangle",
+      "width": 1000,
+      "height": 800,
+      "recipe": [
+        {
+          "algorithm": "list",
+          "disable": false
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 10,
+            "angleVar": 20,
+            "count": 20,
+            "randomizeBase": false
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "0.1",
+          "colours": ["blue", "indigo"],
+          "stroke": "none"
+        }
+      ]
+    },
+    {
+      "name": "man1",
+      "base": "standing-man",
+      "recipe": [
+        {
+          "algorithm": "rotate",
+          "disable": true,
+          "cx": 10,
+          "cy": 10,
+          "angle": 10.0
+        },
+        {
+          "algorithm": "list",
+          "disable": true
+        },
+        {
+          "algorithm": "multiply",
+          "count": 4
+        },
+        {
+          "algorithm": "scaler",
+          "rangeF": "1.0-2.0"
+        },
+        {
+          "algorithm": "spread",
+          "disable": true,
+          "method": "random",
+          "rangeX": "10.0@{0}+math.fabs(math.sin((math.pi/8)*{1}))*80",
+          "rangeX2": "0.0-1400.0",
+          "rangeY": "10.0@100+math.fabs(math.sin((math.pi/8)*{1}))*300",
+          "rangeY2": "0.0-900.0"
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 10,
+            "angleVar": 8,
+            "count": 10,
+            "randomizeBase": false
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "0.15-0.20",
+          "colours": ["orange", "khaki", "red"],
+          "stroke": "none"
+        }
+      ]
+    },
+    {
+      "name": "man2",
+      "base": "standing-man",
+      "recipe": [
+        {
+          "algorithm": "list",
+          "disable": false
+        },
+        {
+          "algorithm": "scaler",
+          "rangeF": "0.9-1.7"
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 10,
+            "angleVar": 8,
+            "count": 10,
+            "randomizeBase": false
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "0.25-0.30",
+          "colours": ["black", "red"],
+          "stroke": "none"
+        }
+      ]
+    },
+    {
+      "name": "rec4",
+      "base": "generator",
+      "type": "rectangle",
+      "rangeW": "40.0-200.0",
+      "rangeH": "30.0-400.0",
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": 4
+        },
+        {
+          "algorithm": "spread",
+          "method": "random",
+          "rangeX": "10.0@{0}+math.fabs(math.sin((math.pi/8)*{1}))*80",
+          "rangeX2": "0.0-1400.0",
+          "rangeY": "10.0@750+math.fabs(math.sin((math.pi/8)*{1}))*300",
+          "rangeY2": "0.0-900.0"
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 12,
+            "angleVar": 15,
+            "count": 5,
+            "randomizeBase": false
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "0.25-0.70",
+          "colours": ["green", "khaki", "white"],
+          "stroke": "black"
+        }
+      ]
+    }
+  ],
+  "output": {
+    "background": "#100540",
+    "shapes": [
+      {
+        "name": "bg"
+      },
+      {
+        "name": "man1"
+      },
+      {
+        "name": "man2"
+      },
+      {
+        "name": "rec4"
+      }
+    ]
+  }
+}

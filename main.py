@@ -1,43 +1,47 @@
-import form
+"""Main for generating art"""
+
 import json
-import default
 import sys
 import getopt
 import svg
+import default
+import forms
+import form
 
 
-def readConfig(fname):
+def read_config(fname):
+    """Read json config"""
     print("reading config")
-    f = open(fname, 'r')
-    # json to dictionary
-    data = json.load(f)
-    f.close()
+    with open(fname, 'r', encoding="utf-8") as conf_file:
+        # json to dictionary
+        data = json.load(conf_file)
     print("init defaults")
-    d = data.get('defaults')
-    if d is not None:
-        default.read(d)
+    defs = data.get('defaults')
+    if defs is not None:
+        default.read(defs)
     return data
 
 
 def run(data, fname):
+    """run the generation"""
     print("initializing form table")
-    form.initFormTable()
+    forms.init()
     print("generate forms")
-    forms = data.get('forms')
-    if forms is not None:
-        for fd in forms:
-            form.generateForm(fd)
+    form_data = data.get('forms')
+    if form_data is not None:
+        for fd in form_data:
+            form.generate_form(fd)
     print("write output")
     op = data.get('output')
     if op is not None:
-        svg.write(fname, 900, 1400, op, form.formTable)
+        svg.write(fname, 900, 1400, op)
 
 
 def main(argv):
     inputfile = ''
     outputfile = ''
     try:
-        opts, args = getopt.getopt(argv, "hi:o:", ["ifile=", "ofile="])
+        opts, _ = getopt.getopt(argv, "hi:o:", ["ifile=", "ofile="])
     except getopt.GetoptError:
         print('main.py -i <inputfile> -o <outputfile>')
         sys.exit(2)
@@ -51,9 +55,9 @@ def main(argv):
             outputfile = arg
     print('Input file is "', inputfile)
     print('Output file is "', outputfile)
-    data = readConfig(inputfile)
+    data = read_config(inputfile)
     run(data, outputfile)
 
 
 if __name__ == "__main__":
-   main(sys.argv[1:])
+    main(sys.argv[1:])

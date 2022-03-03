@@ -19,6 +19,14 @@ class Point:
         self.x = self.x + nd * math.cos(na)
         self.y = self.y + nd * math.sin(na)
 
+    def rotate(self, x, y, a):
+        s = math.sin(a)
+        c = math.cos(a)
+        self.x -= x
+        self.y -= y
+        self.x = (self.x * c - self.y * s) + x
+        self.y = (self.x * s + self.y * c) + y
+
     def output(self):
         print(self.x, self.y)
 
@@ -46,9 +54,9 @@ class Rect:
         self.x = self.x + dx
         self.y = self.y + dy
 
-    def scale(self, dr):
-        self.width = self.width * dr
-        self.height = self.height * dr
+    def scale(self, drx, dry):
+        self.width = self.width * drx
+        self.height = self.height * dry
 
     def setPosition(self, x, y):
         self.x = x - (self.width / 2)
@@ -56,6 +64,9 @@ class Rect:
 
     def bBox(self):
         return Rect(self.x, self.y, self.width, self.height)
+
+    def midPoint(self):
+        return Point(self.x + self.width / 2, self.y + self.height / 2)
 
     def toPolygon(self):
         return [Point(self.x, self.y), Point(self.x + self.width, self.y), Point(self.x + self.width, self.y + self.height), Point(self.x, self.y + self.height)]
@@ -71,10 +82,10 @@ class Circle:
         self.x = self.x + dx
         self.y = self.y + dy
 
-    def scale(self, r):
-        self.x = self.x * r
-        self.y = self.y * r
-        self.r = self.r * r
+    def scale(self, rx, ry):
+        self.x = self.x * rx
+        self.y = self.y * rx
+        self.r = self.r * rx
 
     def setPosition(self, x, y):
         self.x = x
@@ -131,10 +142,15 @@ class Shape:
             p.x = p.x + dx
             p.y = p.y + dy
 
-    def scale(self, r):
+    def scale(self, rx, ry=0):
+        if ry == 0:
+            ry = rx
         for p in self.points:
-            p.x = p.x * r
-            p.y = p.y * r
+            p.x = p.x * rx
+            p.y = p.y * ry
+
+    def toPolygon(self):
+        return self.points
 
 
 class OutputParams:
@@ -164,70 +180,3 @@ def goldenRects2(rect, limit):
         rs.append(r)
         rect = r
     return rs
-
-
-def readFromFile(fname):
-    defaults = Shape()
-    shapes = []
-    f = open(fname, 'r')
-    # json to dictionary
-    data = json.load(f)
-    t = data.get('defaults')
-    if t != None:
-        defaults.tear.iterations = t.get('iterations', 1)
-        defaults.tear.minDistance = t.get('minDistance', 2.0)
-        defaults.tear.angleVar = t.get('angleVar', 2)
-        defaults.output.count = t.get('count', 1)
-        defaults.output.opacity = t.get('opacity', 2.0)
-    for shap in data['shapes']:
-        #        print(shap)
-        p = Shape()
-        typ = shap.get('type')
-        if typ == 'polygon':
-            g = shap['geometry']
-            x = math.fabs(g.get('x', 0.0))
-            y = math.fabs(g.get('y', 0.0))
-            g = g['points']
-            if len(g) % 2 != 0:
-                raise ValueError("invalid polygon geometry")
-            for i in range(0, len(g), 2):
-                p.points.append(
-                    Point(math.fabs(g[i]) + x, math.fabs(g[i+1]) + y))
-        elif typ == 'rectangle':
-            g = shap['geometry']
-            x = math.fabs(g.get('x', 0.0))
-            y = math.fabs(g.get('y', 0.0))
-            w = math.fabs(g['width'])
-            h = math.fabs(g['height'])
-            p.points.append(Point(x, y))
-            p.points.append(Point(x + w, y))
-            p.points.append(Point(x + w, y + h))
-            p.points.append(Point(x, y + h))
-        else:
-            raise ValueError("invalid shape type", typ)
-
-        t = shap.get('tear')
-        if t is not None:
-            p.tear.iterations = t.get('iterations', defaults.tear.iterations)
-            p.tear.minDistance = t.get(
-                'minDistance', defaults.tear.minDistance)
-            p.tear.angleVar = math.pi / \
-                t.get('angleVar', defaults.tear.angleVar)
-        t = shap.get('output')
-        if t is not None:
-            p.output.count = t.get('count', defaults.output.count)
-            p.output.opacity = t.get('opacity', defaults.output.opacity)
-            p.output.colours = t.get('colours', ['black'])
-            p.output.dx = t.get('dx', 0.0)
-            p.output.dy = t.get('dy', 0.0)
-#        shapes.append(p)
-        t = shap.get('production')
-        if t is not None:
-            count = t.get('count', 1)
-            rects = goldenRects2(Rect(200, 150, 600, 600), 10)
-            for r in rects:
-                np = copy.deepcopy(p)
-                np.points = r.points()
-                shapes.append(np)
-    f.close()
-    return shapes

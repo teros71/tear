@@ -1,0 +1,105 @@
+{
+  "defaults": {
+    "unitSize": 800.0,
+    "tear": {
+      "iterations": 18,
+      "minDistance": 2.0,
+      "minDistanceFactor": 0,
+      "angleVar": 4,
+      "count": 6,
+      "opacity": 0.2
+    }
+  },
+  "forms": [
+    {
+      "name": "rarea",
+      "base": "new",
+      "type": "rectangle",
+      "x": 400,
+      "y": 400,
+      "width": 600,
+      "height": 400,
+      "recipe": [
+        {
+          "algorithm": "position",
+          "x": 400,
+          "y": 400
+        },
+        {
+          "algorithm": "shape"
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": 0.25,
+          "colours": ["green"]
+        }
+      ]
+    },
+    {
+      "name": "carea",
+      "base": "new",
+      "type": "circle",
+      "x": 400,
+      "y": 400,
+      "r": 300,
+      "recipe": [
+        {
+          "algorithm": "position",
+          "x": 400,
+          "y": 400
+        },
+        {
+          "algorithm": "shape"
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": 0.25,
+          "colours": ["green"]
+        }
+      ]
+    },
+    {
+      "name": "poly1",
+      "base": "generator",
+      "type": "polygon",
+      "rangeR": "60.0-100.0",
+      "rangePoints": "3-12",
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": 40
+        },
+        {
+          "algorithm": "spread",
+          "method": "area",
+          "area": "carea"
+        },
+        {
+          "algorithm": "tear",
+          "disable": true,
+          "params": {
+            "iterations": 12,
+            "angleVar": 20,
+            "count": 15
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": 0.25,
+          "colours": ["olivedrab", "khaki", "orange", "red"]
+        }
+      ]
+    }
+  ],
+  "output": {
+    "background": "#8050c0",
+    "shapes": [
+      {
+        "name": "carea"
+      },
+      {
+        "name": "poly1"
+      }
+    ]
+  }
+}

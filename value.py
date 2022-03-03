@@ -89,10 +89,9 @@ class Eval:
         return self
 
     def __next__(self):
-        v = self.current
         self.i += 1
         self.current = eval(self.f.format(self.current, self.i))
-        return v
+        return self.current
 
     def reset(self):
         self.current = self.x

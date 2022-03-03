@@ -1,0 +1,216 @@
+{
+  "defaults": {
+    "unitSize": 800.0,
+    "tear": {
+      "iterations": 18,
+      "minDistance": 2.0,
+      "minDistanceFactor": 0,
+      "angleVar": 4,
+      "count": 6,
+      "opacity": 0.2
+    }
+  },
+  "forms": [
+    {
+      "name": "poly1",
+      "base": "generator",
+      "type": "polygon",
+      "rangeR": "10.0-200.0",
+      "rangePoints": "3-12",
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": 1
+        },
+        {
+          "algorithm": "spread",
+          "method": "random",
+          "rangeX": "0.0-400.0",
+          "rangeY": "0.0-800.0"
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 12,
+            "angleVar": 20,
+            "count": 15
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": 0.25,
+          "colours": ["olivedrab", "khaki", "orange", "red"]
+        }
+      ]
+    },
+    {
+      "name": "rec",
+      "base": "generator",
+      "type": "rectangle",
+      "rangeW": "40.0-200.0",
+      "rangeH": "30.0-400.0",
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": 40
+        },
+        {
+          "algorithm": "spread",
+          "method": "random",
+          "rangeX": "20.0@{0}+math.fabs(math.sin((math.pi/8)*{1}))*80",
+          "rangeX2": "0.0-1400.0",
+          "rangeY": "10.0@math.fabs(math.sin((math.pi/8)*{1}))*300",
+          "rangeY2": "0.0-900.0"
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 6,
+            "angleVar": 45,
+            "count": 5,
+            "randomizeBase": false
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "0.25-0.70",
+          "colours": ["green", "khaki", "blue"],
+          "stroke": "black"
+        }
+      ]
+    },
+    {
+      "name": "rec2",
+      "base": "generator",
+      "type": "rectangle",
+      "rangeW": "40.0-200.0",
+      "rangeH": "30.0-400.0",
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": 40
+        },
+        {
+          "algorithm": "spread",
+          "method": "random",
+          "rangeX": "15.0@{0}+math.fabs(math.sin((math.pi/8)*{1}))*80",
+          "rangeX2": "0.0-1400.0",
+          "rangeY": "10.0@250+math.fabs(math.sin((math.pi/8)*{1}))*300",
+          "rangeY2": "0.0-900.0"
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 8,
+            "angleVar": 35,
+            "count": 5,
+            "randomizeBase": false
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "0.25-0.70",
+          "colours": ["green", "khaki", "red"],
+          "stroke": "black"
+        }
+      ]
+    },
+    {
+      "name": "rec3",
+      "base": "generator",
+      "type": "rectangle",
+      "rangeW": "40.0-200.0",
+      "rangeH": "30.0-400.0",
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": 40
+        },
+        {
+          "algorithm": "spread",
+          "method": "random",
+          "rangeX": "10.0@{0}+math.fabs(math.sin((math.pi/8)*{1}))*80",
+          "rangeX2": "0.0-1400.0",
+          "rangeY": "10.0@500+math.fabs(math.sin((math.pi/8)*{1}))*300",
+          "rangeY2": "0.0-900.0"
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 10,
+            "angleVar": 25,
+            "count": 5,
+            "randomizeBase": false
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "0.25-0.70",
+          "colours": ["green", "khaki", "yellow"],
+          "stroke": "black"
+        }
+      ]
+    },
+    {
+      "name": "rec4",
+      "base": "generator",
+      "type": "rectangle",
+      "rangeW": "40.0-200.0",
+      "rangeH": "30.0-400.0",
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": 40
+        },
+        {
+          "algorithm": "spread",
+          "method": "random",
+          "rangeX": "10.0@{0}+math.fabs(math.sin((math.pi/8)*{1}))*80",
+          "rangeX2": "0.0-1400.0",
+          "rangeY": "10.0@750+math.fabs(math.sin((math.pi/8)*{1}))*300",
+          "rangeY2": "0.0-900.0"
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 12,
+            "angleVar": 15,
+            "count": 5,
+            "randomizeBase": false
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "0.25-0.70",
+          "colours": ["green", "khaki", "white"],
+          "stroke": "black"
+        }
+      ]
+    }
+  ],
+  "output": {
+    "background": "#201080",
+    "shapes": [
+      {
+        "name": "poly1"
+      },
+      {
+        "name": "rec"
+      },
+      {
+        "name": "rec2"
+      },
+      {
+        "name": "rec3"
+      },
+      {
+        "name": "rec4"
+      }
+    ]
+  }
+}

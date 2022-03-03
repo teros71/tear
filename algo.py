@@ -1,36 +1,38 @@
+"""Algorithms for processing"""
+
 import math
-import json
 import copy
 import itertools
 import shape
-import default
 import goldenratio
 import tear
-import random
-import polygon
 import value
+import area
+import forms
+import polygon
+
 
 # ===========================================================================
 
 
-def applyRecursive(r, base, alg):
-    if type(base) is not list:
+def apply_recursive(config, base, alg):
+    """recursively apply algorithm to forms"""
+    if not isinstance(base, list):
         return alg(base)
-    else:
-        for s in base:
-            applyRecursive(r, s, alg)
+    for form in base:
+        apply_recursive(config, form, alg)
     return base
 
 # ===========================================================================
 
 
-def position(r, base):
-    # set x y and scale
-    s = r.get("scale", 1)
-    if s != 1:
-        base.scale(s)
-    x = r.get("x", -1)
-    y = r.get("y", -1)
+def position(config, base):
+    """set x y and scale"""
+    val = config.get("scale", 1)
+    if val != 1:
+        base.scale(val)
+    x = config.get("x", -1)
+    y = config.get("y", -1)
     if x != -1 or y != -1:
         base.setPosition(x, y)
     return base
@@ -38,47 +40,66 @@ def position(r, base):
 # ===========================================================================
 
 
-def generate(r, base):
-    # base must be generative shape
-    count = r.get('count', 2)
+def generate(config, base):
+    """base must be generative shape"""
+    count = config.get('count', 2)
     shapes = list(itertools.islice(base, count))
     return shapes
 
 # ===========================================================================
 
 
-def spread(r, base):
-    # base is a list of shapes, they are spread
-    rx = value.read(r, "rangeX")
-    ry = value.read(r, "rangeY")
+def spread(config, base):
+    """base is a list of shapes, they are spread"""
+    method = config.get("method", "random")
+    if method == "random":
+        rx = value.read(config, "rangeX")
+        ry = value.read(config, "rangeY")
 
-    def doIt(s):
-        s.setPosition(rx.__next__(), ry.__next__())
-    return applyRecursive(r, base, doIt)
+        def do_it(shape):
+            shape.setPosition(rx.__next__(), ry.__next__())
+            return shape
+        return apply_recursive(config, base, do_it)
+    if method == "area":
+        name = config.get("area")
+        shap = forms.get(name)
+        if not isinstance(shap, polygon.Polygon):
+            shap = polygon.Polygon(shap.toPolygon())
+        a = area.RandomInArea(shap)
+
+        def do_it2(shape):
+            p = a.__next__()
+            shape.setPosition(p.x, p.y)
+            return shape
+        return apply_recursive(config, base, do_it2)
+    return base
+
 
 # ===========================================================================
 
 
-def setAppearance(r, s, colour, opacity, stroke):
-    if type(s) is not list:
-        s.colour = colour.__next__()
-        s.opacity = opacity.__next__()
-        s.stroke = stroke.__next__()
+def set_appearance(config, shape, colour, opacity, stroke):
+    """Set appearance of a shape"""
+    if not isinstance(shape, list):
+        shape.colour = colour.__next__()
+        shape.opacity = opacity.__next__()
+        shape.stroke = stroke.__next__()
         return
     colour.reset()
     opacity.reset()
     stroke.reset()
-    for ss in s:
-        setAppearance(r, ss, colour, opacity, stroke)
+    for inner_shape in shape:
+        set_appearance(config, inner_shape, colour, opacity, stroke)
 
 # ===========================================================================
 
 
-def appearance(r, base):
-    opacity = value.read(r, 'opacity', d=1.0)
-    colour = value.read(r, 'colours', d=["black"])
-    stroke = value.read(r, 'stroke', d="none")
-    setAppearance(r, base, colour, opacity, stroke)
+def appearance(config, base):
+    """appearance algorithm"""
+    opacity = value.read(config, 'opacity', d=1.0)
+    colour = value.read(config, 'colours', d=["black"])
+    stroke = value.read(config, 'stroke', d="none")
+    set_appearance(config, base, colour, opacity, stroke)
     return base
 
 # ===========================================================================
@@ -103,13 +124,25 @@ def aTear(r, base):
 
 
 def scaler(r, base):
-    rf = value.read(r, "rangeF")
+    rx = value.read(r, "rangeF")
+    ry = value.read(r, "rangeFY", d=0)
 
     def doIt(s):
-        s.scale(rf.__next__())
-    return applyRecursive(r, base, doIt)
+        s.scale(rx.__next__(), ry.__next__())
+        return s
+    return apply_recursive(r, base, doIt)
 
 # ===========================================================================
+
+
+def rotate(r, base):
+    #    x = value.read(r, "cx")
+    #    y = value.read(r, "cy")
+    a = value.read(r, "angle")
+    p = base.bBox().midPoint()
+    print(p.x, p.y)
+    base.rotate(p.x, p.y, (a.__next__() / 180) * math.pi)
+    return base
 
 
 def applyAlgorithm(r, base):
@@ -141,22 +174,23 @@ def applyAlgorithm(r, base):
     elif alg == 'appearance':
         return appearance(r, base)
 
+    elif alg == 'rotate':
+        return rotate(r, base)
+
     elif alg == 'list':
         return [base]
+
     elif alg == 'shape':
         s = shape.Shape()
         s.points = base.toPolygon()
-        s.opacity = 0.2
-        return [[s]]
+        return s
 
     elif alg == 'multiply':
         res = [base]
-        xstep = r.get('x-step', 10.0)
         for i in range(r.get('count', 1)):
             nbase = copy.deepcopy(base)
-            dx = i * xstep
-            dy = 0
-            nbase.move(dx, dy)
+            if nbase is None:
+                print(base, "!!!!!!")
             res.append(nbase)
         return res
     elif alg == 'goldenRatioRectangles':
