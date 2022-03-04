@@ -15,9 +15,9 @@ standing_man = "101.690 351.870, 101.530 347.430, 101.980 342.700, 102.760 342.1
 
 def init():
     """initialize forms"""
-    half = default.unitSize / 2.0
+    half = default.UNIT_SIZE / 2.0
     add("rectangle", shape.Rect(
-        0, 0, default.unitSize, default.unitSize))
+        0, 0, default.UNIT_SIZE, default.UNIT_SIZE))
     add("circle", shape.Circle(half, half, half))
     add("man", polygon.Polygon.fromstr(man))
     add("dancer", polygon.Polygon.fromstr(dancer))

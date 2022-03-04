@@ -78,18 +78,20 @@ def spread(config, base):
 # ===========================================================================
 
 
-def set_appearance(config, shape, colour, opacity, stroke):
+def set_appearance(config, shape, colour, opacity, stroke, strokew):
     """Set appearance of a shape"""
     if not isinstance(shape, list):
         shape.colour = colour.__next__()
         shape.opacity = opacity.__next__()
         shape.stroke = stroke.__next__()
+        shape.stroke_width = strokew.__next__()
         return
     colour.reset()
     opacity.reset()
     stroke.reset()
+    strokew.reset()
     for inner_shape in shape:
-        set_appearance(config, inner_shape, colour, opacity, stroke)
+        set_appearance(config, inner_shape, colour, opacity, stroke, strokew)
 
 # ===========================================================================
 
@@ -99,7 +101,8 @@ def appearance(config, base):
     opacity = value.read(config, 'opacity', d=1.0)
     colour = value.read(config, 'colours', d=["black"])
     stroke = value.read(config, 'stroke', d="none")
-    set_appearance(config, base, colour, opacity, stroke)
+    strokew = value.read(config, 'strokeWidth', d=0)
+    set_appearance(config, base, colour, opacity, stroke, strokew)
     return base
 
 # ===========================================================================

@@ -1,6 +1,6 @@
 """default config values"""
 
-unitSize = 1000.0
+UNIT_SIZE = 1000.0
 TEAR_ITERATIONS = 18
 TEAR_MINDISTANCE = 2.0
 TEAR_MINDISTANCEFACTOR = 0.0
@@ -13,7 +13,7 @@ TEAR_COLOURS = '[black]'
 
 def read(config):
     """read defaults"""
-    global unitSize
+    global UNIT_SIZE
     global TEAR_ITERATIONS
     global TEAR_MINDISTANCE
     global TEAR_MINDISTANCEFACTOR
@@ -22,8 +22,8 @@ def read(config):
     global TEAR_COUNT
     global TEAR_OPACITY
     global TEAR_COLOURS
-    unitSize = config.get('unitSize', unitSize)
-    print(unitSize)
+    UNIT_SIZE = config.get('unitSize', UNIT_SIZE)
+    print(UNIT_SIZE)
     t = config.get('tear', None)
     if t is not None:
         TEAR_ITERATIONS = t.get('iterations', TEAR_ITERATIONS)

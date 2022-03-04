@@ -136,6 +136,7 @@ class Shape:
         self.colour = 'black'
         self.opacity = 1
         self.stroke = 'none'
+        self.stroke_width = 0
 
     def move(self, dx, dy):
         for p in self.points:

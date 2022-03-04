@@ -12,8 +12,6 @@ class Params:
         self.angleVar = math.pi / default.TEAR_ANGLEVAR
         self.randomizeBase = True
         self.count = 1
-        self.opacity = 1.0
-        self.colours = '[black]'
 
     @classmethod
     def frommap(cls, p):
@@ -103,7 +101,5 @@ def generateShape(points, params):
     for i in range(params.count):
         s = shape.Shape()
         s.points = generate(points, params)
-#        s.colour = params.colours[i % len(params.colours)]
-#        s.opacity = params.opacity
         shapes.append(s)
     return shapes

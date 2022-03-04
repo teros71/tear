@@ -22,24 +22,20 @@ def write_svg_shape(file, single):
     if isinstance(single, shape.Rect):
         file.write(f'<rect x="{single.x}" y="{single.y}" '
                    f'height="{single.height}" width="{single.width}" ')
-        sw = 0
-        if single.stroke != 'none':
-            sw = 1
         file.write(
             f'style="opacity:{single.opacity};'
-            f'fill:{single.colour};stroke:{single.stroke};stroke-width:{sw}" />\n')
+            f'fill:{single.colour};stroke:{single.stroke};'
+            f'stroke-width:{single.stroke_width}" />\n')
         return
     file.write('<polygon\n')
     file.write('points="')
     for p in single.points:
         file.write(f'{p.x},{p.y} ')
     file.write('"\n')
-    sw = 0
-    if single.stroke != 'none':
-        sw = 1
     file.write(
         f'style="opacity:{single.opacity};'
-        f'fill:{single.colour};stroke:{single.stroke};stroke-width:{sw}" />\n')
+        f'fill:{single.colour};stroke:{single.stroke};'
+        f'stroke-width:{single.stroke_width};stroke-linejoin:round" />\n')
 
 
 def write_form(file, config):

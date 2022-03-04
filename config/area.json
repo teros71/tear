@@ -54,7 +54,9 @@
         {
           "algorithm": "appearance",
           "opacity": 0.25,
-          "colours": ["green"]
+          "colours": ["none"],
+          "stroke": "black",
+          "strokeWidth": 5
         }
       ]
     },
