@@ -63,12 +63,12 @@ def spread(config, base):
     if method == "area":
         name = config.get("area")
         shap = forms.get(name)
-        a = area.RandomInArea(geom.Polygon(shap.get_points()))
+        a = area.RandomInArea(geom.Polygon(shap.get_rendering_points()))
 
-        def do_it2(shape):
+        def do_it2(s):
             p = a.__next__()
-            shape.set_position(p.x, p.y)
-            return shape
+            s.set_position(p.x, p.y)
+            return s
         return apply_recursive(config, base, do_it2)
     return base
 

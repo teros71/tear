@@ -15,8 +15,6 @@
       "name": "rarea",
       "base": "new",
       "type": "rectangle",
-      "x": 400,
-      "y": 400,
       "width": 600,
       "height": 400,
       "recipe": [
@@ -24,9 +22,6 @@
           "algorithm": "position",
           "x": 400,
           "y": 400
-        },
-        {
-          "algorithm": "shape"
         },
         {
           "algorithm": "appearance",
@@ -39,17 +34,12 @@
       "name": "carea",
       "base": "new",
       "type": "circle",
-      "x": 400,
-      "y": 400,
       "r": 300,
       "recipe": [
         {
           "algorithm": "position",
           "x": 400,
           "y": 400
-        },
-        {
-          "algorithm": "shape"
         },
         {
           "algorithm": "appearance",

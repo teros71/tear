@@ -77,7 +77,8 @@
           "algorithm": "appearance",
           "opacity": "0.25-0.70",
           "colours": ["green", "khaki", "blue"],
-          "stroke": "black"
+          "stroke": "black",
+          "strokeWidth": 1
         }
       ]
     },
@@ -114,7 +115,8 @@
           "algorithm": "appearance",
           "opacity": "0.25-0.70",
           "colours": ["green", "khaki", "red"],
-          "stroke": "black"
+          "stroke": "black",
+          "strokeWidth": 1
         }
       ]
     },
@@ -151,7 +153,8 @@
           "algorithm": "appearance",
           "opacity": "0.25-0.70",
           "colours": ["green", "khaki", "yellow"],
-          "stroke": "black"
+          "stroke": "black",
+          "strokeWidth": 1
         }
       ]
     },
@@ -188,7 +191,8 @@
           "algorithm": "appearance",
           "opacity": "0.25-0.70",
           "colours": ["green", "khaki", "white"],
-          "stroke": "black"
+          "stroke": "black",
+          "strokeWidth": 1
         }
       ]
     }
