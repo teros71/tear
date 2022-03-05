@@ -1,11 +1,100 @@
+"""Basic geometrical elements"""
 import math
 import random
-import json
-import copy
-import shape
 
 
-class XPolygon:
+class Point:
+    # Point at x,y
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def copy(self):
+        return Point(self.x, self.y)
+
+    def move(self, dx, dy):
+        return Point(self.x + dx, self.y + dy)
+
+    def randomize(self, maxR):
+        nd = random.uniform(0.0, maxR)
+        na = random.uniform(0, 2 * math.pi)
+        self.x = self.x + nd * math.cos(na)
+        self.y = self.y + nd * math.sin(na)
+
+    def rotate(self, x, y, a):
+        s = math.sin(a)
+        c = math.cos(a)
+        self.x -= x
+        self.y -= y
+        self.x = (self.x * c - self.y * s) + x
+        self.y = (self.x * s + self.y * c) + y
+
+    def output(self):
+        print(self.x, self.y)
+
+
+def halfWayPoint(p1, p2):
+    return Point(p1.x + (p2.x - p1.x) / 2, p1.y + (p2.y - p1.y) / 2)
+
+
+def distance(p1, p2):
+    return math.sqrt(math.pow(p2.y - p1.y, 2) + math.pow(p2.x - p1.x, 2))
+
+
+def angle(p1, p2):
+    return math.atan2(p2.y - p1.y, p2.x - p1.x)
+
+
+class BBox:
+    def __init__(self, x0, y0, x1, y1):
+        self.x0 = x0
+        self.y0 = y0
+        self.x1 = x1
+        self.y1 = y1
+
+
+class Rect:
+    def __init__(self, w, h):
+        self.width = w
+        self.height = h
+
+    def scale(self, drx, dry):
+        self.width = self.width * drx
+        self.height = self.height * dry
+
+    def xmidPoint(self):
+        return Point(self.x + self.width / 2, self.y + self.height / 2)
+
+    def get_points(self, x, y):
+        topleft = Point(x - self.width / 2, y - self.width / 2)
+        return [topleft, Point(topleft.x, topleft.y + self.height),
+                Point(topleft.x + self.width, topleft.y + self.height),
+                Point(topleft.x + self.width, topleft.y)]
+
+
+class Circle:
+    def __init__(self, r):
+        self.r = r
+
+    def scale(self, rx, ry):
+        self.r = self.r * rx
+
+    def copy(self):
+        return Circle(self.r)
+
+    def get_points(self, x, y):
+        points = []
+        t = 0.0
+        while t < math.pi * 2:
+            points.append(Point(x + self.r * math.cos(t),
+                                y + self.r * math.sin(t)))
+            t = t + math.pi / 8
+        return points
+
+
+class Polygon:
+    """Polygon"""
+
     def __init__(self, points):
         self.points = points
 
@@ -15,11 +104,11 @@ class XPolygon:
         for ps in lst.split(','):
             pl = ps.strip().split(' ')
             if len(pl) == 2:
-                points.append(shape.Point(float(pl[0]), float(pl[1])))
+                points.append(Point(float(pl[0]), float(pl[1])))
         return cls(points)
 
-    def get_points(self):
-        return self.points
+    def get_points(self, x, y):
+        return [p.move(x, y) for p in self.points]
 
     def move(self, dx, dy):
         for p in self.points:
@@ -32,13 +121,6 @@ class XPolygon:
         for p in self.points:
             p.x = p.x * rx
             p.y = p.y * ry
-
-#    def setPosition(self, x, y):
-#        bb = self.bBox()
-#        dx = x - (bb.width / 2)
-#        dy = y - (bb.height / 2)
-#        if dx != 0 or dy != 0:
-#            self.move(dx, dy)
 
     def rotate(self, x, y, a):
         for p in self.points:
@@ -59,7 +141,7 @@ class XPolygon:
                 y1 = p.y
             if p.y > y2:
                 y2 = p.y
-        return shape.BBox(x1, y1, x2 - x1, y2 - y1)
+        return BBox(x1, y1, x2 - x1, y2 - y1)
 
     def contains(self, p):
 
@@ -113,7 +195,7 @@ class XPolygon:
 
         # Create a point for line segment from p to infinite
 #        p = shape.Point(x, y)
-        extreme = shape.Point(0, p.y)
+        extreme = Point(0, p.y)
         # Count intersections of the above line with sides of polygon
         count = 0
         i = 0

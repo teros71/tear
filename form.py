@@ -1,11 +1,11 @@
 import shape
-import polygon
 import value
 import algo
 import forms
+import geom
 
 
-def make_generator_form(config):
+def make_generator_shape(config):
     t = config.get('type', 'rectangle')
     if t == 'rectangle':
         rw = value.read(config, "rangeW")
@@ -17,21 +17,24 @@ def make_generator_form(config):
     if t == 'polygon':
         rar = value.readRange(config, "rangeR")
         rap = value.read(config, "rangePoints")
-        return polygon.Generator(rar, rap)
+        return shape.PolygonGenerator(rar, rap)
 
 
-def make_new_form(r):
+def make_new_shape(r):
     t = r.get('type', 'rectangle')
     x = r.get("x", 0.0)
     y = r.get("y", 0.0)
+    base = None
     if t == 'rectangle':
-        return shape.Rect(x, y, r.get("width", 10.0), r.get("height", 10.0))
+        base = geom.Rect(r.get("width", 10.0), r.get("height", 10.0))
     if t == 'circle':
-        return shape.Circle(x, y, r.get("r", 10.0))
+        base = geom.Circle(r.get("r", 10.0))
     if t == 'polygon':
-        p = polygon.Polygon.fromstr(
+        base = geom.Polygon.fromstr(
             r.get("points", "0.0 0.0, 10.0 5.0, 5.0 10.0"))
-        return p
+    s = shape.Shape(base)
+    s.set_position(x, y)
+    return s
 
 
 def apply_recipe(recipe, base):
@@ -45,9 +48,9 @@ def generate_form(config):
     base_name = config['base']
     base = None
     if base_name == 'generator':
-        base = make_generator_form(config)
+        base = make_generator_shape(config)
     elif base_name == 'new':
-        base = make_new_form(config)
+        base = make_new_shape(config)
     else:
         print("generating form {0} from {1}".format(name, base_name))
         base = forms.get(base_name)

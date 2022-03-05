@@ -2,15 +2,15 @@
 
 import shape
 import forms
+import geom
 
 
 def write_svg_recursive(file, shapes):
     """write recursive form"""
     if not isinstance(shapes, list):
         single = shapes
-        if not isinstance(shapes, shape.Shape):
-            shap = shape.Shape()
-            shap.points = shapes.toPolygon()
+#        if not isinstance(shapes, shape.Shape):
+#            shap = shape.Shape(polygon.Polygon(shapes.get_points()))
         write_svg_shape(file, single)
         return
     for shap in shapes:
@@ -19,23 +19,27 @@ def write_svg_recursive(file, shapes):
 
 def write_svg_shape(file, single):
     """write shape"""
-    if isinstance(single, shape.Rect):
-        file.write(f'<rect x="{single.x}" y="{single.y}" '
-                   f'height="{single.height}" width="{single.width}" ')
+    app = single.appearance
+    if isinstance(single.base, geom.Rect):
+        r = single.base
+        x = single.position.x - r.width / 2
+        y = single.position.y - r.height / 2
+        file.write(f'<rect x="{x}" y="{y}" '
+                   f'height="{r.height}" width="{r.width}" ')
         file.write(
-            f'style="opacity:{single.opacity};'
-            f'fill:{single.colour};stroke:{single.stroke};'
-            f'stroke-width:{single.stroke_width}" />\n')
+            f'style="opacity:{app.opacity};'
+            f'fill:{app.colour};stroke:{app.stroke};'
+            f'stroke-width:{app.stroke_width}" />\n')
         return
     file.write('<polygon\n')
     file.write('points="')
-    for p in single.points:
+    for p in single.get_rendering_points():
         file.write(f'{p.x},{p.y} ')
     file.write('"\n')
     file.write(
-        f'style="opacity:{single.opacity};'
-        f'fill:{single.colour};stroke:{single.stroke};'
-        f'stroke-width:{single.stroke_width};stroke-linejoin:round" />\n')
+        f'style="opacity:{app.opacity};'
+        f'fill:{app.colour};stroke:{app.stroke};'
+        f'stroke-width:{app.stroke_width};stroke-linejoin:round" />\n')
 
 
 def write_form(file, config):

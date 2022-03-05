@@ -2,6 +2,7 @@ import math
 import random
 import shape
 import default
+import geom
 
 
 class Params:
@@ -31,8 +32,8 @@ class Params:
 
 
 def generatePoint(p1, p2, params):
-    d = shape.distance(p1, p2)
-    a = shape.angle(p1, p2)
+    d = geom.distance(p1, p2)
+    a = geom.angle(p1, p2)
 #    print("d a", d, a)
     if d < params.minDistance:
         return None
@@ -43,7 +44,7 @@ def generatePoint(p1, p2, params):
 #    print("new da", nd, na)
     x = p1.x + nd * math.cos(na)
     y = p1.y + nd * math.sin(na)
-    return shape.Point(x, y)
+    return geom.Point(x, y)
 
 
 def randomizePoints(points, params):
@@ -95,11 +96,11 @@ def generate(points, params):
     return newps
 
 
-def generateShape(points, params):
+def generateShape(base, params):
     shapes = []
-#    print("variation", params.angleVar)
     for i in range(params.count):
-        s = shape.Shape()
-        s.points = generate(points, params)
+        s = shape.Shape(geom.Polygon(generate(base.get_points(), params)))
+        s.inherit(base)
+        print(base, s)
         shapes.append(s)
     return shapes

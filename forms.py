@@ -2,7 +2,7 @@
 
 import default
 import shape
-import polygon
+import geom
 
 form_table = {}
 
@@ -16,12 +16,12 @@ standing_man = "101.690 351.870, 101.530 347.430, 101.980 342.700, 102.760 342.1
 def init():
     """initialize forms"""
     half = default.UNIT_SIZE / 2.0
-    add("rectangle", shape.Rect(
-        0, 0, default.UNIT_SIZE, default.UNIT_SIZE))
-    add("circle", shape.Circle(half, half, half))
-    add("man", polygon.Polygon.fromstr(man))
-    add("dancer", polygon.Polygon.fromstr(dancer))
-    add("standing-man", polygon.Polygon.fromstr(standing_man))
+#    add("rectangle", shape.Rect(
+#        0, 0, default.UNIT_SIZE, default.UNIT_SIZE))
+#    add("circle", shape.Circle(half, half, half))
+    add("man", shape.Shape(geom.Polygon.fromstr(man)))
+    add("dancer", shape.Shape(geom.Polygon.fromstr(dancer)))
+    add("standing-man", shape.Shape(geom.Polygon.fromstr(standing_man)))
 
 
 def get(name):

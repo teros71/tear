@@ -19,8 +19,10 @@
       "height": 800,
       "recipe": [
         {
-          "algorithm": "list",
-          "disable": false
+          "algorithm": "position",
+          "disable": false,
+          "x": 300,
+          "y": 400
         },
         {
           "algorithm": "tear",
@@ -84,9 +86,9 @@
         },
         {
           "algorithm": "appearance",
-          "opacity": "0.15-0.20",
+          "opacity": "0.15-0.15",
           "colours2": ["orange", "khaki", "red"],
-          "colours": ["blue"],
+          "colours": ["black", "indigo"],
           "stroke": "none",
           "strokeWidth": 10
         }
@@ -140,7 +142,7 @@
           "method": "random",
           "rangeX": "10.0@{0}+math.fabs(math.sin((math.pi/8)*{1}))*80",
           "rangeX2": "0.0-1400.0",
-          "rangeY": "10.0@750+math.fabs(math.sin((math.pi/8)*{1}))*300",
+          "rangeY": "10.0@550+math.fabs(math.sin((math.pi/8)*{1}))*300",
           "rangeY2": "0.0-900.0"
         },
         {

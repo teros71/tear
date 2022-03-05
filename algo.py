@@ -9,7 +9,7 @@ import tear
 import value
 import area
 import forms
-import polygon
+import geom
 
 
 # ===========================================================================
@@ -34,7 +34,7 @@ def position(config, base):
     x = config.get("x", -1)
     y = config.get("y", -1)
     if x != -1 or y != -1:
-        base.setPosition(x, y)
+        base.set_position(x, y)
     return base
 
 # ===========================================================================
@@ -57,19 +57,17 @@ def spread(config, base):
         ry = value.read(config, "rangeY")
 
         def do_it(shape):
-            shape.setPosition(rx.__next__(), ry.__next__())
+            shape.set_position(rx.__next__(), ry.__next__())
             return shape
         return apply_recursive(config, base, do_it)
     if method == "area":
         name = config.get("area")
         shap = forms.get(name)
-        if not isinstance(shap, polygon.Polygon):
-            shap = polygon.Polygon(shap.toPolygon())
-        a = area.RandomInArea(shap)
+        a = area.RandomInArea(geom.Polygon(shap.get_points()))
 
         def do_it2(shape):
             p = a.__next__()
-            shape.setPosition(p.x, p.y)
+            shape.set_position(p.x, p.y)
             return shape
         return apply_recursive(config, base, do_it2)
     return base
@@ -81,10 +79,8 @@ def spread(config, base):
 def set_appearance(config, shape, colour, opacity, stroke, strokew):
     """Set appearance of a shape"""
     if not isinstance(shape, list):
-        shape.colour = colour.__next__()
-        shape.opacity = opacity.__next__()
-        shape.stroke = stroke.__next__()
-        shape.stroke_width = strokew.__next__()
+        shape.appearance.set(colour.__next__(), opacity.__next__(),
+                             stroke.__next__(), strokew.__next__())
         return
     colour.reset()
     opacity.reset()
@@ -108,18 +104,33 @@ def appearance(config, base):
 # ===========================================================================
 
 
-def aTear(r, base):
+def inherit_shape(l, base):
+    if not isinstance(l, list):
+        print(l)
+        l.position = copy.deepcopy(base.position)
+        l.appearance = copy.deepcopy(base.appearance)
+        return
+    print(len(l))
+    for s in l:
+        inherit_shape(s, base)
+
+
+def a_tear(r, base):
     # base is a list of forms, result is a list of shapes
     params = tear.Params.frommap(r.get('params'))
     shapes = []
-    print("tearing shapes;count={0}".format(len(base)), end='', flush=True)
-    for b in base:
-        print(".", end='', flush=True)
-        # take point list
-        pl = b.toPolygon()
-        s = tear.generateShape(pl, params)
+    if not isinstance(base, list):
+        print("tearing shapes;count=1")
+        s = tear.generateShape(base, params)
         if s is not None:
             shapes.append(s)
+    else:
+        print("tearing shapes;count={0}".format(len(base)), end='', flush=True)
+        for b in base:
+            print(".", end='', flush=True)
+            s = tear.generateShape(b, params)
+            if s is not None:
+                shapes.append(s)
     print('')
     return shapes
 
@@ -142,7 +153,7 @@ def rotate(r, base):
     #    x = value.read(r, "cx")
     #    y = value.read(r, "cy")
     a = value.read(r, "angle")
-    p = base.bBox().midPoint()
+    p = base.position
     print(p.x, p.y)
     base.rotate(p.x, p.y, (a.__next__() / 180) * math.pi)
     return base
@@ -169,7 +180,7 @@ def applyAlgorithm(r, base):
         return spread(r, base)
 
     elif alg == 'tear':
-        return aTear(r, base)
+        return a_tear(r, base)
 
     elif alg == 'scaler':
         return scaler(r, base)
@@ -182,11 +193,6 @@ def applyAlgorithm(r, base):
 
     elif alg == 'list':
         return [base]
-
-    elif alg == 'shape':
-        s = shape.Shape()
-        s.points = base.toPolygon()
-        return s
 
     elif alg == 'multiply':
         res = [base]
@@ -205,4 +211,5 @@ def applyAlgorithm(r, base):
 #    elif alg == 'line':
 #        return lineUp(base)
     else:
+        print(f"WARNING: unknown algorithm {alg}")
         return base
