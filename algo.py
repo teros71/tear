@@ -54,6 +54,9 @@ def generate(config, base):
 
 # ===========================================================================
 
+# TODO: add different spreading schemes:
+# - paths, fill, polar coordinates...
+
 
 def spread(config, base):
     """base is a list of shapes, they are spread"""
@@ -160,8 +163,8 @@ def rotate(r, base):
     #    y = value.read(r, "cy")
     a = value.read(r, "angle")
     p = base.position
-    print(p.x, p.y)
-    base.rotate(p.x, p.y, (a.__next__() / 180) * math.pi)
+#    angle = math.radians(a.__next__())
+    base.rotate(p.x, p.y, a)
     return base
 
 

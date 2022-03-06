@@ -1,0 +1,53 @@
+{
+  "defaults": {
+    "unitSize": 800.0,
+    "tear": {
+      "iterations": 18,
+      "minDistance": 2.0,
+      "minDistanceFactor": 0,
+      "angleVar": 4,
+      "count": 6,
+      "opacity": 0.2
+    }
+  },
+  "forms": [
+    {
+      "name": "well",
+      "base": "new",
+      "type": "circle",
+      "r": 800.0,
+      "recipe": [
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 12,
+            "angleVar": 14,
+            "count": 8
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "0.25-0.45",
+          "colours": ["blue"],
+          "stroke": "none",
+          "strokeWidth": 40
+        },
+        {
+          "algorithm": "position",
+          "disable": false,
+          "x": 1000,
+          "y": 900
+        }
+      ]
+    }
+  ],
+  "output": {
+    "background": "black",
+    "shapes": [
+      {
+        "name": "well"
+      }
+    ]
+  }
+}

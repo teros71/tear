@@ -1,0 +1,113 @@
+{
+  "defaults": {
+    "unitSize": 800.0,
+    "tear": {
+      "iterations": 18,
+      "minDistance": 2.0,
+      "minDistanceFactor": 0,
+      "angleVar": 4,
+      "count": 6,
+      "opacity": 0.2
+    }
+  },
+  "forms": [
+    {
+      "name": "man1",
+      "base": "standing-man",
+      "recipe": [
+        {
+          "algorithm": "multiply",
+          "count": 5
+        },
+        {
+          "algorithm": "scaler",
+          "rangeF": "2.5-2.5"
+        },
+        {
+          "algorithm": "rotate",
+          "disable": false,
+          "cx": 0,
+          "cy": 0,
+          "angle": "0.0-30.0"
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 12,
+            "angleVar": 20,
+            "count": 2
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "0.15-0.25",
+          "colours2": ["orange", "khaki", "red"],
+          "colours": ["blue", "red"],
+          "stroke": "none",
+          "strokeWidth": 2
+        },
+        {
+          "algorithm": "position",
+          "disable": false,
+          "x": 800,
+          "y": 600
+        }
+      ]
+    },
+    {
+      "name": "rec",
+      "base": "generator",
+      "type": "polygon",
+      "rangeR": "20.0-400.0",
+      "rangePoints": "3-4",
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": 30
+        },
+        {
+          "algorithm": "rotate",
+          "disable": true,
+          "cx": 0,
+          "cy": 0,
+          "angle": 90.0
+        },
+        {
+          "algorithm": "spread",
+          "method": "random",
+          "rangeX": "0.0-1400.0",
+          "rangeY": "0.0-900.0"
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 12,
+            "angleVar": 20,
+            "count": 4
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "0.45-0.55",
+          "colours": ["orange", "khaki", "red"],
+          "colours2": ["black", "indigo"],
+          "stroke": "none",
+          "strokeWidth": 2
+        }
+      ]
+    }
+  ],
+  "output": {
+    "background": "crimson",
+    "shapes": [
+      {
+        "name": "rec"
+      },
+      {
+        "name": "man1"
+      }
+    ]
+  }
+}

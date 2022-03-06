@@ -24,10 +24,10 @@ class Point:
     def rotate(self, x, y, a):
         s = math.sin(a)
         c = math.cos(a)
-        self.x -= x
-        self.y -= y
-        self.x = (self.x * c - self.y * s) + x
-        self.y = (self.x * s + self.y * c) + y
+        nx = self.x - x
+        ny = self.y - y
+        self.x = (nx * c - ny * s) + x
+        self.y = (nx * s + ny * c) + y
 
     def output(self):
         print(self.x, self.y)
@@ -150,7 +150,7 @@ class Polygon:
 
         def on_segment(p, q, r):
             if q.x <= max(p.x, r.x) and q.x >= min(p.x, r.x) \
-                and q.y <= max(p.y, r.y) and q.y >= min(p.y, r.y):
+                    and q.y <= max(p.y, r.y) and q.y >= min(p.y, r.y):
                 return True
             return False
 

@@ -78,6 +78,9 @@ class Shape:
             return
         self.base.scale(rx, ry)
 
+    def rotate(self, x, y, a):
+        self.base.rotate(x, y, math.radians(a.__next__()))
+
     def bbox(self):
         if isinstance(self.base, geom.Rect):
             tlx = self.position.x - self.base.width / 2
@@ -134,6 +137,10 @@ class List:
             ry = rx
         for b in self.shapes:
             b.scale(rx, ry)
+
+    def rotate(self, x, y, a):
+        for b in self.shapes:
+            b.rotate(x, y, a)
 
     def bbox(self):
         bb = None
