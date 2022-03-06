@@ -1,0 +1,139 @@
+{
+  "defaults": {
+    "unitSize": 800.0,
+    "tear": {
+      "iterations": 18,
+      "minDistance": 2.0,
+      "minDistanceFactor": 0,
+      "angleVar": 4,
+      "count": 6,
+      "opacity": 0.2
+    }
+  },
+  "forms": [
+    {
+      "name": "man1",
+      "base": "standing-man",
+      "recipe": [
+        {
+          "algorithm": "multiply",
+          "count": 5
+        },
+        {
+          "algorithm": "scaler",
+          "rangeF": "1.0-2.9"
+        },
+        {
+          "algorithm": "position",
+          "x": 300,
+          "y": 300
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "0.15-0.15",
+          "colours2": ["orange", "khaki", "red"],
+          "colours": ["black", "indigo"],
+          "stroke": "none",
+          "strokeWidth": 10
+        }
+      ]
+    },
+    {
+      "name": "rec",
+      "base": "new",
+      "type": "rectangle",
+      "width": 400,
+      "height": 400,
+      "recipe": [
+        {
+          "algorithm": "multiply",
+          "count": 5
+        },
+        {
+          "algorithm": "scaler",
+          "rangeF": "1.0-1.9"
+        },
+        {
+          "algorithm": "position",
+          "x": 1000,
+          "y": 1000
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "0.25-0.50",
+          "colours": ["green", "khaki", "white"],
+          "colours2": ["none"],
+          "stroke": "black",
+          "strokeWidth": 1
+        }
+      ]
+    },
+    {
+      "name": "cir",
+      "base": "new",
+      "type": "circle",
+      "r": 200,
+      "height": 400,
+      "recipe": [
+        {
+          "algorithm": "multiply",
+          "count": 5
+        },
+        {
+          "algorithm": "scaler",
+          "rangeF": "1.0-1.9"
+        },
+        {
+          "algorithm": "position",
+          "x": 1500,
+          "y": 1000
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "0.25-0.50",
+          "colours": ["red", "blue", "yellow"],
+          "colours2": ["none"],
+          "stroke": "black",
+          "strokeWidth": 1
+        }
+      ]
+    },
+    {
+      "name": "cir2",
+      "base": "cir",
+      "recipe": [
+        {
+          "algorithm": "multiply",
+          "count": 10
+        },
+        {
+          "algorithm": "scaler",
+          "rangeF": "0.5-1.2"
+        },
+        {
+          "algorithm": "spread",
+          "method": "random",
+          "rangeX": "100-1800",
+          "rangeY": "100-1600"
+        }
+      ]
+    }
+  ],
+  "output": {
+    "background": "white",
+    "shapes": [
+      {
+        "name": "man1"
+      },
+      {
+        "name": "rec"
+      },
+      {
+        "name": "cir"
+      },
+      {
+        "name": "cir2"
+      }
+    ]
+  }
+}

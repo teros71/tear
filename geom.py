@@ -52,6 +52,12 @@ class BBox:
         self.x1 = x1
         self.y1 = y1
 
+    def join(self, bb):
+        self.x0 = min(self.x0, bb.x0)
+        self.y0 = min(self.y0, bb.y0)
+        self.x1 = max(self.x1, bb.x1)
+        self.y1 = max(self.y1, bb.y1)
+
 
 class Rect:
     def __init__(self, w, h):
@@ -61,9 +67,6 @@ class Rect:
     def scale(self, drx, dry):
         self.width = self.width * drx
         self.height = self.height * dry
-
-    def xmidPoint(self):
-        return Point(self.x + self.width / 2, self.y + self.height / 2)
 
     def get_points(self, x, y):
         topleft = Point(x - self.width / 2, y - self.width / 2)
@@ -145,8 +148,9 @@ class Polygon:
 
     def contains(self, p):
 
-        def onSegment(p, q, r):
-            if q.x <= max(p.x, r.x) and q.x >= min(p.x, r.x) and q.y <= max(p.y, r.y) and q.y >= min(p.y, r.y):
+        def on_segment(p, q, r):
+            if q.x <= max(p.x, r.x) and q.x >= min(p.x, r.x) \
+                and q.y <= max(p.y, r.y) and q.y >= min(p.y, r.y):
                 return True
             return False
 
@@ -168,7 +172,7 @@ class Polygon:
         # 1 = intersects
         # 2 = at endpoint with orientation 1
         # 4 = at endpoint with orientation 2
-        def doIntersect(p1, q1, p2, q2):
+        def do_intersect(p1, q1, p2, q2):
             # Find the four orientations needed for general and
             # special cases
             o1 = orientation(p1, q1, p2)
@@ -180,16 +184,16 @@ class Polygon:
             # => count corner only once (o3 => true, o4 => false)
             if o1 != o2 and o3 != o4:
                 if o3 == 0:
-                    return (1 << o4)
+                    return 1 << o4
                 if o4 == 0:
-                    return (1 << o3)
+                    return 1 << o3
                 return 1
 
             # Special Cases
             # p1, q1 and p2 are colinear and p2 lies on segment p1q1
             # Although all of the cases below also intersect, we are
             # only interested if the actual point p2 lies on the segment.
-            if o1 == 0 and onSegment(p1, p2, q1):
+            if o1 == 0 and on_segment(p1, p2, q1):
                 return 1
             return 0  # Doesn't fall in any of the above cases
 
@@ -206,7 +210,7 @@ class Polygon:
             next = (i + 1) % n
             # Check if the line segment from 'p' to 'extreme' intersects
             # with the line segment from 'polygon[i]' to 'polygon[next]'
-            doi = doIntersect(self.points[i], self.points[next], p, extreme)
+            doi = do_intersect(self.points[i], self.points[next], p, extreme)
             if doi > 0:
                 count += 1
                 if po == 0:

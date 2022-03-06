@@ -39,7 +39,7 @@ def make_new_shape(r):
 
 def apply_recipe(recipe, base):
     for r in recipe:
-        base = algo.applyAlgorithm(r, base)
+        base = algo.apply_algorithm(r, base)
     return base
 
 
@@ -52,7 +52,9 @@ def generate_form(config):
     elif base_name == 'new':
         base = make_new_shape(config)
     else:
-        print("generating form {0} from {1}".format(name, base_name))
+        print("\ngenerating form {0} from {1}".format(name, base_name))
         base = forms.get(base_name)
     new_form = apply_recipe(config.get('recipe', None), base)
+    if isinstance(new_form, list):
+        new_form = shape.List(new_form)
     forms.add(name, new_form)

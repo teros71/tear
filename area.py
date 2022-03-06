@@ -1,7 +1,6 @@
 """handle area related things"""
 
 import random
-import shape
 import geom
 
 

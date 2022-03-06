@@ -19,9 +19,15 @@ def init():
 #    add("rectangle", shape.Rect(
 #        0, 0, default.UNIT_SIZE, default.UNIT_SIZE))
 #    add("circle", shape.Circle(half, half, half))
-    add("man", shape.Shape(geom.Polygon.fromstr(man)))
-    add("dancer", shape.Shape(geom.Polygon.fromstr(dancer)))
-    add("standing-man", shape.Shape(geom.Polygon.fromstr(standing_man)))
+
+    def add_poly(name, pl):
+        p = geom.Polygon.fromstr(pl)
+        bb = p.bbox()
+        p.move(-((bb.x1 - bb.x0) / 2), -((bb.y1 - bb.y0) / 2))
+        add(name, shape.Shape(p))
+    add_poly("man", man)
+    add_poly("dancer", dancer)
+    add_poly("standing-man", standing_man)
 
 
 def get(name):
@@ -29,4 +35,5 @@ def get(name):
 
 
 def add(name, form):
+    print(f"added form {name}")
     form_table[name] = form

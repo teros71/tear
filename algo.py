@@ -17,9 +17,9 @@ import geom
 
 def apply_recursive(config, base, alg):
     """recursively apply algorithm to forms"""
-    if not isinstance(base, list):
+    if not isinstance(base, shape.List):
         return alg(base)
-    for form in base:
+    for form in base.shapes:
         apply_recursive(config, form, alg)
     return base
 
@@ -29,12 +29,18 @@ def apply_recursive(config, base, alg):
 def position(config, base):
     """set x y and scale"""
     val = config.get("scale", 1)
-    if val != 1:
+
+    def do_it(base):
         base.scale(val)
+    if val != 1:
+        apply_recursive(config, base, do_it)
     x = config.get("x", -1)
     y = config.get("y", -1)
-    if x != -1 or y != -1:
+
+    def do_it2(base):
         base.set_position(x, y)
+    if x != -1 or y != -1:
+        apply_recursive(config, base, do_it2)
     return base
 
 # ===========================================================================
@@ -44,7 +50,7 @@ def generate(config, base):
     """base must be generative shape"""
     count = config.get('count', 2)
     shapes = list(itertools.islice(base, count))
-    return shapes
+    return shape.List(shapes)
 
 # ===========================================================================
 
@@ -76,18 +82,19 @@ def spread(config, base):
 # ===========================================================================
 
 
-def set_appearance(config, shape, colour, opacity, stroke, strokew):
+def set_appearance(config, shap, colour, opacity, stroke, strokew):
     """Set appearance of a shape"""
-    if not isinstance(shape, list):
-        shape.appearance.set(colour.__next__(), opacity.__next__(),
-                             stroke.__next__(), strokew.__next__())
+    if isinstance(shap, shape.List):
+        colour.reset()
+        opacity.reset()
+        stroke.reset()
+        strokew.reset()
+        for inner_shape in shap.shapes:
+            set_appearance(config, inner_shape, colour,
+                           opacity, stroke, strokew)
         return
-    colour.reset()
-    opacity.reset()
-    stroke.reset()
-    strokew.reset()
-    for inner_shape in shape:
-        set_appearance(config, inner_shape, colour, opacity, stroke, strokew)
+    shap.appearance.set(colour.__next__(), opacity.__next__(),
+                        stroke.__next__(), strokew.__next__())
 
 # ===========================================================================
 
@@ -104,47 +111,46 @@ def appearance(config, base):
 # ===========================================================================
 
 
-def inherit_shape(l, base):
-    if not isinstance(l, list):
-        print(l)
-        l.position = copy.deepcopy(base.position)
-        l.appearance = copy.deepcopy(base.appearance)
+def xinherit_shape(shap, base):
+    """inherit position and appearance"""
+    if not isinstance(shap, list):
+        print(shap)
+        shap.position = copy.deepcopy(base.position)
+        shap.appearance = copy.deepcopy(base.appearance)
         return
-    print(len(l))
-    for s in l:
-        inherit_shape(s, base)
+    print(len(shap))
+    for s in shap:
+        xinherit_shape(s, base)
 
 
 def a_tear(r, base):
-    # base is a list of forms, result is a list of shapes
+    """tear a shape"""
     params = tear.Params.frommap(r.get('params'))
-    shapes = []
-    if not isinstance(base, list):
+    if not isinstance(base, shape.List):
         print("tearing shapes;count=1")
-        s = tear.generateShape(base, params)
+        return tear.generateShape(base, params)
+    print(f"tearing shapes;count={len(base.shapes)}", end='', flush=True)
+    shapes = []
+    for b in base.shapes:
+        print(".", end='', flush=True)
+        s = tear.generateShape(b, params)
         if s is not None:
             shapes.append(s)
-    else:
-        print("tearing shapes;count={0}".format(len(base)), end='', flush=True)
-        for b in base:
-            print(".", end='', flush=True)
-            s = tear.generateShape(b, params)
-            if s is not None:
-                shapes.append(s)
     print('')
-    return shapes
+    return shape.List(shapes)
 
 # ===========================================================================
 
 
 def scaler(r, base):
+    """scale x and y"""
     rx = value.read(r, "rangeF")
     ry = value.read(r, "rangeFY", d=0)
 
-    def doIt(s):
+    def do_it(s):
         s.scale(rx.__next__(), ry.__next__())
         return s
-    return apply_recursive(r, base, doIt)
+    return apply_recursive(r, base, do_it)
 
 # ===========================================================================
 
@@ -159,57 +165,51 @@ def rotate(r, base):
     return base
 
 
-def applyAlgorithm(r, base):
-    # r is mapping of parameters from json config
-    # base is the base form for which we apply
+def multiply(r, base):
+    res = [base]
+    for i in range(r.get('count', 1)):
+        nbase = copy.deepcopy(base)
+        if nbase is None:
+            print(base, "!!!!!!")
+        res.append(nbase)
+    return shape.List(res)
 
-    if r.get('disable', False):
-        return base
+
+algorithms = {
+    "position": position,
+    "generate": generate,
+    "spread": spread,
+    "tear": a_tear,
+    "scaler": scaler,
+    "appearance": appearance,
+    "rotate": rotate,
+    "multiply": multiply
+}
+
+
+def apply_algorithm(r, base):
+    """Apply algorithm
+       r is mapping of parameters from json config
+       base is the base form for which we apply"""
 
     alg = r.get('algorithm', None)
-    print("algorithm {0}".format(alg))
+    if r.get('disable', False):
+        print(f"disabled algorithm {alg}")
+        return base
+    print(f"algorithm {alg}")
+
+    af = algorithms.get(alg)
+    if af is not None:
+        return af(r, base)
 
     # which one?
-    if alg == 'position':
-        return position(r, base)
-
-    elif alg == 'generate':
-        return generate(r, base)
-
-    elif alg == 'spread':
-        return spread(r, base)
-
-    elif alg == 'tear':
-        return a_tear(r, base)
-
-    elif alg == 'scaler':
-        return scaler(r, base)
-
-    elif alg == 'appearance':
-        return appearance(r, base)
-
-    elif alg == 'rotate':
-        return rotate(r, base)
-
-    elif alg == 'list':
-        return [base]
-
-    elif alg == 'multiply':
-        res = [base]
-        for i in range(r.get('count', 1)):
-            nbase = copy.deepcopy(base)
-            if nbase is None:
-                print(base, "!!!!!!")
-            res.append(nbase)
-        return res
-    elif alg == 'goldenRatioRectangles':
+    if alg == 'goldenRatioRectangles':
         limit = r.get('limit', 10)
         # base is a rectangle, result is a list of rectangles
         return goldenratio.spiralOfRectangles(base, limit)
-    elif alg == 'goldenRatioSpiral':
+    if alg == 'goldenRatioSpiral':
         return goldenratio.toPath(base)
 #    elif alg == 'line':
 #        return lineUp(base)
-    else:
-        print(f"WARNING: unknown algorithm {alg}")
-        return base
+    print(f"WARNING: unknown algorithm {alg}")
+    return base

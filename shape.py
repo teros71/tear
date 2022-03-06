@@ -72,6 +72,10 @@ class Shape:
     def scale(self, rx, ry=0):
         if ry == 0:
             ry = rx
+        if isinstance(self.base, list):
+            for b in self.base:
+                b.scale(rx, ry)
+            return
         self.base.scale(rx, ry)
 
     def bbox(self):
@@ -102,6 +106,47 @@ class Shape:
     def inherit(self, s):
         self.appearance = copy.deepcopy(s.appearance)
         self.position = copy.deepcopy(s.position)
+
+
+class List:
+    def __init__(self, ls):
+        self.shapes = ls
+        bb = self.bbox()
+        self.position = geom.Point(bb.x0 + (bb.x1 - bb.x0) / 2,
+                                   bb.y0 + (bb.y1 - bb.y0) / 2)
+#        self.base = base
+        self.appearance = Appearence()
+
+    def move(self, dx, dy):
+        """move shape by dx, dy"""
+        self.position.move(dx, dy)
+        for b in self.shapes:
+            b.move(dx, dy)
+
+    def set_position(self, x, y):
+        """mark our position and move underlying shapes"""
+        dx = x - self.position.x
+        dy = y - self.position.y
+        self.move(dx, dy)
+
+    def scale(self, rx, ry=0):
+        if ry == 0:
+            ry = rx
+        for b in self.shapes:
+            b.scale(rx, ry)
+
+    def bbox(self):
+        bb = None
+        for b in self.shapes:
+            if bb is None:
+                bb = b.bbox()
+            else:
+                bb.join(b.bbox())
+        return bb
+
+#    def inherit(self, s):
+#        for b in self.shapes:
+#            b.inherit(s)
 
 
 class Appearence:

@@ -19,6 +19,10 @@ def write_svg_recursive(file, shapes):
 
 def write_svg_shape(file, single):
     """write shape"""
+    if isinstance(single, shape.List):
+        for b in single.shapes:
+            write_svg_recursive(file, b)
+        return
     app = single.appearance
     if isinstance(single.base, geom.Rect):
         r = single.base
