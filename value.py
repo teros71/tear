@@ -9,8 +9,8 @@ random int: "?:42:54"
 random float: "?:42.0:54.1"
 random from list: "?:1,2,3,4"
 
-colour: "c:blue" or "c:#0000ff"
-colour range: "r:#000000:#102030"
+colour: "blue" or "#0000ff"
+colour range: "c:#000000:#102030"
 
 tuple: [1, 2, 3]
 range, tuple: [1, 2, 3]:[4, 4, 4]
@@ -51,8 +51,55 @@ class Colour:
         self.g = g
         self.b = b
 
-    def value(self):
+    @classmethod
+    def fromstr(cls, s):
+        return cls(int(s[1:3], 16), int(s[3:5], 16), int(s[5:7], 16))
+
+    def get(self):
         return f'#{self.r:02x}{self.g:02x}{self.b:02x}'
+
+    def add(self, c):
+        return Colour(self.r + c.r, self.g + c.g, self.b + c.b)
+
+    def substract(self, c):
+        return Colour(self.r - c.r, self.g - c.g, self.b - c.b)
+
+    def copy(self):
+        return Colour(self.r, self.g, self.b)
+
+
+class ColourRange:
+    def __init__(self, begin, end, count):
+        self.begin = begin
+        self.end = end
+        self.add = end.substract(begin)
+        self.count = count
+        self.i = 0
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        return self.get()
+
+    def get(self):
+
+        def add(v, n, m):
+            r = int(float(v) * (float(n) / float(m)))
+            print(v, n, m, r)
+            return r
+
+        if self.i > self.count:
+            self.i = 0
+        c = self.begin
+        r = Colour(c.r + add(self.add.r, self.i, self.count),
+                   c.g + add(self.add.g, self.i, self.count),
+                   c.b + add(self.add.b, self.i, self.count))
+        self.i += 1
+        return r.get()
+
+    def reset(self):
+        self.i = 0
 
 
 class Range:
@@ -65,13 +112,19 @@ class Range:
         print("range", self.min, self.max, self.step)
 
     def __iter__(self):
+        self.reset()
         return self
 
     def __next__(self):
-        r = self.current
-        self.current += self.step
+        if self.current >= self.max:
+            raise StopIteration
+        return self.get()
+
+    def get(self):
         if self.current >= self.max:
             self.current = self.min
+        r = self.current
+        self.current += self.step
         return r
 
     def reset(self):
@@ -96,6 +149,9 @@ class Random:
         return self
 
     def __next__(self):
+        return self.get()
+
+    def get(self):
         if isinstance(self.range, list):
             i = random.randint(0, len(self.range) - 1)
             return self.range[i]
@@ -110,15 +166,22 @@ class Random:
 class Single:
     def __init__(self, value):
         self.value = value
+        self.v = True
 
     def __iter__(self):
         return self
 
     def __next__(self):
+        if self.v:
+            self.v = False
+            return self.value
+        raise StopIteration
+
+    def get(self):
         return self.value
 
     def reset(self):
-        pass
+        self.v = True
 
 
 class List:
@@ -127,9 +190,17 @@ class List:
         self.i = 0
 
     def __iter__(self):
+        self.i = 0
         return self
 
     def __next__(self):
+        if self.i < len(self.lst):
+            v = self.lst[self.i]
+            self.i += 1
+            return v
+        raise StopIteration
+
+    def get(self):
         v = self.lst[self.i]
         self.i = (self.i + 1) % len(self.lst)
         return v
@@ -146,9 +217,13 @@ class Eval:
         self.i = 0
 
     def __iter__(self):
+        self.reset()
         return self
 
     def __next__(self):
+        return self.get()
+
+    def get(self):
         self.i += 1
         self.current = eval(self.f.format(self.current, self.i))
         return self.current
@@ -213,6 +288,8 @@ def read_str_value(s):
         lst = s.split(':')
         if len(lst) == 3:
             return Range.fromlist(convert_list(lst))
+        if len(lst) != 2:
+            print("WARNING: invalid range syntax", s)
         if '/' in lst[1]:
             lst2 = lst[1].split('/')
             minv = convert_value(lst[0])
@@ -221,6 +298,12 @@ def read_str_value(s):
             return Range(minv, maxv, step)
         return Range.fromlist(convert_list(lst))
     return Single(convert_value(s))
+
+
+def read_colour(s):
+    lst = s.split(':')
+    lst2 = lst[1].split('/')
+    return ColourRange(Colour.fromstr(lst[0]), Colour.fromstr(lst2[0]), int(lst2[1]))
 
 
 def read(js, name, d=42):
@@ -236,9 +319,9 @@ def make(obj):
     if isinstance(obj, list):
         return List(obj)
     if isinstance(obj, str):
-        # colour?
-        #        if obj.startswith('#'):
-        #            return read_colour(obj)
+        # colour range?
+        if obj.startswith('c:'):
+            return read_colour(obj[2:])
         if obj.startswith('?:'):
             val = read_str_value(obj[2:])
             if isinstance(val, List):
@@ -250,4 +333,5 @@ def make(obj):
         if obj.startswith('e:'):
             return str2Eval(obj[2:])
         return read_str_value(obj)
+    print("WARNING: unknown value type", obj)
     return obj

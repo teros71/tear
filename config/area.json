@@ -78,7 +78,8 @@
         {
           "algorithm": "appearance",
           "opacity": 0.25,
-          "colours": ["olivedrab", "khaki", "orange", "red"]
+          "colours": "c:#408060:#ff9080/10",
+          "colours2": ["olivedrab", "khaki", "orange", "red"]
         }
       ]
     }

@@ -11,7 +11,7 @@ class RandomInArea:
         self.area = area
         self.bbox = area.bbox()
 
-    def __next__(self):
+    def get(self):
         for _ in range(10):
             x = self.bbox.x0 + random.uniform(0.0, self.bbox.x1)
             y = self.bbox.y0 + random.uniform(0.0, self.bbox.y1)

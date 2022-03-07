@@ -14,7 +14,7 @@ class RectGenerator:
         return self
 
     def __next__(self):
-        return Shape(geom.Rect(self.w.__next__(), self.h.__next__()))
+        return Shape(geom.Rect(self.w.get(), self.h.get()))
 
 
 class CircleGenerator:
@@ -25,7 +25,7 @@ class CircleGenerator:
         return self
 
     def __next__(self):
-        return Shape(geom.Circle(self.r.__next__()))
+        return Shape(geom.Circle(self.r.get()))
 
 
 class PolygonGenerator():
@@ -39,7 +39,7 @@ class PolygonGenerator():
         return self
 
     def __next__(self):
-        count = self.range_points.__next__()
+        count = self.range_points.get()
         return Shape(random_polygon(self.range_r.min, self.range_r.max, count))
 
 
@@ -79,7 +79,7 @@ class Shape:
         self.base.scale(rx, ry)
 
     def rotate(self, x, y, a):
-        self.base.rotate(x, y, math.radians(a.__next__()))
+        self.base.rotate(x, y, math.radians(a.get()))
 
     def bbox(self):
         if isinstance(self.base, geom.Rect):

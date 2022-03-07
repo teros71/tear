@@ -37,7 +37,7 @@
         {
           "algorithm": "appearance",
           "opacity": 0.15,
-          "colours": ["red", "yellow"],
+          "colours": "c:#ff0000:#ffff00/10",
           "stroke": "none"
         }
       ]

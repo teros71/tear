@@ -58,22 +58,38 @@ def generate(config, base):
 # - paths, fill, polar coordinates...
 
 
+def spread_matrix(config, base):
+    rx = value.read(config, "rangeX")
+    ry = value.read(config, "rangeY")
+    x = rx.get()
+    y = ry.get()
+
+    def do_it(shape):
+        shape.set_position(x, y)
+        return shape
+    for s in base.shapes:
+        apply_recursive(config, s, do_it)
+        x = rx.get()
+        y = ry.get()
+    return base
+
+
 def spread(config, base):
     """base is a list of shapes, they are spread"""
     method = config.get("method", "random")
     if method == "random":
         rx = value.read(config, "rangeX")
         ry = value.read(config, "rangeY")
-        x = rx.__next__()
-        y = ry.__next__()
+        x = rx.get()
+        y = ry.get()
 
         def do_it(shape):
             shape.set_position(x, y)
             return shape
         for s in base.shapes:
             apply_recursive(config, s, do_it)
-            x = rx.__next__()
-            y = ry.__next__()
+            x = rx.get()
+            y = ry.get()
         return base
     if method == "area":
         name = config.get("area")
@@ -81,7 +97,7 @@ def spread(config, base):
         a = area.RandomInArea(geom.Polygon(shap.get_rendering_points()))
 
         def do_it2(s):
-            p = a.__next__()
+            p = a.get()
             s.set_position(p.x, p.y)
             return s
         return apply_recursive(config, base, do_it2)
@@ -102,8 +118,8 @@ def set_appearance(config, shap, colour, opacity, stroke, strokew):
             set_appearance(config, inner_shape, colour,
                            opacity, stroke, strokew)
         return
-    shap.appearance.set(colour.__next__(), opacity.__next__(),
-                        stroke.__next__(), strokew.__next__())
+    shap.appearance.set(colour.get(), opacity.get(),
+                        stroke.get(), strokew.get())
 
 # ===========================================================================
 
@@ -157,8 +173,8 @@ def scaler(r, base):
     ry = value.read(r, "rangeFY", d=0)
 
     def do_it(s):
-        fx = rx.__next__()
-        fy = ry.__next__()
+        fx = rx.get()
+        fy = ry.get()
         print("do scale", fx, fy)
         s.scale(fx, fy)
         return s
