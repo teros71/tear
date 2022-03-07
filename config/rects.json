@@ -15,8 +15,8 @@
       "name": "poly1",
       "base": "generator",
       "type": "polygon",
-      "rangeR": "10.0-200.0",
-      "rangePoints": "3-12",
+      "rangeR": "10.0:200.0",
+      "rangePoints": "3:12",
       "recipe": [
         {
           "algorithm": "generate",
@@ -25,8 +25,8 @@
         {
           "algorithm": "spread",
           "method": "random",
-          "rangeX": "0.0-400.0",
-          "rangeY": "0.0-800.0"
+          "rangeX": "?:0.0:400.0",
+          "rangeY": "?:0.0:800.0"
         },
         {
           "algorithm": "tear",
@@ -48,8 +48,8 @@
       "name": "rec",
       "base": "generator",
       "type": "rectangle",
-      "rangeW": "40.0-200.0",
-      "rangeH": "30.0-400.0",
+      "rangeW": "?:40.0:200.0",
+      "rangeH": "?:30.0:400.0",
       "recipe": [
         {
           "algorithm": "generate",
@@ -58,9 +58,9 @@
         {
           "algorithm": "spread",
           "method": "random",
-          "rangeX": "20.0@{0}+math.fabs(math.sin((math.pi/8)*{1}))*80",
+          "rangeX": "e:20.0@{0}+math.fabs(math.sin((math.pi/8)*{1}))*80",
           "rangeX2": "0.0-1400.0",
-          "rangeY": "10.0@math.fabs(math.sin((math.pi/8)*{1}))*300",
+          "rangeY": "e:10.0@math.fabs(math.sin((math.pi/8)*{1}))*300",
           "rangeY2": "0.0-900.0"
         },
         {
@@ -75,7 +75,7 @@
         },
         {
           "algorithm": "appearance",
-          "opacity": "0.25-0.70",
+          "opacity": "?:0.25:0.50",
           "colours": ["green", "khaki", "blue"],
           "stroke": "black",
           "strokeWidth": 1
@@ -86,8 +86,8 @@
       "name": "rec2",
       "base": "generator",
       "type": "rectangle",
-      "rangeW": "40.0-200.0",
-      "rangeH": "30.0-400.0",
+      "rangeW": "?:40.0:200.0",
+      "rangeH": "?:30.0:400.0",
       "recipe": [
         {
           "algorithm": "generate",
@@ -96,9 +96,9 @@
         {
           "algorithm": "spread",
           "method": "random",
-          "rangeX": "15.0@{0}+math.fabs(math.sin((math.pi/8)*{1}))*80",
+          "rangeX": "e:15.0@{0}+math.fabs(math.sin((math.pi/8)*{1}))*80",
           "rangeX2": "0.0-1400.0",
-          "rangeY": "10.0@250+math.fabs(math.sin((math.pi/8)*{1}))*300",
+          "rangeY": "e:10.0@250+math.fabs(math.sin((math.pi/8)*{1}))*300",
           "rangeY2": "0.0-900.0"
         },
         {
@@ -113,7 +113,7 @@
         },
         {
           "algorithm": "appearance",
-          "opacity": "0.25-0.70",
+          "opacity": "?:0.25-0.50",
           "colours": ["green", "khaki", "red"],
           "stroke": "black",
           "strokeWidth": 1
@@ -124,8 +124,8 @@
       "name": "rec3",
       "base": "generator",
       "type": "rectangle",
-      "rangeW": "40.0-200.0",
-      "rangeH": "30.0-400.0",
+      "rangeW": "?:40.0:200.0",
+      "rangeH": "?:30.0:400.0",
       "recipe": [
         {
           "algorithm": "generate",
@@ -134,9 +134,9 @@
         {
           "algorithm": "spread",
           "method": "random",
-          "rangeX": "10.0@{0}+math.fabs(math.sin((math.pi/8)*{1}))*80",
+          "rangeX": "e:10.0@{0}+math.fabs(math.sin((math.pi/8)*{1}))*80",
           "rangeX2": "0.0-1400.0",
-          "rangeY": "10.0@500+math.fabs(math.sin((math.pi/8)*{1}))*300",
+          "rangeY": "e:10.0@500+math.fabs(math.sin((math.pi/8)*{1}))*300",
           "rangeY2": "0.0-900.0"
         },
         {
@@ -151,7 +151,7 @@
         },
         {
           "algorithm": "appearance",
-          "opacity": "0.25-0.70",
+          "opacity": "?:0.25:0.70",
           "colours": ["green", "khaki", "yellow"],
           "stroke": "black",
           "strokeWidth": 1
@@ -162,8 +162,8 @@
       "name": "rec4",
       "base": "generator",
       "type": "rectangle",
-      "rangeW": "40.0-200.0",
-      "rangeH": "30.0-400.0",
+      "rangeW": "?:40.0:200.0",
+      "rangeH": "?:30.0:400.0",
       "recipe": [
         {
           "algorithm": "generate",
@@ -172,9 +172,9 @@
         {
           "algorithm": "spread",
           "method": "random",
-          "rangeX": "10.0@{0}+math.fabs(math.sin((math.pi/8)*{1}))*80",
+          "rangeX": "e:10.0@{0}+math.fabs(math.sin((math.pi/8)*{1}))*80",
           "rangeX2": "0.0-1400.0",
-          "rangeY": "10.0@750+math.fabs(math.sin((math.pi/8)*{1}))*300",
+          "rangeY": "e:10.0@750+math.fabs(math.sin((math.pi/8)*{1}))*300",
           "rangeY2": "0.0-900.0"
         },
         {
@@ -189,7 +189,7 @@
         },
         {
           "algorithm": "appearance",
-          "opacity": "0.25-0.70",
+          "opacity": "?:0.25:0.50",
           "colours": ["green", "khaki", "white"],
           "stroke": "black",
           "strokeWidth": 1

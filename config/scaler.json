@@ -17,24 +17,24 @@
       "recipe": [
         {
           "algorithm": "multiply",
-          "count": 5
+          "count": 7
         },
         {
           "algorithm": "scaler",
-          "rangeF": "1.0-2.9"
+          "rangeF": "1.0:2.9/7"
         },
         {
           "algorithm": "position",
-          "x": 300,
-          "y": 300
+          "x": 900,
+          "y": 500
         },
         {
           "algorithm": "appearance",
-          "opacity": "0.15-0.15",
+          "opacity": "0.20:0.20",
           "colours2": ["orange", "khaki", "red"],
-          "colours": ["black", "indigo"],
-          "stroke": "none",
-          "strokeWidth": 10
+          "colours": ["black"],
+          "stroke": "orange",
+          "strokeWidth": 22
         }
       ]
     },
@@ -43,7 +43,7 @@
       "base": "new",
       "type": "rectangle",
       "width": 400,
-      "height": 400,
+      "height": 800,
       "recipe": [
         {
           "algorithm": "multiply",
@@ -51,19 +51,29 @@
         },
         {
           "algorithm": "scaler",
-          "rangeF": "1.0-1.9"
+          "rangeF": "?:1.0:1.9"
         },
         {
           "algorithm": "position",
           "x": 1000,
-          "y": 1000
+          "y": 300
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 12,
+            "angleVar": 10,
+            "count": 4,
+            "randomizeBase": true
+          }
         },
         {
           "algorithm": "appearance",
-          "opacity": "0.25-0.50",
-          "colours": ["green", "khaki", "white"],
+          "opacity": "?:0.10:0.10",
+          "colours": ["blue", "indigo", "blue"],
           "colours2": ["none"],
-          "stroke": "black",
+          "stroke": "none",
           "strokeWidth": 1
         }
       ]
@@ -72,16 +82,15 @@
       "name": "cir",
       "base": "new",
       "type": "circle",
-      "r": 200,
-      "height": 400,
+      "r": 100,
       "recipe": [
         {
           "algorithm": "multiply",
-          "count": 5
+          "count": 3
         },
         {
           "algorithm": "scaler",
-          "rangeF": "1.0-1.9"
+          "rangeF": "?:1.0:1.9"
         },
         {
           "algorithm": "position",
@@ -90,8 +99,8 @@
         },
         {
           "algorithm": "appearance",
-          "opacity": "0.25-0.50",
-          "colours": ["red", "blue", "yellow"],
+          "opacity": "?:0.25:0.50",
+          "colours": ["red", "blue", "yellow", "#339966", "#33CCFF"],
           "colours2": ["none"],
           "stroke": "black",
           "strokeWidth": 1
@@ -104,35 +113,78 @@
       "recipe": [
         {
           "algorithm": "multiply",
-          "count": 10
+          "count": 60
         },
         {
           "algorithm": "scaler",
-          "rangeF": "0.5-1.2"
+          "rangeF": "?:0.5:1.8"
         },
         {
           "algorithm": "spread",
           "method": "random",
-          "rangeX": "100-1800",
-          "rangeY": "100-1600"
+          "rangeX": "?:100:2800",
+          "rangeY": "?:100:1600"
+        }
+      ]
+    },
+    {
+      "name": "bg",
+      "base": "new",
+      "type": "circle",
+      "r": 100,
+      "recipe": [
+        {
+          "algorithm": "multiply",
+          "count": 30
+        },
+        {
+          "algorithm": "scaler",
+          "rangeF": "?:2.5:4.0"
+        },
+        {
+          "algorithm": "spread",
+          "method": "random",
+          "rangeX": "?:100:2800",
+          "rangeY": "?:100:1600"
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 12,
+            "angleVar": 10,
+            "count": 5,
+            "randomizeBase": true
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "0.10:0.10",
+          "colours": ["red", "yellow", "crimson"],
+          "colours2": ["none"],
+          "stroke": "none",
+          "strokeWidth": 6
         }
       ]
     }
   ],
   "output": {
-    "background": "white",
+    "background": "#283456",
     "shapes": [
       {
-        "name": "man1"
-      },
-      {
-        "name": "rec"
+        "name": "bg"
       },
       {
         "name": "cir"
       },
       {
         "name": "cir2"
+      },
+      {
+        "name": "rec"
+      },
+      {
+        "name": "man1"
       }
     ]
   }

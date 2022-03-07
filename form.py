@@ -15,7 +15,7 @@ def make_generator_shape(config):
         rr = value.read(config, "rangeR")
         return shape.CircleGenerator(rr)
     if t == 'polygon':
-        rar = value.readRange(config, "rangeR")
+        rar = value.read(config, "rangeR")
         rap = value.read(config, "rangePoints")
         return shape.PolygonGenerator(rar, rap)
 

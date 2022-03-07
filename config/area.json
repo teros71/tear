@@ -54,8 +54,8 @@
       "name": "poly1",
       "base": "generator",
       "type": "polygon",
-      "rangeR": "60.0-100.0",
-      "rangePoints": "3-12",
+      "rangeR": "60.0:100.0",
+      "rangePoints": "3:12",
       "recipe": [
         {
           "algorithm": "generate",

@@ -64,11 +64,17 @@ def spread(config, base):
     if method == "random":
         rx = value.read(config, "rangeX")
         ry = value.read(config, "rangeY")
+        x = rx.__next__()
+        y = ry.__next__()
 
         def do_it(shape):
-            shape.set_position(rx.__next__(), ry.__next__())
+            shape.set_position(x, y)
             return shape
-        return apply_recursive(config, base, do_it)
+        for s in base.shapes:
+            apply_recursive(config, s, do_it)
+            x = rx.__next__()
+            y = ry.__next__()
+        return base
     if method == "area":
         name = config.get("area")
         shap = forms.get(name)
@@ -151,7 +157,10 @@ def scaler(r, base):
     ry = value.read(r, "rangeFY", d=0)
 
     def do_it(s):
-        s.scale(rx.__next__(), ry.__next__())
+        fx = rx.__next__()
+        fy = ry.__next__()
+        print("do scale", fx, fy)
+        s.scale(fx, fy)
         return s
     return apply_recursive(r, base, do_it)
 
@@ -163,7 +172,6 @@ def rotate(r, base):
     #    y = value.read(r, "cy")
     a = value.read(r, "angle")
     p = base.position
-#    angle = math.radians(a.__next__())
     base.rotate(p.x, p.y, a)
     return base
 
