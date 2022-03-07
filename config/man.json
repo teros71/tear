@@ -118,15 +118,47 @@
           "algorithm": "appearance",
           "opacity": "0.15:0.15",
           "colours2": ["black", "red"],
-          "colours": ["black"],
-          "stroke": ["red", "yellow"],
+          "colours": "#201030",
+          "stroke": "#ff8000",
           "strokeWidth": 30
         },
         {
           "algorithm": "position",
           "disable": false,
-          "x": 600,
+          "x": 1500,
           "y": 600
+        }
+      ]
+    },
+    {
+      "name": "bgcir",
+      "base": "new",
+      "type": "circle",
+      "r": 400,
+      "recipe": [
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 10,
+            "angleVar": 8,
+            "count": 14,
+            "randomizeBase": true
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": 0.3,
+          "colours2": ["black", "red"],
+          "colours": "#ff8000",
+          "stroke": "none",
+          "strokeWidth": 30
+        },
+        {
+          "algorithm": "position",
+          "disable": false,
+          "x": 1520,
+          "y": 640
         }
       ]
     },
@@ -171,10 +203,13 @@
     }
   ],
   "output": {
-    "background": "#100540",
+    "background": "indigo",
     "shapes": [
       {
         "name": "bg"
+      },
+      {
+        "name": "bgcir"
       },
       {
         "name": "man1"

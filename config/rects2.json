@@ -1,0 +1,117 @@
+{
+  "defaults": {
+    "unitSize": 800.0,
+    "tear": {
+      "iterations": 18,
+      "minDistance": 2.0,
+      "minDistanceFactor": 0,
+      "angleVar": 4,
+      "count": 6,
+      "opacity": 0.2
+    }
+  },
+  "forms": [
+    {
+      "name": "baserect",
+      "base": "generator",
+      "type": "rectangle",
+      "rangeH": 100.0,
+      "rangeW": 100.0,
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": 520
+        },
+        {
+          "algorithm": "spread",
+          "method": "matrix",
+          "rangeX": "50.0:2950.0:100.0",
+          "rangeY": "50.0:1950.0:100.0"
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": 0.15,
+          "colours": "c:#ffff00:#0000ff/520",
+          "stroke": "black",
+          "strokeWidth": 1
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 5,
+            "angleVar": "0.01:0.4/520",
+            "count": 5,
+            "randomizeBase": false
+          }
+        }
+      ]
+    },
+    {
+      "name": "carea",
+      "base": "new",
+      "type": "circle",
+      "r": 400,
+      "recipe": [
+        {
+          "algorithm": "position",
+          "x": 1400,
+          "y": 900
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": 0.25,
+          "colours": ["none"],
+          "stroke": "black",
+          "strokeWidth": 5
+        }
+      ]
+    },
+    {
+      "name": "polys",
+      "base": "generator",
+      "type": "polygon",
+      "rangeR": "130.0:200.0",
+      "rangePoints": "5:9",
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": 40
+        },
+        {
+          "algorithm": "spread",
+          "method": "area",
+          "area": "carea"
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": 0.25,
+          "colours": ["olivedrab", "khaki", "green"],
+          "stroke": "red",
+          "strokeWidth": 20
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 10,
+            "angleVar": 0.1,
+            "count": 3,
+            "randomizeBase": false
+          }
+        }
+      ]
+    }
+  ],
+  "output": {
+    "background": "red",
+    "shapes": [
+      {
+        "name": "baserect"
+      },
+      {
+        "name": "polys"
+      }
+    ]
+  }
+}

@@ -101,6 +101,17 @@ def spread(config, base):
             s.set_position(p.x, p.y)
             return s
         return apply_recursive(config, base, do_it2)
+    if method == "matrix":
+        rx = value.read(config, "rangeX")
+        ry = value.read(config, "rangeY")
+        pos = value.List([geom.Point(x, y) for y in ry for x in rx])
+
+        def do_it3(shape):
+            p = pos.get()
+            shape.set_position(p.x, p.y)
+            return shape
+        return apply_recursive(config, base, do_it3)
+
     return base
 
 

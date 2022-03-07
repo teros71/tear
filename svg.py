@@ -54,7 +54,20 @@ def write_svg_shape(file, single):
         f'stroke-width:{app.stroke_width};stroke-linejoin:round" />\n')
 
 
-def write_form(file, config):
+def write_svg_image(file, img, bg):
+    """write image"""
+    file.write(f'<mask id="{img.name}">'
+               f'<rect x="0" y="0" width="2800" height="1800" fill="white" />\n')
+    for d in img.paths:
+        file.write(f'<path d="{d}" fill="black" />\n')
+    file.write('</mask>\n')
+    file.write(f'<rect x="0" y="0" '
+               f'height="1800" width="2800" '
+               f'fill="{bg}" mask="url(#{img.name})" />\n')
+    return
+
+
+def write_form(file, config, bg):
     """write a form"""
     name = config.get('name')
     if name is None:
@@ -63,11 +76,25 @@ def write_form(file, config):
     sss = forms.get(name)
     if sss is not None:
         write_svg_recursive(file, sss)
+    else:
+        write_image(file, name, bg)
+
+
+def write_image(file, name, bg):
+    """write an image"""
+#    name = config.get('name')
+#    if name is None:
+#        return
+    print(f"getting image {name}")
+    sss = forms.get_image(name)
+    if sss is not None:
+        write_svg_image(file, sss, bg)
 
 
 def write(fname, height, width, config):
     bg = config.get("background", "white")
     shapes = config.get("shapes", [])
+    images = config.get("images", [])
     with open(fname, 'w', encoding="utf-8") as file:
         file.write(
             f'<svg style="background-color:{bg}" '
@@ -75,5 +102,7 @@ def write(fname, height, width, config):
             f'height="{height}" width="{width}" '
             f'xmlns="http://www.w3.org/2000/svg">\n')
         for fn in shapes:
-            write_form(file, fn)
+            write_form(file, fn, bg)
+#        for img in images:
+#            write_image(file, img, bg)
         file.write('</svg>\n')
