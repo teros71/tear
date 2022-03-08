@@ -86,7 +86,6 @@ class ColourRange:
 
         def add(v, n, m):
             r = int(float(v) * (float(n) / float(m)))
-            print(v, n, m, r)
             return r
 
         if self.i > self.count:
@@ -109,7 +108,6 @@ class Range:
         self.max = max
         self.step = step
         self.current = self.min
-        print("range", self.min, self.max, self.step)
 
     def __iter__(self):
         self.reset()
@@ -139,9 +137,6 @@ class Range:
 
 class Random:
     def __init__(self, range):
-        print("random", range)
-        if not isinstance(range, list):
-            print("range:", range.min, range.max)
         self.range = range
         self.method = 0
 
@@ -309,7 +304,6 @@ def read_colour(s):
 def read(js, name, d=42):
     v = js.get(name, d)
     obj = make(v)
-    print(name, obj)
     return obj
 
 

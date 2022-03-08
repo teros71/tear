@@ -12,52 +12,67 @@
   "forms": [
     {
       "name": "bg",
-      "base": "rectangle",
+      "base": "new",
+      "type": "rectangle",
+      "width": 1200,
+      "height": 800,
       "recipe": [
         {
-          "algorithm": "list"
+          "algorithm": "position",
+          "x": 600.0,
+          "y": 400.0
         },
         {
           "algorithm": "tear",
           "params": {
             "iterations": 14,
-            "angleVar": 6,
-            "count": 24,
-            "opacity": 0.15,
-            "colours": ["blue", "purple"],
-            "colours2": ["yellow", "red"]
+            "angleVar": 0.1,
+            "count": 24
           }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": 0.15,
+          "colours": ["blue", "purple"],
+          "colours2": ["none"],
+          "stroke": "none",
+          "strokeWidth": 6
         }
       ]
     },
     {
       "name": "bg2",
-      "base": "new",
-      "type": "generator",
-      "rangeR": [10, 200],
-      "rangePoints": [3, 12],
+      "base": "generator",
+      "type": "polygon",
+      "rangeR": "?:10:200",
+      "rangePoints": "?:3:12",
       "recipe": [
         {
-          "algorithm": "multiplier",
+          "algorithm": "generate",
           "count": 30
         },
         {
           "algorithm": "spread",
           "method": "random",
-          "rangeX": [0.0, 1000.0],
-          "rangeY": [0.0, 600.0]
+          "rangeX": "?:50.0:1000.0",
+          "rangeY": "?:50.0:600.0"
         },
         {
           "algorithm": "tear",
           "disable": false,
           "params": {
             "iterations": 10,
-            "angleVar": 20,
-            "count": 15,
-            "opacity": 0.15,
-            "colours": ["white", "yellow", "violet"],
-            "colours2": ["red", "orange", "yellow", "blue"]
+            "angleVar": 0.05,
+            "count": 15
           }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": 0.15,
+          "colours": ["white", "yellow", "violet"],
+          "colours2": ["none"],
+          "stroke": "none",
+          "strokeWidth": 6
         }
       ]
     },
@@ -66,23 +81,29 @@
       "base": "dancer",
       "recipe": [
         {
-          "algorithm": "scale",
-          "ratio": 1
+          "algorithm": "multiply",
+          "count": 4
         },
         {
-          "algorithm": "multiply",
-          "count": 4,
-          "x-step": 140
+          "algorithm": "spread",
+          "type": "matrix",
+          "rangeX": "300:1000:170",
+          "rangeY": 500.0
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": 0.25,
+          "colours2": ["red", "yellow"],
+          "colours": "c:#ff8000:#dfdf20/5",
+          "stroke": "none",
+          "strokeWidth": 6
         },
         {
           "algorithm": "tear",
           "params": {
             "iterations": 7,
-            "angleVar": 8,
-            "count": 8,
-            "opacity": 0.25,
-            "colours": ["red", "yellow"],
-            "colours2": ["black", "blue", "purple", "orange"]
+            "angleVar": 0.18,
+            "count": 8
           }
         }
       ]
@@ -91,9 +112,9 @@
   "output": {
     "background": "black",
     "shapes": [
-      "bg",
-      "bg2",
-      "man-t"
+      { "name": "bg" },
+      { "name": "bg2" },
+      { "name": "man-t" }
     ]
   }
 }

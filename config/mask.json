@@ -15,8 +15,8 @@
       "name": "polys",
       "base": "generator",
       "type": "polygon",
-      "rangeR": "30.0:250.0",
-      "rangePoints": "5:12",
+      "rangeR": "?:30.0:250.0",
+      "rangePoints": "?:5:12",
       "recipe": [
         {
           "algorithm": "generate",

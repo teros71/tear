@@ -8,15 +8,15 @@ import geom
 def make_generator_shape(config):
     t = config.get('type', 'rectangle')
     if t == 'rectangle':
-        rw = value.read(config, "rangeW")
-        rh = value.read(config, "rangeH")
+        rw = value.read(config, "w")
+        rh = value.read(config, "h")
         return shape.RectGenerator(rw, rh)
     if t == 'circle':
-        rr = value.read(config, "rangeR")
+        rr = value.read(config, "r")
         return shape.CircleGenerator(rr)
     if t == 'polygon':
-        rar = value.read(config, "rangeR")
-        rap = value.read(config, "rangePoints")
+        rar = value.read(config, "r")
+        rap = value.read(config, "c")
         return shape.PolygonGenerator(rar, rap)
 
 
@@ -26,7 +26,7 @@ def make_new_shape(r):
     y = r.get("y", 0.0)
     base = None
     if t == 'rectangle':
-        base = geom.Rect(r.get("width", 10.0), r.get("height", 10.0))
+        base = geom.Rect(r.get("w", 10.0), r.get("h", 10.0))
     if t == 'circle':
         base = geom.Circle(r.get("r", 10.0))
     if t == 'polygon':

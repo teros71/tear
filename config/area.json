@@ -34,28 +34,52 @@
       "name": "carea",
       "base": "new",
       "type": "circle",
-      "r": 300,
+      "r": 600.0,
       "recipe": [
         {
           "algorithm": "position",
-          "x": 400,
-          "y": 400
+          "x": 1200,
+          "y": 900
         },
         {
           "algorithm": "appearance",
           "opacity": 0.25,
-          "colours": ["none"],
+          "colours": ["#8050c0"],
           "stroke": "black",
           "strokeWidth": 5
         }
       ]
     },
     {
-      "name": "poly1",
+      "name": "carea2",
       "base": "generator",
-      "type": "polygon",
-      "rangeR": "60.0:100.0",
-      "rangePoints": "3:12",
+      "type": "circle",
+      "r": "604.0:1000.0:30",
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": 10
+        },
+        {
+          "algorithm": "spread",
+          "method": "matrix",
+          "rangeX": 1200.0,
+          "rangeY": 900.0
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": 0.20,
+          "colours": "c:#201080:#4030a0/10",
+          "stroke": "black",
+          "strokeWidth": 3
+        }
+      ]
+    },
+    {
+      "name": "rounds",
+      "base": "generator",
+      "type": "circle",
+      "r": "?:20.0:50.0",
       "recipe": [
         {
           "algorithm": "generate",
@@ -67,33 +91,65 @@
           "area": "carea"
         },
         {
-          "algorithm": "tear",
-          "disable": true,
-          "params": {
-            "iterations": 12,
-            "angleVar": 20,
-            "count": 15
-          }
+          "algorithm": "appearance",
+          "opacity": 0.85,
+          "colours2": "c:#408060:#ff9080/10",
+          "colours": ["blue", "green", "orange", "red"]
+        }
+      ]
+    },
+    {
+      "name": "poly1",
+      "base": "generator",
+      "type": "polygon",
+      "r": "?:60.0:100.0",
+      "c": "?:3:12",
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": 80
+        },
+        {
+          "algorithm": "spread",
+          "method": "area",
+          "area": "carea"
         },
         {
           "algorithm": "appearance",
-          "opacity": 0.25,
+          "opacity": "?:0.15:0.35",
           "colours": "c:#408060:#ff9080/10",
-          "colours2": ["olivedrab", "khaki", "orange", "red"]
+          "colours2": ["olivedrab", "khaki", "orange", "red"],
+          "stroke": "blue",
+          "strokeWidth": 1
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 12,
+            "angleVar": 0.04,
+            "count": 2,
+            "randomizeBase": true
+          }
         }
       ]
     }
   ],
   "output": {
-    "background": "#8050c0",
+    "background": "#4030a0",
     "shapes": [
+      {
+        "name": "carea2"
+      },
       {
         "name": "carea"
       },
       {
+        "name": "rounds"
+      },
+      {
         "name": "poly1"
       }
-    ],
-    "images": [ "umbrella" ]
+    ]
   }
 }

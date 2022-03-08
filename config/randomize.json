@@ -15,8 +15,8 @@
       "name": "poly1",
       "base": "generator",
       "type": "polygon",
-      "rangeR": "10.0-200.0",
-      "rangePoints": "3-12",
+      "r": "?:10.0:200.0",
+      "c": "?:3:12",
       "recipe": [
         {
           "algorithm": "generate",
@@ -25,15 +25,15 @@
         {
           "algorithm": "spread",
           "method": "random",
-          "rangeX": "0.0-1400.0",
-          "rangeY": "0.0-900.0"
+          "rangeX": "?:0.0:1400.0",
+          "rangeY": "?:0.0:900.0"
         },
         {
           "algorithm": "tear",
           "disable": false,
           "params": {
             "iterations": 12,
-            "angleVar": 20,
+            "angleVar": 0.1,
             "count": 15
           }
         },
@@ -48,7 +48,7 @@
       "name": "cir",
       "base": "generator",
       "type": "circle",
-      "rangeR": "10.0-100.0",
+      "r": "?:10.0:100.0",
       "recipe": [
         {
           "algorithm": "generate",
@@ -56,26 +56,26 @@
         },
         {
           "algorithm": "scaler",
-          "rangeF": "0.2@{0}+{1}*0.04"
+          "rangeF": "e:0.2@{0}+{1}*0.04"
         },
         {
           "algorithm": "spread",
           "method": "random",
-          "rangeX": "0.0-1400.0",
-          "rangeY": "0.0-900.0"
+          "rangeX": "?:0.0:1400.0",
+          "rangeY": "?:0.0:900.0"
         },
         {
           "algorithm": "tear",
           "disable": false,
           "params": {
             "iterations": 10,
-            "angleVar": 15,
+            "angleVar": 0.10,
             "count": 8
           }
         },
         {
           "algorithm": "appearance",
-          "opacity": "0.15-0.20",
+          "opacity": "?:0.15:0.20",
           "colours": ["orange", "red", "white"]
         }
       ]
@@ -84,8 +84,8 @@
       "name": "rec",
       "base": "generator",
       "type": "rectangle",
-      "rangeW": "40.0-200.0",
-      "rangeH": "30.0-400.0",
+      "w": "?:40.0:200.0",
+      "h": "?:30.0:400.0",
       "recipe": [
         {
           "algorithm": "generate",
@@ -94,9 +94,9 @@
         {
           "algorithm": "spread",
           "method": "random",
-          "rangeX": "20.0@{0}+math.fabs(math.sin((math.pi/8)*{1}))*80",
+          "rangeX": "e:20.0@{0}+math.fabs(math.sin((math.pi/8)*{1}))*80",
           "rangeX2": "0.0-1400.0",
-          "rangeY": "10.0@math.fabs(math.sin((math.pi/8)*{1}))*300",
+          "rangeY": "e:10.0@math.fabs(math.sin((math.pi/8)*{1}))*300",
           "rangeY2": "0.0-900.0"
         },
         {
@@ -104,14 +104,14 @@
           "disable": false,
           "params": {
             "iterations": 6,
-            "angleVar": 25,
+            "angleVar": 0.11,
             "count": 5,
             "randomizeBase": false
           }
         },
         {
           "algorithm": "appearance",
-          "opacity": "0.25-0.70",
+          "opacity": "?:0.25:0.70",
           "colours": ["green", "khaki", "blue"],
           "stroke": "black"
         }

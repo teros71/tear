@@ -69,7 +69,7 @@ class Rect:
         self.height = self.height * dry
 
     def get_points(self, x, y):
-        topleft = Point(x - self.width / 2, y - self.width / 2)
+        topleft = Point(x - self.width / 2, y - self.height / 2)
         return [topleft, Point(topleft.x, topleft.y + self.height),
                 Point(topleft.x + self.width, topleft.y + self.height),
                 Point(topleft.x + self.width, topleft.y)]
@@ -131,20 +131,20 @@ class Polygon:
 
     def bbox(self):
         p = self.points[0]
+        x0 = p.x
+        y0 = p.y
         x1 = p.x
         y1 = p.y
-        x2 = p.x
-        y2 = p.y
         for p in self.points:
-            if p.x < x1:
+            if p.x < x0:
+                x0 = p.x
+            if p.x > x1:
                 x1 = p.x
-            if p.x > x2:
-                x2 = p.x
-            if p.y < y1:
+            if p.y < y0:
+                y0 = p.y
+            if p.y > y1:
                 y1 = p.y
-            if p.y > y2:
-                y2 = p.y
-        return BBox(x1, y1, x2 - x1, y2 - y1)
+        return BBox(x0, y0, x1, y1)
 
     def contains(self, p):
 

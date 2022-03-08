@@ -15,26 +15,30 @@
       "name": "rec",
       "base": "new",
       "type": "rectangle",
-      "x": 100,
-      "y": 100,
       "width": 1000,
       "height": 900,
       "recipe": [
         {
-          "algorithm": "list"
+          "algorithm": "position",
+          "x": 600.0,
+          "y": 400.0
         },
         {
           "algorithm": "tear",
           "disable": false,
           "params": {
             "iterations": 12,
-            "angleVar": 40,
+            "angleVar": 0.03,
             "minDistanceFactor": 0.9,
-            "count": 9,
-            "opacity": 0.35,
-            "colours": ["blue", "purple", "black"],
-            "colours2": ["yellow", "red"]
+            "count": 9
           }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": 0.35,
+          "colours": ["blue", "purple", "black"],
+          "stroke": "none",
+          "strokeWidth": 6
         }
       ]
     },
@@ -42,30 +46,28 @@
       "name": "cir",
       "base": "new",
       "type": "circle",
-      "x": 500,
-      "y": 500,
       "r": 200,
       "recipe": [
         {
-          "algorithm": "set",
-          "disable": false,
-          "x": 500,
-          "y": 500,
-          "scale": 1.3
-        },
-        {
-          "algorithm": "list"
+          "algorithm": "position",
+          "x": 500.0,
+          "y": 500.0
         },
         {
           "algorithm": "tear",
           "disable": false,
           "params": {
             "iterations": 10,
-            "angleVar": 5,
-            "count": 14,
-            "opacity": 0.15,
-            "colours": ["black", "red"]
+            "angleVar": 0.16,
+            "count": 14
           }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": 0.15,
+          "colours": ["black", "red"],
+          "stroke": "none",
+          "strokeWidth": 6
         }
       ]
     },
@@ -73,82 +75,72 @@
       "name": "cir2",
       "base": "new",
       "type": "circle",
-      "x": 500,
-      "y": 500,
       "r": 200,
       "recipe": [
         {
-          "algorithm": "set",
-          "disable": true,
-          "x": 600,
-          "y": 500,
-          "scale": 0.8
+          "algorithm": "position",
+          "x": 500.0,
+          "y": 500.0
         },
         {
-          "algorithm": "list"
+          "algorithm": "scaler",
+          "rangeF": 0.8
         },
         {
           "algorithm": "tear",
           "disable": false,
           "params": {
             "iterations": 10,
-            "angleVar": 10,
-            "count": 14,
-            "opacity": 0.15,
-            "colours": ["yellow", "white"]
+            "angleVar": 0.12,
+            "count": 14
           }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": 0.15,
+          "colours": ["yellow", "white"],
+          "stroke": "none",
+          "strokeWidth": 6
         }
       ]
     },
     {
       "name": "poly1",
-      "base": "new",
-      "type": "random",
-      "x": 800,
-      "y": 400,
-      "minR": 10,
-      "maxR": 500,
-      "count": 12,
+      "base": "generator",
+      "type": "polygon",
+      "rangeR": "?:400:800",
+      "rangePoints": 12,
       "recipe": [
         {
-          "algorithm": "random",
-          "disable": true,
-          "count": 8,
-          "x-min": 10.0,
-          "x-max": 900.0,
-          "y-min": 100,
-          "y-max": 200,
-          "scale-min": 0.5,
-          "scale-max": 2.0
-        },
-        {
-          "algorithm": "list"
+          "algorithm": "generate",
+          "count": 8
         },
         {
           "algorithm": "tear",
           "disable": false,
           "params": {
             "iterations": 12,
-            "angleVar": 40,
-            "count": 12,
-            "opacity": 0.30,
-            "colours": ["black", "gray"]
+            "angleVar": 0.03,
+            "count": 12
           }
         },
         {
-          "algorithm": "set",
-          "disable": true,
-          "x": 500,
-          "y": 500,
-          "scale": 1.3
+          "algorithm": "appearance",
+          "opacity": 0.30,
+          "colours": ["black", "gray"],
+          "stroke": "none",
+          "strokeWidth": 6
         }
       ]
     }
   ],
-  "output": [
-    "rec",
-    "cir",
-    "cir2",
-    "poly1"
-  ]
+  "output": {
+    "background": "white",
+    "shapes": [
+      { "name": "rec" },
+      { "name": "cir" },
+      { "name": "cir2" },
+      { "name": "poly1" }
+    ]
+  }
 }

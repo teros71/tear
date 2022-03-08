@@ -96,9 +96,11 @@ def spread(config, base):
         shap = forms.get(name)
         a = area.RandomInArea(geom.Polygon(shap.get_rendering_points()))
 
+
         def do_it2(s):
             p = a.get()
-            s.set_position(p.x, p.y)
+            if p is not None:
+                s.set_position(p.x, p.y)
             return s
         return apply_recursive(config, base, do_it2)
     if method == "matrix":

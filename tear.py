@@ -102,4 +102,5 @@ def generateShape(base, params):
         s = shape.Shape(geom.Polygon(points))
         s.inherit(base)
         shapes.append(s)
-    return shape.List(shapes)
+    sl = shape.List(shapes)
+    return sl

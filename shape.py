@@ -31,25 +31,25 @@ class CircleGenerator:
 class PolygonGenerator():
     """Generator for shapes"""
 
-    def __init__(self, range_r, range_points):
-        self.range_r = range_r
-        self.range_points = range_points
+    def __init__(self, r, corners):
+        self.r = r
+        self.corners = corners
 
     def __iter__(self):
         return self
 
     def __next__(self):
-        count = self.range_points.get()
-        return Shape(random_polygon(self.range_r.min, self.range_r.max, count))
+        count = self.corners.get()
+        return Shape(random_polygon(self.r, count))
 
 
-def random_polygon(minR, maxR, count):
+def random_polygon(r, count):
     slicea = (2 * math.pi) / count
     points = []
     for i in range(0, count):
         s = i * slicea
         a = random.uniform(s, s + slicea)
-        d = random.uniform(minR, maxR)
+        d = r.get()
         points.append(geom.Point(d * math.cos(a), d * math.sin(a)))
     return geom.Polygon(points)
 

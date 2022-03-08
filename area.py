@@ -12,7 +12,7 @@ class RandomInArea:
         self.bbox = area.bbox()
 
     def get(self):
-        for _ in range(10):
+        for _ in range(15):
             x = self.bbox.x0 + random.uniform(0.0, self.bbox.x1)
             y = self.bbox.y0 + random.uniform(0.0, self.bbox.y1)
             p = geom.Point(x, y)

@@ -1,0 +1,99 @@
+{
+  "defaults": {
+    "unitSize": 800.0,
+    "tear": {
+      "iterations": 18,
+      "minDistance": 2.0,
+      "minDistanceFactor": 0,
+      "angleVar": 4,
+      "count": 6,
+      "opacity": 0.2
+    }
+  },
+  "forms": [
+    {
+      "name": "bg",
+      "base": "new",
+      "type": "rectangle",
+      "h": 400,
+      "w": 2800,
+      "recipe": [
+        {
+          "algorithm": "position",
+          "x": 1400,
+          "y": 900
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": 0.1,
+          "colours": "black"
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 18,
+            "angleVar": 0.02,
+            "count": 4,
+            "randomizeBase": false
+          }
+        }
+      ]
+    },
+    {
+      "name": "basic",
+      "base": "generator",
+      "type": "polygon",
+      "r": "?:80.0:200.0",
+      "c": "?:5:7",
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": 6
+        },
+        {
+          "algorithm": "scaler",
+          "rangeF": "?:1.5:2.0",
+          "rangeFY": "?:4.0:5.0"
+        },
+        {
+          "algorithm": "spread",
+          "method": "matrix",
+          "rangeX": "300.0:2400.0/6",
+          "rangeY": 800.0
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": "5:20:3",
+            "angleVar": "0.02:0.22:0.03",
+            "count": "2:18:2",
+            "randomizeBase": false
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": 0.20,
+          "colours": ["blue", "purple", "indigo"],
+          "stroke": "blue",
+          "strokeWidth": 4
+        }
+      ]
+    }
+  ],
+  "output": {
+    "background": "#e0e0e0",
+    "shapes": [
+      {
+        "name": "bg"
+      },
+      {
+        "name": "basic"
+      },
+      {
+        "name": "rec"
+      }
+    ]
+  }
+}
