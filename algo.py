@@ -96,7 +96,6 @@ def spread(config, base):
         shap = forms.get(name)
         a = area.RandomInArea(geom.Polygon(shap.get_rendering_points()))
 
-
         def do_it2(s):
             p = a.get()
             if p is not None:
@@ -131,7 +130,10 @@ def set_appearance(config, shap, colour, opacity, stroke, strokew):
             set_appearance(config, inner_shape, colour,
                            opacity, stroke, strokew)
         return
-    shap.appearance.set(colour.get(), opacity.get(),
+    c = colour.get()
+    if isinstance(c, value.ColourRange):
+        c = c.get()
+    shap.appearance.set(c, opacity.get(),
                         stroke.get(), strokew.get())
 
 # ===========================================================================
@@ -188,7 +190,6 @@ def scaler(r, base):
     def do_it(s):
         fx = rx.get()
         fy = ry.get()
-        print("do scale", fx, fy)
         s.scale(fx, fy)
         return s
     return apply_recursive(r, base, do_it)
@@ -215,6 +216,11 @@ def multiply(r, base):
     return shape.List(res)
 
 
+def mirror(r, base):
+    base.mirror()
+    return base
+
+
 algorithms = {
     "position": position,
     "generate": generate,
@@ -223,7 +229,8 @@ algorithms = {
     "scaler": scaler,
     "appearance": appearance,
     "rotate": rotate,
-    "multiply": multiply
+    "multiply": multiply,
+    "mirror": mirror
 }
 
 

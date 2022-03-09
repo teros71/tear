@@ -81,6 +81,9 @@ class Shape:
     def rotate(self, x, y, a):
         self.base.rotate(x, y, math.radians(a.get()))
 
+    def mirror(self):
+        self.base.mirror()
+
     def bbox(self):
         if isinstance(self.base, geom.Rect):
             tlx = self.position.x - self.base.width / 2
@@ -141,6 +144,10 @@ class List:
     def rotate(self, x, y, a):
         for b in self.shapes:
             b.rotate(x, y, a)
+
+    def mirror(self):
+        for b in self.shapes:
+            b.mirror()
 
     def bbox(self):
         bb = None

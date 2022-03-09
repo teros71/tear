@@ -311,6 +311,9 @@ def make(obj):
     if isinstance(obj, int) or isinstance(obj, float):
         return Single(obj)
     if isinstance(obj, list):
+        if isinstance(obj[0], str) and obj[0].startswith('c:'):
+            cl = [read_colour(c[2:]) for c in obj]
+            return List(cl)
         return List(obj)
     if isinstance(obj, str):
         # colour range?

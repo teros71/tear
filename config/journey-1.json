@@ -14,9 +14,141 @@
     {
       "name": "bg",
       "base": "new",
-      "type": "rectangle",
-      "h": 400,
-      "w": 2800,
+      "type": "polygon",
+      "points": "0.0 0.0, 1200.0 10.0, 2400.0 0.0, 1200.0 -10.0",
+      "recipe": [
+        {
+          "algorithm": "position",
+          "x": 100,
+          "y": 900
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 18,
+            "angleVar": 0.02,
+            "count": 10,
+            "randomizeBase": false
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": 0.1,
+          "colours": ["black", "red"]
+        }
+      ]
+    },
+    {
+      "name": "sit",
+      "base": "sitting-shape",
+      "recipe": [
+        {
+          "algorithm": "scaler",
+          "disable": false,
+          "rangeF": 7.0
+        },
+        {
+          "algorithm": "position",
+          "x": 2000,
+          "y": 900
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 18,
+            "angleVar": 0.09,
+            "count": 6,
+            "randomizeBase": [false,false]
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": 0.20,
+          "colours": ["blue", "purple", "indigo"],
+          "stroke": "black",
+          "strokeWidth": 3
+        }
+      ]
+    },
+    {
+      "name": "sit2",
+      "base": "sitting-shape",
+      "recipe": [
+        {
+          "algorithm": "mirror"
+        },
+        {
+          "algorithm": "scaler",
+          "disable": false,
+          "rangeF": 7.0
+        },
+        {
+          "algorithm": "position",
+          "x": 800,
+          "y": 900
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 18,
+            "angleVar": 0.09,
+            "count": 6,
+            "randomizeBase": [false,false]
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": 0.20,
+          "colours": "c:#00ffcd:#00d3ff/6",
+          "stroke": "black",
+          "strokeWidth": 3
+        }
+      ]
+    },
+    {
+      "name": "curtain",
+      "base": "new",
+      "type": "polygon",
+      "points": "0.0 0.0, 0.0 100.0, 70.0 100.0, 100.0 0.0",
+      "recipe": [
+        {
+          "algorithm": "scaler",
+          "disable": false,
+          "rangeF": 12.0,
+          "rangeFY": 18.0
+        },
+        {
+          "algorithm": "position",
+          "x": -200,
+          "y": 0
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 18,
+            "angleVar": 0.07,
+            "count": 12,
+            "randomizeBase": false
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": 0.20,
+          "colours": ["c:#ffa040:#ff6060/6"],
+          "stroke": "black",
+          "strokeWidth": 0
+        }
+      ]
+    },
+    {
+      "name": "carea",
+      "base": "new",
+      "type": "circle",
+      "r": 600.0,
       "recipe": [
         {
           "algorithm": "position",
@@ -25,74 +157,70 @@
         },
         {
           "algorithm": "appearance",
-          "opacity": 0.1,
-          "colours": "black"
-        },
-        {
-          "algorithm": "tear",
-          "disable": false,
-          "params": {
-            "iterations": 18,
-            "angleVar": 0.02,
-            "count": 4,
-            "randomizeBase": false
-          }
+          "opacity": 0.25,
+          "colours": ["#8050c0"],
+          "stroke": "black",
+          "strokeWidth": 5
         }
       ]
     },
     {
-      "name": "basic",
+      "name": "poly1",
       "base": "generator",
       "type": "polygon",
-      "r": "?:80.0:200.0",
-      "c": "?:5:7",
+      "r": "?:60.0:100.0",
+      "c": "?:3:12",
       "recipe": [
         {
           "algorithm": "generate",
-          "count": 6
-        },
-        {
-          "algorithm": "scaler",
-          "rangeF": "?:1.5:2.0",
-          "rangeFY": "?:4.0:5.0"
+          "count": 40
         },
         {
           "algorithm": "spread",
-          "method": "matrix",
-          "rangeX": "300.0:2400.0/6",
-          "rangeY": 800.0
+          "method": "area",
+          "area": "carea"
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "?:0.15:0.35",
+          "colours": "c:#408060:#ff9080/10",
+          "colours2": ["olivedrab", "khaki", "orange", "red"],
+          "stroke": "blue",
+          "strokeWidth": 1
         },
         {
           "algorithm": "tear",
           "disable": false,
           "params": {
-            "iterations": "5:20:3",
-            "angleVar": "0.02:0.22:0.03",
-            "count": "2:18:2",
-            "randomizeBase": false
+            "iterations": 12,
+            "angleVar": 0.04,
+            "count": 2,
+            "randomizeBase": true
           }
-        },
-        {
-          "algorithm": "appearance",
-          "opacity": 0.20,
-          "colours": ["blue", "purple", "indigo"],
-          "stroke": "blue",
-          "strokeWidth": 4
         }
       ]
     }
   ],
   "output": {
-    "background": "#e0e0e0",
+    "background": "#a03030",
     "shapes": [
       {
         "name": "bg"
       },
       {
-        "name": "basic"
+        "name": "carea"
       },
       {
-        "name": "rec"
+        "name": "poly1"
+      },
+      {
+        "name": "curtain"
+      },
+      {
+        "name": "sit"
+      },
+      {
+        "name": "sit2"
       }
     ]
   }

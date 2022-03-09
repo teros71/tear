@@ -29,7 +29,7 @@ class Point:
         self.x = (nx * c - ny * s) + x
         self.y = (nx * s + ny * c) + y
 
-    def output(self):
+    def print(self):
         print(self.x, self.y)
 
 
@@ -57,6 +57,9 @@ class BBox:
         self.y0 = min(self.y0, bb.y0)
         self.x1 = max(self.x1, bb.x1)
         self.y1 = max(self.y1, bb.y1)
+
+    def print(self):
+        print(f'bbox;[{self.x0},{self.y0}]-[{self.x1},{self.y1}]')
 
 
 class Rect:
@@ -128,6 +131,12 @@ class Polygon:
     def rotate(self, x, y, a):
         for p in self.points:
             p.rotate(x, y, a)
+
+    def mirror(self):
+        bb = self.bbox()
+        x = bb.x0 + ((bb.x1 - bb.x0) / 2)
+        for p in self.points:
+            p.x = x + (x - p.x)
 
     def bbox(self):
         p = self.points[0]
