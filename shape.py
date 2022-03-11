@@ -79,6 +79,8 @@ class Shape:
         self.base.scale(rx, ry)
 
     def rotate(self, x, y, a):
+        if isinstance(self.base, geom.Rect):
+            self.base = geom.Polygon.fromrect(self.base)
         self.base.rotate(x, y, math.radians(a.get()))
 
     def mirror(self):
@@ -175,6 +177,22 @@ class Appearence:
         self.opacity = o
         self.stroke = s
         self.stroke_width = sw
+
+
+class ShapePath:
+    def __init__(self, s, count):
+        self.s = s
+        self.len = s.base.length()
+        self.step = self.len / count
+        self.current = 0
+
+    def next(self):
+        p = self.s.base.point_at(
+            self.s.position.x, self.s.position.y, self.current)
+        self.current += self.step
+        if self.current > self.len:
+            self.current = 0
+        return p
 
 
 def goldenRects2(rect, limit):

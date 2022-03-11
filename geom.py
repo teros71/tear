@@ -77,6 +77,23 @@ class Rect:
                 Point(topleft.x + self.width, topleft.y + self.height),
                 Point(topleft.x + self.width, topleft.y)]
 
+    def length(self):
+        return self.width * 2 + self.height * 2
+
+    def point_at(self, x, y, dist):
+        p = self.get_points(x, y)
+        dist = dist % self.length()
+        if dist < self.height:
+            return Point(p[0].x, p[0].y + dist)
+        dist -= self.height
+        if dist < self.width:
+            return Point(p[1].x + dist, p[1].y)
+        dist -= self.width
+        if dist < self.height:
+            return Point(p[2].x, p[2].y - dist)
+        dist -= self.height
+        return Point(p[3].x - dist, p[3].y)
+
 
 class Circle:
     def __init__(self, r):
@@ -97,6 +114,14 @@ class Circle:
             t = t + math.pi / 8
         return points
 
+    def length(self):
+        return 2 * math.pi * self.r
+
+    def point_at(self, x, y, dist):
+        dist %= self.length()
+        t = (2 * math.pi) * (dist / self.length())
+        return Point(x + self.r * math.cos(t), y + self.r * math.sin(t))
+
 
 class Polygon:
     """Polygon"""
@@ -112,6 +137,10 @@ class Polygon:
             if len(pl) == 2:
                 points.append(Point(float(pl[0]), float(pl[1])))
         return cls(points)
+
+    @classmethod
+    def fromrect(cls, r):
+        return cls(r.get_points(0, 0))
 
     def get_points(self, x, y):
         return [p.move(x, y) for p in self.points]
@@ -233,3 +262,33 @@ class Polygon:
         if count % 2 == 1:
             return True
         return False
+
+    def length(self):
+        i = 0
+        n = len(self.points)
+        d = 0.0
+        while i < n:
+            j = (i + 1) % n
+            d += distance(self.points[i], self.points[j])
+            i += 1
+        return d
+
+    def point_at(self, x, y, dist):
+        dist %= self.length()
+        p = self.get_points(x, y)
+        i = 0
+        n = len(p)
+        j = 1
+        p0 = p[0]
+        p1 = p[1]
+        d = distance(p0, p1)
+        while dist > d:
+            print(dist, p0.x, p0.y, p1.x, p1.y, d)
+            dist -= d
+            i += 1
+            j = (i + 1) % n
+            p0 = p[i]
+            p1 = p[j]
+            d = distance(p0, p1)
+        print(dist, p0.x, p0.y, p1.x, p1.y, d)
+        return Point(p0.x + (p1.x - p0.x) * (dist / d), p0.y + (p1.y - p0.y) * (dist / d))

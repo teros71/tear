@@ -1,8 +1,9 @@
 import copy
 import math
+import geom
 
 value = 1.618033988749895
-goldenB = 0.30635
+goldenB = 0.3063489
 
 
 def spiralOfRectangles(rect, limit):
@@ -31,11 +32,22 @@ def spiralOfRectangles(rect, limit):
 
 
 def spiralX(t):
-    return math.cos(t) * (math.pow(math.e, (0.30635 * t)))
+    return math.cos(t) * (math.pow(math.e, (goldenB * t)))
 
 
 def spiralY(t):
-    return math.sin(t) * (math.pow(math.e, (0.30635 * t)))
+    return math.sin(t) * (math.pow(math.e, (goldenB * t)))
+
+
+class SpiralPath:
+    def __init__(self, step):
+        self.step = step
+        self.current = 0
+
+    def next(self):
+        p = geom.Point(spiralX(self.current), spiralY(self.current))
+        self.current += self.step
+        return p
 
 
 def toPathSingle(f):

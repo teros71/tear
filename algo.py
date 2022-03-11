@@ -112,7 +112,18 @@ def spread(config, base):
             shape.set_position(p.x, p.y)
             return shape
         return apply_recursive(config, base, do_it3)
+    if method == "path":
+        name = config.get("shape")
+        shap = forms.get(name)
+        count = value.read(config, "count")
+        a = shape.ShapePath(shap, count.get())
 
+        def do_it4(s):
+            p = a.next()
+            if p is not None:
+                s.set_position(p.x, p.y)
+            return s
+        return apply_recursive(config, base, do_it4)
     return base
 
 

@@ -1,0 +1,10 @@
+TODO:
+
+Add handling of recursive shape lists:
+- how is appearance applied
+- how are shapes spread
+- maybe add count for shape lists and a cumulative count also?
+- maybe mark a shapelist to be a leaf = no recursive applying?
+- parametrize tear algorithm to mark what is the leaf?
+- make colour ranges work within a list of colours
+- spreading according to path: open or closed paths

@@ -1,0 +1,162 @@
+{
+  "defaults": {
+    "unitSize": 800.0,
+    "tear": {
+      "iterations": 18,
+      "minDistance": 2.0,
+      "minDistanceFactor": 0,
+      "angleVar": 4,
+      "count": 6,
+      "opacity": 0.2
+    }
+  },
+  "forms": [
+    {
+      "name": "rects",
+      "base": "generator",
+      "type": "rectangle",
+      "w": 40,
+      "h": 40,
+      "r": "?:20.0:40.0",
+      "c": "4:4",
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": 300
+        },
+        {
+          "algorithm": "scaler",
+          "rangeF": 1,
+          "rangeFY": "?:6.0:10.0"
+        },
+        {
+          "algorithm": "rotate",
+          "angle": "?:-20:20"
+        },
+        {
+          "algorithm": "spread",
+          "method": "random",
+          "rangeX": "?:0.0:1600.0",
+          "rangeY": "?:0.0:1600.0"
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 12,
+            "angleVar2": 20,
+            "angleVar": 0.07,
+            "count": 1,
+            "randomizeBase": false
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "?:0.2:0.6",
+          "colours": "c:#0000ff:#8080ff/8",
+          "stroke": "black",
+          "strokeWidth": 1
+        }
+      ]
+    },
+    {
+      "name": "rects2",
+      "base": "generator",
+      "type": "rectangle",
+      "w": 40,
+      "h": 40,
+      "r": "?:20.0:40.0",
+      "c": "4:4",
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": 300
+        },
+        {
+          "algorithm": "scaler",
+          "rangeF": 1,
+          "rangeFY": "?:6.0:10.0"
+        },
+        {
+          "algorithm": "rotate",
+          "angle": "?:-20:20"
+        },
+        {
+          "algorithm": "spread",
+          "method": "random",
+          "rangeX": "?:0.0:1600.0",
+          "rangeY": "?:0.0:1600.0"
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 12,
+            "angleVar2": 20,
+            "angleVar": 0.07,
+            "count": 1,
+            "randomizeBase": false
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "?:0.2:0.6",
+          "colours": "c:#808000:#a0a080/8",
+          "colours2": "c:#008000:#80a080/8",
+          "stroke": "black",
+          "strokeWidth": 1
+        }
+      ]
+    },
+    {
+      "name": "circarea",
+      "base": "new",
+      "type": "circle",
+      "r": 300,
+      "recipe": [
+        {
+          "algorithm": "position",
+          "x": 800,
+          "y": 800
+        }
+      ]
+    },
+    {
+      "name": "circs",
+      "base": "new",
+      "type": "circle",
+      "r": 10,
+      "recipe": [
+        {
+          "algorithm": "multiply",
+          "count": 100
+        },
+        {
+          "algorithm": "scaler",
+          "rangeF": "?:1.0:3.0"
+        },
+        {
+          "algorithm": "spread",
+          "method": "path",
+          "shape": "circarea",
+          "count": 100,
+          "area": "circarea"
+        }
+      ]
+    }
+  ],
+  "output": {
+    "background": "#4040a0",
+    "shapes": [
+      {
+        "name": "rects2"
+      },
+      {
+        "name": "rects"
+      },
+      {
+        "name": "circs"
+      }
+    ]
+  }
+}

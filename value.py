@@ -296,7 +296,12 @@ def read_str_value(s):
 
 
 def read_colour(s):
+    if s[0] != '#':
+        return s
     lst = s.split(':')
+    if len(lst) != 2:
+        print("ERROR: invalid colour", s)
+        return None
     lst2 = lst[1].split('/')
     return ColourRange(Colour.fromstr(lst[0]), Colour.fromstr(lst2[0]), int(lst2[1]))
 
