@@ -94,7 +94,8 @@ def spread(config, base):
     if method == "area":
         name = config.get("area")
         shap = forms.get(name)
-        a = area.RandomInArea(geom.Polygon(shap.get_rendering_points()))
+        out = config.get("out", False)
+        a = area.RandomInArea(geom.Polygon(shap.get_rendering_points()), out)
 
         def do_it2(s):
             p = a.get()

@@ -1,0 +1,176 @@
+{
+  "defaults": {
+    "unitSize": 800.0,
+    "tear": {
+      "iterations": 18,
+      "minDistance": 2.0,
+      "minDistanceFactor": 0,
+      "angleVar": 4,
+      "count": 6,
+      "opacity": 0.2
+    }
+  },
+  "forms": [
+    {
+      "name": "circarea",
+      "base": "new",
+      "type": "circle",
+      "r": 600,
+      "recipe": [
+        {
+          "algorithm": "position",
+          "x": 1000,
+          "y": 900
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": 0.5,
+          "colour": "#706050"
+        }
+      ]
+    },
+    {
+      "name": "rects",
+      "base": "generator",
+      "type": "rectangle",
+      "w": 70,
+      "h": 130,
+      "r": "?:20.0:40.0",
+      "c": "4:4",
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": 30
+        },
+        {
+          "algorithm": "scaler",
+          "disable": true,
+          "rangeF": 1,
+          "rangeFY": "?:6.0:10.0"
+        },
+        {
+          "algorithm": "rotate",
+          "angle": "0:360/30"
+        },
+        {
+          "algorithm": "spread",
+          "method": "path",
+          "shape": "circarea",
+          "count": 30
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 8,
+            "angleVar": 0.07,
+            "count": 5,
+            "randomizeBase": true
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "?:0.2:0.6",
+          "colours": "c:#0000ff:#8080ff/8",
+          "stroke": "black",
+          "strokeWidth": 1
+        }
+      ]
+    },
+    {
+      "name": "rects2",
+      "base": "generator",
+      "type": "rectangle",
+      "w": 270,
+      "h": 170,
+      "r": "?:20.0:40.0",
+      "c": "4:4",
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": 50
+        },
+        {
+          "algorithm": "scaler",
+          "disable": true,
+          "rangeF": 1,
+          "rangeFY": "?:6.0:10.0"
+        },
+        {
+          "algorithm": "rotate",
+          "angle": "?:-10:10"
+        },
+        {
+          "algorithm": "spread",
+          "method": "area",
+          "area": "circarea",
+          "out": true,
+          "count": 30
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 8,
+            "angleVar": 1.0,
+            "count": 1,
+            "randomizeBase": true
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "?:0.2:0.6",
+          "colours": "c:#806080:#8080ff/8",
+          "stroke": "black",
+          "strokeWidth": 0
+        }
+      ]
+    },
+    {
+      "name": "circs",
+      "base": "new",
+      "type": "circle",
+      "r": 10,
+      "recipe": [
+        {
+          "algorithm": "multiply",
+          "count": 100
+        },
+        {
+          "algorithm": "scaler",
+          "rangeF": "?:1.0:3.0"
+        },
+        {
+          "algorithm": "spread",
+          "method": "area",
+          "shape": "circarea",
+          "count": 100,
+          "area": "circarea"
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": 0.6,
+          "colours": "c:#008020:#a0c060/50"
+        }
+      ]
+    }
+  ],
+  "output": {
+    "background": "#504030",
+    "background2": "#4040a0",
+    "shapes": [
+      {
+        "name": "rects2"
+      },
+      {
+        "name": "circarea"
+      },
+      {
+        "name": "rects"
+      },
+      {
+        "name": "circs"
+      }
+    ]
+  }
+}
