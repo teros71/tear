@@ -8,8 +8,6 @@ Add handling of recursive shape lists:
 - appearance inheritance of list shapes?
 - parametrize tear algorithm to mark what is the leaf?
 - make colour ranges work within a list of colours
-- spreading according to path: open or closed paths
-- fix clumsy area spread outside of area: define area boundaries
 - need for "save" operation for generated shapes? Like e.g. generate scaled
   areas to be used for spreading different objects later.
 - improve and optimize shape path spreading
@@ -18,8 +16,12 @@ Add handling of recursive shape lists:
 
 DONE:
 - spread shape path
+- spread function (x is generic value/range -> f(x) returns point)
 - playground size definitions: pg.HEIGHT & pg.WIDTH
 - $CX = center X, $CY = center Y
+- fix clumsy area spread outside of area: define area boundaries (take from pg)
+- random within colour range
+- series value, fibonacci
 
 values:
 x = integer
@@ -29,5 +31,7 @@ m:n:s = range between m-n with step s
 m:n/s = range between m-n divided into s steps
 %x%value = x percents of a value
 #rrggbb:#rrggbb/s = colour range
+?:#rrggbb:#rrggbb/s = random in the colour range (syntax requires step, not used)
 [x, y, z] = list
 f:str = function where str is evaluated with parameter x (depending no the algorithm)
+!:str = series where str is evaluated and should result object with get() method

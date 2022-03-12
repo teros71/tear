@@ -1,6 +1,7 @@
 import unittest
 import value
 import itertools
+import goldenratio
 
 
 class TestValues(unittest.TestCase):
@@ -74,6 +75,13 @@ class TestValues(unittest.TestCase):
         c = value.make("?:#80ff00:#ff0080/1")
         for _ in range(20):
             print(c.get())
+
+    def test_series(self):
+        v = value.make("!:goldenratio.Fibonacci()")
+        self.assertIsInstance(v, value.Series)
+        self.assertIsInstance(v.obj, goldenratio.Fibonacci)
+        for _ in range(20):
+            print(v.get())
 
 
 tf = {

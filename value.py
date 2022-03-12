@@ -274,6 +274,14 @@ class Function:
         return eval(self.f.format(x))
 
 
+class Series:
+    def __init__(self, s):
+        self.obj = eval(s)
+
+    def get(self):
+        return self.obj.get()
+
+
 def convert_list(lst):
     if isint(lst[0]):
         lst = [int(x) for x in lst]
@@ -375,6 +383,8 @@ def make_from_str(obj):
     # percent
     if obj.startswith('%'):
         return Single(read_percent_value(obj[1:]))
+    if obj.startswith('!:'):
+        return Series(obj[2:])
     # generic string
     return read_str_value(obj)
 

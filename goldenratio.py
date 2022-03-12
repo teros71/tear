@@ -43,6 +43,22 @@ def spiral_point(t):
     return geom.Point(spiral_x(t), spiral_y(t))
 
 
+class Fibonacci:
+    def __init__(self):
+        self.prev = 0
+        self.current = 1
+
+    def get(self):
+        v = self.prev
+        self.prev = self.current
+        self.current = v + self.prev
+        return v
+
+    def reset(self):
+        self.prev = 0
+        self.current = 1
+
+
 class SpiralPath:
     def __init__(self, step):
         self.step = step
