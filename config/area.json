@@ -1,6 +1,5 @@
 {
   "defaults": {
-    "unitSize": 800.0,
     "tear": {
       "iterations": 18,
       "minDistance": 2.0,
@@ -10,13 +9,17 @@
       "opacity": 0.2
     }
   },
+  "playground": {
+    "w": 1800,
+    "h": 1800
+  },
   "forms": [
     {
       "name": "rarea",
       "base": "new",
       "type": "rectangle",
-      "width": 600,
-      "height": 400,
+      "w": 600,
+      "h": 400,
       "recipe": [
         {
           "algorithm": "position",
@@ -38,8 +41,8 @@
       "recipe": [
         {
           "algorithm": "position",
-          "x": 1200,
-          "y": 900
+          "x": "$CX",
+          "y": "$CY"
         },
         {
           "algorithm": "appearance",
@@ -62,9 +65,8 @@
         },
         {
           "algorithm": "spread",
-          "method": "matrix",
-          "rangeX": 1200.0,
-          "rangeY": 900.0
+          "x": "?:%45%$W:%55%$W",
+          "y": "?:%45%$H:%55%$H"
         },
         {
           "algorithm": "appearance",
@@ -86,9 +88,8 @@
           "count": 40
         },
         {
-          "algorithm": "spread",
-          "method": "area",
-          "area": "carea"
+          "algorithm": "spread-area",
+          "shape": "carea"
         },
         {
           "algorithm": "appearance",
@@ -110,9 +111,8 @@
           "count": 80
         },
         {
-          "algorithm": "spread",
-          "method": "area",
-          "area": "carea"
+          "algorithm": "spread-area",
+          "shape": "carea"
         },
         {
           "algorithm": "appearance",

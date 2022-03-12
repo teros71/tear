@@ -19,6 +19,8 @@ random: "f:math.uniform(1.0, 42.3)"
 """
 import random
 import math
+import pg
+import goldenratio
 
 
 def isfloat(num):
@@ -235,28 +237,12 @@ def str2Eval(s):
     return None
 
 
-#def readRange(js, name, d="0.0-1"):
-#    r = js.get(name, d)
-#    if isinstance(r, list):
-#        if isint(r[0]) and isint(r[1]):
-#            return Range(int(r[0]), int(r[1]))
-#        else:
-#            return Range(float(r[0]), float(r[1]))
-#    if isinstance(r, str):
-#        rr = str2Range(r)
-#        if rr is not None:
-#            return rr
-#    return Range(0.0, 1.0)
+class Function:
+    def __init__(self, f):
+        self.f = f
 
-
-#def str2Range(s):
-#    lst = s.split(':')
-#    if len(lst) == 2:
-#        if isint(lst[0]) and isint(lst[1]):
-#            return Range(int(lst[0]), int(lst[1]))
-#        else:
-#            return Range(float(lst[0]), float(lst[1]))
-#    return None
+    def __call__(self, x):
+        return eval(self.f.format(x))
 
 
 def convert_list(lst):
@@ -264,6 +250,8 @@ def convert_list(lst):
         lst = [int(x) for x in lst]
     elif isfloat(lst[0]):
         lst = [float(x) for x in lst]
+    else:
+        lst = [convert_value(x) for x in lst]
     return lst
 
 
@@ -272,7 +260,15 @@ def convert_value(val):
         return int(val)
     if isfloat(val):
         return float(val)
+    if isinstance(val, str) and val.startswith('%'):
+        return read_percent_value(val[1:])
     return val
+
+
+def read_percent_value(s):
+    ls = s.split('%')
+    v = convert_value(ls[1])
+    return (float(ls[0]) / 100) * v
 
 
 def read_str_value(s):
@@ -312,28 +308,51 @@ def read(js, name, d=42):
     return obj
 
 
+def make_from_list(obj):
+    if isinstance(obj[0], str) and obj[0].startswith('c:'):
+        cl = [read_colour(c[2:]) for c in obj]
+        return List(cl)
+    return List([make(x) for x in obj])
+
+
+def make_from_str(obj):
+    # colour range
+    if obj.startswith('c:'):
+        return read_colour(obj[2:])
+    # substitute variables
+    if '$' in obj:
+        obj = obj.replace("$CX", str(pg.WIDTH / 2))
+        obj = obj.replace("$CY", str(pg.HEIGHT / 2))
+        obj = obj.replace("$W", str(pg.WIDTH))
+        obj = obj.replace("$H", str(pg.HEIGHT))
+    # random value
+    if obj.startswith('?:'):
+        val = read_str_value(obj[2:])
+        if isinstance(val, List):
+            return Random(val.lst)
+        if isinstance(val, Range):
+            return Random(val)
+        return Random([val.value])
+    # function
+    if obj.startswith('f:'):
+        return Function(obj[2:])
+    # eval TODO: fix
+    if obj.startswith('e:'):
+        return str2Eval(obj[2:])
+    # percent
+    if obj.startswith('%'):
+        return Single(read_percent_value(obj[1:]))
+    # generic string
+    return read_str_value(obj)
+
+
 def make(obj):
-    if isinstance(obj, int) or isinstance(obj, float):
+    """make a generic value object"""
+    if isinstance(obj, (float, int)):
         return Single(obj)
     if isinstance(obj, list):
-        if isinstance(obj[0], str) and obj[0].startswith('c:'):
-            cl = [read_colour(c[2:]) for c in obj]
-            return List(cl)
-        return List(obj)
+        return make_from_list(obj)
     if isinstance(obj, str):
-        # colour range?
-        if obj.startswith('c:'):
-            return read_colour(obj[2:])
-        if obj.startswith('?:'):
-            val = read_str_value(obj[2:])
-            if isinstance(val, List):
-                return Random(val.lst)
-            if isinstance(val, Range):
-                return Random(val)
-            return Random([val.value])
-
-        if obj.startswith('e:'):
-            return str2Eval(obj[2:])
-        return read_str_value(obj)
+        return make_from_str(obj)
     print("WARNING: unknown value type", obj)
     return obj

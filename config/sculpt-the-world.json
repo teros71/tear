@@ -1,6 +1,5 @@
 {
   "defaults": {
-    "unitSize": 800.0,
     "tear": {
       "iterations": 18,
       "minDistance": 2.0,
@@ -9,6 +8,10 @@
       "count": 6,
       "opacity": 0.2
     }
+  },
+  "playground": {
+    "w": 2800,
+    "h": 1800
   },
   "forms": [
     {
@@ -19,8 +22,8 @@
       "recipe": [
         {
           "algorithm": "position",
-          "x": 1000,
-          "y": 900
+          "x": "$CX",
+          "y": "$CY"
         },
         {
           "algorithm": "appearance",
@@ -53,8 +56,7 @@
           "angle": "0:360/30"
         },
         {
-          "algorithm": "spread",
-          "method": "path",
+          "algorithm": "spread-path",
           "shape": "circarea",
           "count": 30
         },
@@ -101,9 +103,8 @@
           "angle": "?:-10:10"
         },
         {
-          "algorithm": "spread",
-          "method": "area",
-          "area": "circarea",
+          "algorithm": "spread-area",
+          "shape": "circarea",
           "out": true,
           "count": 30
         },
@@ -129,28 +130,42 @@
     {
       "name": "circs",
       "base": "new",
-      "type": "circle",
+      "type": "rectangle",
       "r": 10,
+      "w": 10,
+      "h": 10,
       "recipe": [
         {
           "algorithm": "multiply",
           "count": 100
         },
         {
+          "algorithm": "rotate",
+          "angle": "?:0:90"
+        },
+        {
           "algorithm": "scaler",
-          "rangeF": "?:1.0:3.0"
+          "xrangeF": "?:1.0:3.0",
+          "rangeF": "0.01:10.0:0.025"
         },
         {
           "algorithm": "spread",
+          "disable": true,
           "method": "area",
           "shape": "circarea",
           "count": 100,
           "area": "circarea"
         },
         {
+          "algorithm": "spread-f",
+          "origo": ["$CX","$CY"],
+          "x": "0.1:24/100",
+          "f": "f:goldenratio.spiral_point({0})"
+        },
+        {
           "algorithm": "appearance",
           "opacity": 0.6,
-          "colours": "c:#008020:#a0c060/50"
+          "colours": "c:#008020:#a0c060/100"
         }
       ]
     }

@@ -60,6 +60,22 @@ class Shape:
         self.position = geom.Point(0, 0)
         self.appearance = Appearence()
 
+    @classmethod
+    def fromstr(cls, str):
+        """shortcut for creating rects and circles"""
+        sl = str.split(':')
+        if len(sl) < 3:
+            return None
+        x = float(sl[0])
+        y = float(sl[1])
+        if len(sl) == 3:
+            base = geom.Circle(float(sl[2]))
+        else:
+            base = geom.Rect(float(sl[2]), float(sl[3]))
+        s = cls(base)
+        s.set_position(x, y)
+        return s
+
     def move(self, dx, dy):
         """move shape by dx, dy"""
         self.position.x += dx

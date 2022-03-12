@@ -1,6 +1,5 @@
 {
   "defaults": {
-    "unitSize": 800.0,
     "tear": {
       "iterations": 18,
       "minDistance": 2.0,
@@ -10,13 +9,17 @@
       "opacity": 0.2
     }
   },
+  "playground": {
+    "w": 2800,
+    "h": 1800
+  },
   "forms": [
     {
       "name": "polys",
       "base": "generator",
       "type": "polygon",
-      "rangeR": "?:30.0:250.0",
-      "rangePoints": "?:5:12",
+      "r": "?:30.0:250.0",
+      "c": "?:5:12",
       "recipe": [
         {
           "algorithm": "generate",
@@ -24,9 +27,8 @@
         },
         {
           "algorithm": "spread",
-          "method": "random",
-          "rangeX": "?:0.0:1600.0",
-          "rangeY": "?:0.0:1800.0"
+          "x": "?:0.0:1600.0",
+          "y": "?:0.0:1800.0"
         },
         {
           "algorithm": "appearance",
@@ -49,8 +51,8 @@
       "name": "bg",
       "base": "new",
       "type": "rectangle",
-      "width": 1000,
-      "height": 800,
+      "w": 1000,
+      "h": 800,
       "recipe": [
         {
           "algorithm": "position",

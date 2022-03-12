@@ -38,6 +38,10 @@ class TestValues(unittest.TestCase):
         self.assertIsInstance(v, value.List)
         self.assertEqual(len(v.lst), 4)
         print(list(itertools.islice(v, 5)))
+        v = value.make("?:%40%$W:%60%$W")
+        self.assertIsInstance(v, value.Random)
+        self.assertIsInstance(v.range, value.Range)
+        self.assertIsInstance(v.range.min, float)
 
     def test_eval(self):
         v = value.make("e:1.0@{0}*1.6")
@@ -47,6 +51,14 @@ class TestValues(unittest.TestCase):
         v = value.make("e:20.0@{0}+math.fabs(math.sin((math.pi/8)*{1}))*20")
         self.assertIsInstance(v, value.Eval)
         print(list(itertools.islice(v, 30)))
+
+    def test_percent(self):
+        v = value.make("%42%100")
+        self.assertEqual(v.get(), 42)
+        v = value.make("%50%$W")
+        self.assertEqual(v.get(), 500.0)
+        v = value.make("%50%$H")
+        self.assertEqual(v.get(), 500.0)
 
     def test_colours(self):
         c = value.Colour.fromstr("#4280ff")

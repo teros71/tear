@@ -15,18 +15,17 @@
       "name": "baserect",
       "base": "generator",
       "type": "rectangle",
-      "rangeH": 100.0,
-      "rangeW": 100.0,
+      "h": 100.0,
+      "w": 100.0,
       "recipe": [
         {
           "algorithm": "generate",
           "count": 520
         },
         {
-          "algorithm": "spread",
-          "method": "matrix",
-          "rangeX": "50.0:2950.0:100.0",
-          "rangeY": "50.0:1950.0:100.0"
+          "algorithm": "spread-matrix",
+          "x": "50.0:2950.0:100.0",
+          "y": "50.0:1950.0:100.0"
         },
         {
           "algorithm": "appearance",
@@ -48,40 +47,19 @@
       ]
     },
     {
-      "name": "carea",
-      "base": "new",
-      "type": "circle",
-      "r": 400,
-      "recipe": [
-        {
-          "algorithm": "position",
-          "x": 1400,
-          "y": 900
-        },
-        {
-          "algorithm": "appearance",
-          "opacity": 0.25,
-          "colours": ["none"],
-          "stroke": "black",
-          "strokeWidth": 5
-        }
-      ]
-    },
-    {
       "name": "polys",
       "base": "generator",
       "type": "polygon",
-      "rangeR": "130.0:200.0",
-      "rangePoints": "5:9",
+      "r": "130.0:200.0",
+      "c": "5:9",
       "recipe": [
         {
           "algorithm": "generate",
           "count": 40
         },
         {
-          "algorithm": "spread",
-          "method": "area",
-          "area": "carea"
+          "algorithm": "spread-area",
+          "area": "1400:900:400"
         },
         {
           "algorithm": "appearance",

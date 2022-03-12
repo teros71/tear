@@ -31,12 +31,16 @@ def spiralOfRectangles(rect, limit):
     return rs
 
 
-def spiralX(t):
+def spiral_x(t):
     return math.cos(t) * (math.pow(math.e, (goldenB * t)))
 
 
-def spiralY(t):
+def spiral_y(t):
     return math.sin(t) * (math.pow(math.e, (goldenB * t)))
+
+
+def spiral_point(t):
+    return geom.Point(spiral_x(t), spiral_y(t))
 
 
 class SpiralPath:
@@ -45,7 +49,7 @@ class SpiralPath:
         self.current = 0
 
     def next(self):
-        p = geom.Point(spiralX(self.current), spiralY(self.current))
+        p = geom.Point(spiral_x(self.current), spiral_y(self.current))
         self.current += self.step
         return p
 
@@ -55,7 +59,7 @@ def toPathSingle(f):
     shapes = []
     while t < (8 * math.pi):
         s = copy.deepcopy(f)
-        s.move(spiralX(t), spiralY(t))
+        s.move(spiral_x(t), spiral_y(t))
         shapes.append(s)
         t = t + (math.pi / (1 + t))
     return shapes

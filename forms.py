@@ -38,11 +38,6 @@ class Image:
 
 def init():
     """initialize forms"""
-    half = default.UNIT_SIZE / 2.0
-#    add("rectangle", shape.Rect(
-#        0, 0, default.UNIT_SIZE, default.UNIT_SIZE))
-#    add("circle", shape.Circle(half, half, half))
-
     def add_poly(name, pl):
         p = geom.Polygon.fromstr(pl)
         bb = p.bbox()

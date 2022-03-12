@@ -27,20 +27,14 @@ def apply_recursive(config, base, alg):
 
 
 def position(config, base):
-    """set x y and scale"""
-    val = config.get("scale", 1)
+    """set x and y"""
+
+    vx = value.read(config, 'x')
+    vy = value.read(config, 'y')
 
     def do_it(base):
-        base.scale(val)
-    if val != 1:
-        apply_recursive(config, base, do_it)
-    x = config.get("x", -1)
-    y = config.get("y", -1)
-
-    def do_it2(base):
-        base.set_position(x, y)
-    if x != -1 or y != -1:
-        apply_recursive(config, base, do_it2)
+        base.set_position(vx.get(), vy.get())
+    apply_recursive(config, base, do_it)
     return base
 
 # ===========================================================================
@@ -58,9 +52,83 @@ def generate(config, base):
 # - paths, fill, polar coordinates...
 
 
+def read_point(s):
+    print(s)
+    x = value.make(s[0])
+    y = value.make(s[1])
+    return geom.Point(x.get(), y.get())
+
+
+def read_spread_s(config):
+    name = config.get("area")
+    if name is not None:
+        shap = shape.Shape.fromstr(name)
+    else:
+        name = config.get("shape")
+        shap = forms.get(name)
+    return shap
+
+
 def spread_matrix(config, base):
-    rx = value.read(config, "rangeX")
-    ry = value.read(config, "rangeY")
+    rx = value.read(config, "x")
+    ry = value.read(config, "y")
+    pos = value.List([geom.Point(x, y) for y in ry for x in rx])
+
+    def do_it(shape):
+        p = pos.get()
+        shape.set_position(p.x, p.y)
+        return shape
+    return apply_recursive(config, base, do_it)
+
+
+def spread_area(config, base):
+    shap = read_spread_s(config)
+    if shap is None:
+        return None
+    out = config.get("out", False)
+    a = area.RandomInArea(geom.Polygon(shap.get_rendering_points()), out)
+
+    def do_it(s):
+        p = a.get()
+        if p is not None:
+            s.set_position(p.x, p.y)
+        return s
+    return apply_recursive(config, base, do_it)
+
+
+def spread_path(config, base):
+    shap = read_spread_s(config)
+    if shap is None:
+        return None
+    count = value.read(config, "count")
+    a = shape.ShapePath(shap, count.get())
+
+    def do_it(s):
+        p = a.next()
+        if p is not None:
+            s.set_position(p.x, p.y)
+        return s
+    return apply_recursive(config, base, do_it)
+
+
+def spread_f(config, base):
+    origo = config.get('origo', [0, 0])
+    o = read_point(origo)
+    rx = value.read(config, "x")
+    fx = value.read(config, "f")
+
+    def do_it(s):
+        x = rx.get()
+        p = fx(x)
+        s.set_position(p.x + o.x, p.y + o.y)
+        return s
+    return apply_recursive(config, base, do_it)
+
+
+def spread(config, base):
+    """base is a list of shapes, they are spread"""
+    rx = value.read(config, "x")
+    ry = value.read(config, "y")
     x = rx.get()
     y = ry.get()
 
@@ -71,60 +139,6 @@ def spread_matrix(config, base):
         apply_recursive(config, s, do_it)
         x = rx.get()
         y = ry.get()
-    return base
-
-
-def spread(config, base):
-    """base is a list of shapes, they are spread"""
-    method = config.get("method", "random")
-    if method == "random":
-        rx = value.read(config, "rangeX")
-        ry = value.read(config, "rangeY")
-        x = rx.get()
-        y = ry.get()
-
-        def do_it(shape):
-            shape.set_position(x, y)
-            return shape
-        for s in base.shapes:
-            apply_recursive(config, s, do_it)
-            x = rx.get()
-            y = ry.get()
-        return base
-    if method == "area":
-        name = config.get("area")
-        shap = forms.get(name)
-        out = config.get("out", False)
-        a = area.RandomInArea(geom.Polygon(shap.get_rendering_points()), out)
-
-        def do_it2(s):
-            p = a.get()
-            if p is not None:
-                s.set_position(p.x, p.y)
-            return s
-        return apply_recursive(config, base, do_it2)
-    if method == "matrix":
-        rx = value.read(config, "rangeX")
-        ry = value.read(config, "rangeY")
-        pos = value.List([geom.Point(x, y) for y in ry for x in rx])
-
-        def do_it3(shape):
-            p = pos.get()
-            shape.set_position(p.x, p.y)
-            return shape
-        return apply_recursive(config, base, do_it3)
-    if method == "path":
-        name = config.get("shape")
-        shap = forms.get(name)
-        count = value.read(config, "count")
-        a = shape.ShapePath(shap, count.get())
-
-        def do_it4(s):
-            p = a.next()
-            if p is not None:
-                s.set_position(p.x, p.y)
-            return s
-        return apply_recursive(config, base, do_it4)
     return base
 
 
@@ -143,7 +157,7 @@ def set_appearance(config, shap, colour, opacity, stroke, strokew):
                            opacity, stroke, strokew)
         return
     c = colour.get()
-    if isinstance(c, value.ColourRange):
+    if not isinstance(c, str):
         c = c.get()
     shap.appearance.set(c, opacity.get(),
                         stroke.get(), strokew.get())
@@ -196,8 +210,8 @@ def a_tear(r, base):
 
 def scaler(r, base):
     """scale x and y"""
-    rx = value.read(r, "rangeF")
-    ry = value.read(r, "rangeFY", d=0)
+    rx = value.read(r, "fx")
+    ry = value.read(r, "fy", d=0)
 
     def do_it(s):
         fx = rx.get()
@@ -237,6 +251,10 @@ algorithms = {
     "position": position,
     "generate": generate,
     "spread": spread,
+    "spread-area": spread_area,
+    "spread-path": spread_path,
+    "spread-matrix": spread_matrix,
+    "spread-f": spread_f,
     "tear": a_tear,
     "scaler": scaler,
     "appearance": appearance,

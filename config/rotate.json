@@ -1,6 +1,5 @@
 {
   "defaults": {
-    "unitSize": 800.0,
     "tear": {
       "iterations": 18,
       "minDistance": 2.0,
@@ -9,6 +8,10 @@
       "count": 6,
       "opacity": 0.2
     }
+  },
+  "playground": {
+    "w": 2800,
+    "h": 1800
   },
   "forms": [
     {
@@ -21,27 +24,25 @@
         },
         {
           "algorithm": "scaler",
-          "rangeF": "2.5-2.5"
+          "fx": 2.5
         },
         {
           "algorithm": "rotate",
           "disable": false,
-          "cx": 0,
-          "cy": 0,
-          "angle": "0.0-30.0"
+          "angle": "?:0.0:30.0"
         },
         {
           "algorithm": "tear",
           "disable": false,
           "params": {
             "iterations": 12,
-            "angleVar": 20,
+            "angleVar": 0.6,
             "count": 2
           }
         },
         {
           "algorithm": "appearance",
-          "opacity": "0.15-0.25",
+          "opacity": "?:0.15:0.25",
           "colours2": ["orange", "khaki", "red"],
           "colours": ["blue", "red"],
           "stroke": "none",
@@ -59,8 +60,8 @@
       "name": "rec",
       "base": "generator",
       "type": "polygon",
-      "rangeR": "20.0-400.0",
-      "rangePoints": "3-4",
+      "r": "?:20.0:400.0",
+      "c": "?:3:4",
       "recipe": [
         {
           "algorithm": "generate",
@@ -69,28 +70,25 @@
         {
           "algorithm": "rotate",
           "disable": true,
-          "cx": 0,
-          "cy": 0,
           "angle": 90.0
         },
         {
           "algorithm": "spread",
-          "method": "random",
-          "rangeX": "0.0-1400.0",
-          "rangeY": "0.0-900.0"
+          "x": "?:0.0:1400.0",
+          "y": "?:0.0:900.0"
         },
         {
           "algorithm": "tear",
           "disable": false,
           "params": {
             "iterations": 12,
-            "angleVar": 20,
+            "angleVar": 0.03,
             "count": 4
           }
         },
         {
           "algorithm": "appearance",
-          "opacity": "0.45-0.55",
+          "opacity": "?:0.45:0.55",
           "colours": ["orange", "khaki", "red"],
           "colours2": ["black", "indigo"],
           "stroke": "none",

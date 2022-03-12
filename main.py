@@ -7,6 +7,7 @@ import svg
 import default
 import forms
 import form
+import pg
 
 
 def read_config(fname):
@@ -19,6 +20,10 @@ def read_config(fname):
     defs = data.get('defaults')
     if defs is not None:
         default.read(defs)
+    play = data.get('playground')
+    if play is not None:
+        pg.WIDTH = play.get('w', 1000)
+        pg.HEIGHT = play.get('h', 1000)
     return data
 
 
@@ -34,7 +39,7 @@ def run(data, fname):
     print("write output")
     op = data.get('output')
     if op is not None:
-        svg.write(fname, 900, 1400, op)
+        svg.write(fname, 900, 1400, pg.HEIGHT, pg.WIDTH, op)
 
 
 def main(argv):

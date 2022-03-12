@@ -1,6 +1,5 @@
 {
   "defaults": {
-    "unitSize": 800.0,
     "tear": {
       "iterations": 18,
       "minDistance": 2.0,
@@ -9,6 +8,10 @@
       "count": 6,
       "opacity": 0.2
     }
+  },
+  "playground": {
+    "w": 2800,
+    "h": 1800
   },
   "forms": [
     {
@@ -21,7 +24,7 @@
         },
         {
           "algorithm": "scaler",
-          "rangeF": "1.0:2.9/7"
+          "fx": "1.0:2.9/7"
         },
         {
           "algorithm": "position",
@@ -42,8 +45,8 @@
       "name": "rec",
       "base": "new",
       "type": "rectangle",
-      "width": 400,
-      "height": 800,
+      "w": 400,
+      "h": 800,
       "recipe": [
         {
           "algorithm": "multiply",
@@ -51,7 +54,7 @@
         },
         {
           "algorithm": "scaler",
-          "rangeF": "?:1.0:1.9"
+          "fx": "?:1.0:1.9"
         },
         {
           "algorithm": "position",
@@ -63,7 +66,7 @@
           "disable": false,
           "params": {
             "iterations": 12,
-            "angleVar": 10,
+            "angleVar": 0.4,
             "count": 4,
             "randomizeBase": true
           }
@@ -90,7 +93,7 @@
         },
         {
           "algorithm": "scaler",
-          "rangeF": "?:1.0:1.9"
+          "fx": "?:1.0:1.9"
         },
         {
           "algorithm": "position",
@@ -117,13 +120,12 @@
         },
         {
           "algorithm": "scaler",
-          "rangeF": "?:0.5:1.8"
+          "fx": "?:0.5:1.8"
         },
         {
           "algorithm": "spread",
-          "method": "random",
-          "rangeX": "?:100:2800",
-          "rangeY": "?:100:1600"
+          "x": "?:100:2800",
+          "y": "?:100:1600"
         }
       ]
     },
@@ -139,20 +141,19 @@
         },
         {
           "algorithm": "scaler",
-          "rangeF": "?:2.5:4.0"
+          "fx": "?:2.5:4.0"
         },
         {
           "algorithm": "spread",
-          "method": "random",
-          "rangeX": "?:100:2800",
-          "rangeY": "?:100:1600"
+          "x": "?:100:2800",
+          "y": "?:100:1600"
         },
         {
           "algorithm": "tear",
           "disable": false,
           "params": {
             "iterations": 12,
-            "angleVar": 10,
+            "angleVar": 0.8,
             "count": 5,
             "randomizeBase": true
           }
