@@ -10,12 +10,18 @@ random float: "?:42.0:54.1"
 random from list: "?:1,2,3,4"
 
 colour: "blue" or "#0000ff"
-colour range: "c:#000000:#102030"
+colour range: "c:#000000:#102030/10"
 
-tuple: [1, 2, 3]
-range, tuple: [1, 2, 3]:[4, 4, 4]
-random: "e:math.uniform(1.0, 42.3)"
-random: "f:math.uniform(1.0, 42.3)"
+x = integer
+x.y = float
+?:m:n = random between m-n integers or floats
+m:n:s = range between m-n with step s
+m:n/s = range between m-n divided into s steps
+%x%value = x percents of a value
+c:#rrggbb:#rrggbb/n = colour range
+[x, y, z] = list
+f:str = function where str is evaluated with parameter x (depending no the algorithm)
+
 """
 import random
 import math
@@ -24,6 +30,7 @@ import goldenratio
 
 
 def isfloat(num):
+    """can convert to float?"""
     try:
         float(num)
         return True
@@ -32,6 +39,7 @@ def isfloat(num):
 
 
 def isint(num):
+    """can convert to int?"""
     try:
         int(num)
         return True
@@ -39,72 +47,59 @@ def isint(num):
         return False
 
 
-class Simple:
-    def __init__(self, val):
-        self.val = val
+class Single:
+    """Single value, always returns the same"""
 
-    def value(self):
-        return self.val
-
-
-class Colour:
-    def __init__(self, r, g, b):
-        self.r = r
-        self.g = g
-        self.b = b
-
-    @classmethod
-    def fromstr(cls, s):
-        return cls(int(s[1:3], 16), int(s[3:5], 16), int(s[5:7], 16))
-
-    def get(self):
-        return f'#{self.r:02x}{self.g:02x}{self.b:02x}'
-
-    def add(self, c):
-        return Colour(self.r + c.r, self.g + c.g, self.b + c.b)
-
-    def substract(self, c):
-        return Colour(self.r - c.r, self.g - c.g, self.b - c.b)
-
-    def copy(self):
-        return Colour(self.r, self.g, self.b)
-
-
-class ColourRange:
-    def __init__(self, begin, end, count):
-        self.begin = begin
-        self.end = end
-        self.add = end.substract(begin)
-        self.count = count
-        self.i = 0
+    def __init__(self, value):
+        self.value = value
+        self.v = True
 
     def __iter__(self):
         return self
 
     def __next__(self):
-        return self.get()
+        if self.v:
+            self.v = False
+            return self.value
+        raise StopIteration
 
     def get(self):
+        return self.value
 
-        def add(v, n, m):
-            r = int(float(v) * (float(n) / float(m)))
-            return r
+    def reset(self):
+        self.v = True
 
-        if self.i > self.count:
-            self.i = 0
-        c = self.begin
-        r = Colour(c.r + add(self.add.r, self.i, self.count),
-                   c.g + add(self.add.g, self.i, self.count),
-                   c.b + add(self.add.b, self.i, self.count))
-        self.i += 1
-        return r.get()
+
+class List:
+    """List value, returns the next in the list"""
+
+    def __init__(self, lst):
+        self.lst = lst
+        self.i = 0
+
+    def __iter__(self):
+        self.i = 0
+        return self
+
+    def __next__(self):
+        if self.i < len(self.lst):
+            v = self.lst[self.i]
+            self.i += 1
+            return v
+        raise StopIteration
+
+    def get(self):
+        v = self.lst[self.i]
+        self.i = (self.i + 1) % len(self.lst)
+        return v
 
     def reset(self):
         self.i = 0
 
 
 class Range:
-    # Range of values, between min - max
+    """Range value, returns next according to the step"""
+
     def __init__(self, min, max, step):
         self.min = min
         self.max = max
@@ -138,6 +133,8 @@ class Range:
 
 
 class Random:
+    """Random value based either on a list or a range"""
+
     def __init__(self, range):
         self.range = range
         self.method = 0
@@ -152,55 +149,87 @@ class Random:
         if isinstance(self.range, list):
             i = random.randint(0, len(self.range) - 1)
             return self.range[i]
+        if isinstance(self.range, ColourRange):
+            return self.range.random().get()
+        if isinstance(self.range.min, float):
+            return random.uniform(self.range.min, self.range.max)
         if isinstance(self.range.min, int):
             return random.randint(self.range.min, self.range.max)
-        return random.uniform(self.range.min, self.range.max)
 
     def reset(self):
         pass
 
 
-class Single:
-    def __init__(self, value):
-        self.value = value
-        self.v = True
+class Colour:
+    """Colour"""
+
+    def __init__(self, r, g, b):
+        self.r = r
+        self.g = g
+        self.b = b
+
+    @classmethod
+    def fromstr(cls, s):
+        """read from string #rrggbb"""
+        return cls(int(s[1:3], 16), int(s[3:5], 16), int(s[5:7], 16))
+
+    def get(self):
+        """get string value"""
+        return f'#{self.r:02x}{self.g:02x}{self.b:02x}'
+
+    def add(self, c):
+        """add another colour to this"""
+        return Colour(self.r + c.r, self.g + c.g, self.b + c.b)
+
+    def substract(self, c):
+        """substract another colour from this"""
+        return Colour(self.r - c.r, self.g - c.g, self.b - c.b)
+
+    def copy(self):
+        """return copy of this"""
+        return Colour(self.r, self.g, self.b)
+
+
+class ColourRange:
+    def __init__(self, begin, end, count):
+        self.begin = begin
+        self.end = end
+        self.add = end.substract(begin)
+        self.count = count
+        self.i = 0
 
     def __iter__(self):
         return self
 
     def __next__(self):
-        if self.v:
-            self.v = False
-            return self.value
-        raise StopIteration
+        return self.get()
 
     def get(self):
-        return self.value
 
-    def reset(self):
-        self.v = True
+        def add(v, n, m):
+            r = int(float(v) * (float(n) / float(m)))
+            return r
 
+        if self.i > self.count:
+            self.i = 0
+        c = self.begin
+        r = Colour(c.r + add(self.add.r, self.i, self.count),
+                   c.g + add(self.add.g, self.i, self.count),
+                   c.b + add(self.add.b, self.i, self.count))
+        self.i += 1
+        return r.get()
 
-class List:
-    def __init__(self, lst):
-        self.lst = lst
-        self.i = 0
+    def random(self):
 
-    def __iter__(self):
-        self.i = 0
-        return self
+        def rnd(m, n):
+            vmin = min(m, n)
+            vmax = max(m, n)
+            return random.randint(vmin, vmax)
 
-    def __next__(self):
-        if self.i < len(self.lst):
-            v = self.lst[self.i]
-            self.i += 1
-            return v
-        raise StopIteration
-
-    def get(self):
-        v = self.lst[self.i]
-        self.i = (self.i + 1) % len(self.lst)
-        return v
+        r = rnd(self.begin.r, self.end.r)
+        g = rnd(self.begin.g, self.end.g)
+        b = rnd(self.begin.b, self.end.b)
+        return Colour(r, g, b)
 
     def reset(self):
         self.i = 0
@@ -275,6 +304,8 @@ def read_str_value(s):
     if ',' in s:
         lst = convert_list(s.split(','))
         return List(lst)
+    if s[0] == '#':
+        return read_colour(s)
     if ':' in s:
         lst = s.split(':')
         if len(lst) == 3:
@@ -294,12 +325,14 @@ def read_str_value(s):
 def read_colour(s):
     if s[0] != '#':
         return s
-    lst = s.split(':')
-    if len(lst) != 2:
-        print("ERROR: invalid colour", s)
-        return None
-    lst2 = lst[1].split('/')
-    return ColourRange(Colour.fromstr(lst[0]), Colour.fromstr(lst2[0]), int(lst2[1]))
+    if ':' in s:
+        lst = s.split(':')
+        if len(lst) != 2:
+            print("ERROR: invalid colour", s)
+            return None
+        lst2 = lst[1].split('/')
+        return ColourRange(Colour.fromstr(lst[0]), Colour.fromstr(lst2[0]), int(lst2[1]))
+    return Colour.fromstr(s)
 
 
 def read(js, name, d=42):
@@ -309,20 +342,20 @@ def read(js, name, d=42):
 
 
 def make_from_list(obj):
-    if isinstance(obj[0], str) and obj[0].startswith('c:'):
-        cl = [read_colour(c[2:]) for c in obj]
+    if isinstance(obj[0], str) and obj[0].startswith('#'):
+        cl = [read_colour(c) for c in obj]
         return List(cl)
     return List([make(x) for x in obj])
 
 
 def make_from_str(obj):
     # colour range
-    if obj.startswith('c:'):
-        return read_colour(obj[2:])
+    if obj.startswith('#'):
+        return read_colour(obj)
     # substitute variables
     if '$' in obj:
-        obj = obj.replace("$CX", str(pg.WIDTH / 2))
-        obj = obj.replace("$CY", str(pg.HEIGHT / 2))
+        obj = obj.replace("$CX", str(pg.CENTER_X))
+        obj = obj.replace("$CY", str(pg.CENTER_Y))
         obj = obj.replace("$W", str(pg.WIDTH))
         obj = obj.replace("$H", str(pg.HEIGHT))
     # random value
@@ -330,7 +363,7 @@ def make_from_str(obj):
         val = read_str_value(obj[2:])
         if isinstance(val, List):
             return Random(val.lst)
-        if isinstance(val, Range):
+        if isinstance(val, (Range, ColourRange)):
             return Random(val)
         return Random([val.value])
     # function

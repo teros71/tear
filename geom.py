@@ -4,24 +4,29 @@ import random
 
 
 class Point:
-    # Point at x,y
+    """point at x,y"""
+
     def __init__(self, x, y):
         self.x = x
         self.y = y
 
     def copy(self):
+        """return copy of this point"""
         return Point(self.x, self.y)
 
     def move(self, dx, dy):
+        """return a new point moved by dx,dy"""
         return Point(self.x + dx, self.y + dy)
 
     def randomize(self, maxR):
+        """randomize within distance maxR"""
         nd = random.uniform(0.0, maxR)
         na = random.uniform(0, 2 * math.pi)
         self.x = self.x + nd * math.cos(na)
         self.y = self.y + nd * math.sin(na)
 
     def rotate(self, x, y, a):
+        """rotate angle a by around x,y"""
         s = math.sin(a)
         c = math.cos(a)
         nx = self.x - x
@@ -30,22 +35,27 @@ class Point:
         self.y = (nx * s + ny * c) + y
 
     def print(self):
+        """print data"""
         print(self.x, self.y)
 
 
-def halfWayPoint(p1, p2):
+def mid_point(p1, p2):
     return Point(p1.x + (p2.x - p1.x) / 2, p1.y + (p2.y - p1.y) / 2)
 
 
 def distance(p1, p2):
+    """distance between the given points"""
     return math.sqrt(math.pow(p2.y - p1.y, 2) + math.pow(p2.x - p1.x, 2))
 
 
 def angle(p1, p2):
+    """angle of vector between points"""
     return math.atan2(p2.y - p1.y, p2.x - p1.x)
 
 
 class BBox:
+    """Bounding box, x0,y0 - x1,y1"""
+
     def __init__(self, x0, y0, x1, y1):
         self.x0 = x0
         self.y0 = y0
@@ -53,35 +63,54 @@ class BBox:
         self.y1 = y1
 
     def join(self, bb):
+        """grow by given box"""
         self.x0 = min(self.x0, bb.x0)
         self.y0 = min(self.y0, bb.y0)
         self.x1 = max(self.x1, bb.x1)
         self.y1 = max(self.y1, bb.y1)
 
     def print(self):
+        """print data"""
         print(f'bbox;[{self.x0},{self.y0}]-[{self.x1},{self.y1}]')
 
 
 class Rect:
+    """Rectangle, width, height"""
+
     def __init__(self, w, h):
         self.width = w
         self.height = h
 
-    def scale(self, drx, dry):
-        self.width = self.width * drx
-        self.height = self.height * dry
+    def scale(self, fx, fy):
+        """scale by factors fx, fy"""
+        self.width = self.width * fx
+        self.height = self.height * fy
 
-    def get_points(self, x, y):
-        topleft = Point(x - self.width / 2, y - self.height / 2)
+    def is_inside(self, p):
+        """is point inside this rectangle"""
+        return (p.x >= -(self.width / 2) and p.x <= self.width / 2
+                and p.y >= -(self.height / 2) and p.y <= self.height / 2)
+
+    def bbox(self, origo):
+        """bounding box of rectangle for given origo"""
+        tlx = origo.x - self.width / 2
+        tly = origo.y - self.height / 2
+        return BBox(tlx, tly, tlx + self.width, tly + self.height)
+
+    def get_points(self, origo):
+        """get list of points that make up this rectangle, with given origo"""
+        topleft = Point(origo.x - self.width / 2, origo.y - self.height / 2)
         return [topleft, Point(topleft.x, topleft.y + self.height),
                 Point(topleft.x + self.width, topleft.y + self.height),
                 Point(topleft.x + self.width, topleft.y)]
 
     def length(self):
+        """total length of the edge of this rectangle"""
         return self.width * 2 + self.height * 2
 
-    def point_at(self, x, y, dist):
-        p = self.get_points(x, y)
+    def point_at(self, origo, dist):
+        """get point on the edge at given distance along the edge"""
+        p = self.get_points(origo)
         dist = dist % self.length()
         if dist < self.height:
             return Point(p[0].x, p[0].y + dist)
@@ -96,31 +125,49 @@ class Rect:
 
 
 class Circle:
+    """circle, defined by r"""
+
     def __init__(self, r):
         self.r = r
 
-    def scale(self, rx, ry):
-        self.r = self.r * rx
+    def scale(self, fx, fy):
+        """scale by fx, ignore fy"""
+        self.r = self.r * fx
 
     def copy(self):
+        """return copy of myself"""
         return Circle(self.r)
 
-    def get_points(self, x, y):
+    def is_inside(self, p):
+        """is given point inside of the circle"""
+        return math.sqrt(p.x ** 2 + p.y ** 2) <= self.r
+
+    def bbox(self, origo):
+        """bounding box with given origo"""
+        return BBox(origo.x - self.r,
+                    origo.y - self.r,
+                    origo.x + self.r,
+                    origo.y + self.r)
+
+    def get_points(self, origo):
+        """return list of points approximating the circle"""
         points = []
         t = 0.0
         while t < math.pi * 2:
-            points.append(Point(x + self.r * math.cos(t),
-                                y + self.r * math.sin(t)))
+            points.append(Point(origo.x + self.r * math.cos(t),
+                                origo.y + self.r * math.sin(t)))
             t = t + math.pi / 8
         return points
 
     def length(self):
+        """length of the circle edge"""
         return 2 * math.pi * self.r
 
-    def point_at(self, x, y, dist):
+    def point_at(self, origo, dist):
+        """return point at the edge at given distance"""
         dist %= self.length()
         t = (2 * math.pi) * (dist / self.length())
-        return Point(x + self.r * math.cos(t), y + self.r * math.sin(t))
+        return Point(origo.x + self.r * math.cos(t), origo.y + self.r * math.sin(t))
 
 
 class Polygon:
@@ -131,6 +178,7 @@ class Polygon:
 
     @classmethod
     def fromstr(cls, lst):
+        """read polygon points from string"""
         points = []
         for ps in lst.split(','):
             pl = ps.strip().split(' ')
@@ -140,34 +188,41 @@ class Polygon:
 
     @classmethod
     def fromrect(cls, r):
-        return cls(r.get_points(0, 0))
+        """make polygon from rect object"""
+        return cls(r.get_points(Point(0, 0)))
 
-    def get_points(self, x, y):
-        return [p.move(x, y) for p in self.points]
+    def get_points(self, origo):
+        """get list of points with given origo"""
+        return [p.move(origo.x, origo.y) for p in self.points]
 
     def move(self, dx, dy):
+        """move polygon points by dx, dy"""
         for p in self.points:
             p.x = p.x + dx
             p.y = p.y + dy
 
-    def scale(self, rx, ry=0):
-        if ry == 0:
-            ry = rx
+    def scale(self, fx, fy=0):
+        """scale by fx, fy"""
+        if fy == 0:
+            fy = fx
         for p in self.points:
-            p.x = p.x * rx
-            p.y = p.y * ry
+            p.x = p.x * fx
+            p.y = p.y * fy
 
     def rotate(self, x, y, a):
+        """rotate around x, y by given angle a"""
         for p in self.points:
             p.rotate(x, y, a)
 
     def mirror(self):
-        bb = self.bbox()
+        """mirror by center of polygon"""
+        bb = self.bbox(Point(0, 0))
         x = bb.x0 + ((bb.x1 - bb.x0) / 2)
         for p in self.points:
             p.x = x + (x - p.x)
 
-    def bbox(self):
+    def bbox(self, origo):
+        """bounding box with given origo"""
         p = self.points[0]
         x0 = p.x
         y0 = p.y
@@ -182,9 +237,10 @@ class Polygon:
                 y0 = p.y
             if p.y > y1:
                 y1 = p.y
-        return BBox(x0, y0, x1, y1)
+        return BBox(x0 + origo.x, y0 + origo.y, x1 + origo.x, y1 + origo.y)
 
-    def contains(self, p):
+    def is_inside(self, p):
+        """is point inside of the polygon"""
 
         def on_segment(p, q, r):
             if q.x <= max(p.x, r.x) and q.x >= min(p.x, r.x) \
@@ -264,6 +320,7 @@ class Polygon:
         return False
 
     def length(self):
+        """total length of the polygon edges"""
         i = 0
         n = len(self.points)
         d = 0.0
@@ -273,9 +330,10 @@ class Polygon:
             i += 1
         return d
 
-    def point_at(self, x, y, dist):
+    def point_at(self, origo, dist):
+        """point on the edge on given distance"""
         dist %= self.length()
-        p = self.get_points(x, y)
+        p = self.get_points(origo)
         i = 0
         n = len(p)
         j = 1

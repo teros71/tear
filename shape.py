@@ -1,3 +1,4 @@
+"""Shape related stuff"""
 import math
 import random
 import json
@@ -5,56 +6,10 @@ import copy
 import geom
 
 
-class RectGenerator:
-    def __init__(self, w, h):
-        self.w = w
-        self.h = h
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        return Shape(geom.Rect(self.w.get(), self.h.get()))
-
-
-class CircleGenerator:
-    def __init__(self, r):
-        self.r = r
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        return Shape(geom.Circle(self.r.get()))
-
-
-class PolygonGenerator():
-    """Generator for shapes"""
-
-    def __init__(self, r, corners):
-        self.r = r
-        self.corners = corners
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        count = self.corners.get()
-        return Shape(random_polygon(self.r, count))
-
-
-def random_polygon(r, count):
-    slicea = (2 * math.pi) / count
-    points = []
-    for i in range(0, count):
-        s = i * slicea
-        a = random.uniform(s, s + slicea)
-        d = r.get()
-        points.append(geom.Point(d * math.cos(a), d * math.sin(a)))
-    return geom.Polygon(points)
-
-
 class Shape:
+    """Shape wraps a base geometrical element and adds position
+    and appearance"""
+
     def __init__(self, base):
         self.base = base
         self.position = geom.Point(0, 0)
@@ -62,7 +17,8 @@ class Shape:
 
     @classmethod
     def fromstr(cls, str):
-        """shortcut for creating rects and circles"""
+        """shortcut for creating rects and circles
+        format: x:y:r or x:y:w:h """
         sl = str.split(':')
         if len(sl) < 3:
             return None
@@ -82,63 +38,58 @@ class Shape:
         self.position.y += dy
 
     def set_position(self, x, y):
+        """set absolute position to x,y"""
         self.position.x = x
         self.position.y = y
 
-    def scale(self, rx, ry=0):
-        if ry == 0:
-            ry = rx
-        if isinstance(self.base, list):
-            for b in self.base:
-                b.scale(rx, ry)
-            return
-        self.base.scale(rx, ry)
+    def scale(self, fx, fy=0):
+        """scale base shape"""
+        if fy == 0:
+            fy = fx
+        self.base.scale(fx, fy)
 
     def rotate(self, x, y, a):
+        """rotates around x,y by given angle a"""
         if isinstance(self.base, geom.Rect):
+            # rectangle => convert to polygon
             self.base = geom.Polygon.fromrect(self.base)
         self.base.rotate(x, y, math.radians(a.get()))
 
     def mirror(self):
+        """mirror"""
         self.base.mirror()
 
     def bbox(self):
-        if isinstance(self.base, geom.Rect):
-            tlx = self.position.x - self.base.width / 2
-            tly = self.position.y - self.base.height / 2
-            return geom.BBox(tlx, tly, tlx + self.base.width,
-                             tly + self.base.height)
-        if isinstance(self.base, geom.Circle):
-            return geom.BBox(self.position.x - self.base.r,
-                             self.position.y - self.base.r,
-                             self.position.x + self.base.r,
-                             self.position.y + self.base.r)
-        if isinstance(self.base, geom.Polygon):
-            bb = self.base.bbox()
-            bb.x0 += self.position.x
-            bb.x1 += self.position.x
-            bb.y0 += self.position.y
-            bb.y1 += self.position.y
-            return bb
+        """return bounding box"""
+        return self.base.bbox(self.position)
+
+    def is_inside(self, p):
+        """is point inside of shape"""
+        pp = p.move(-self.position.x, -self.position.y)
+        return self.base.is_inside(pp)
 
     def get_points(self):
-        return self.base.get_points(0, 0)
+        """get list of points for the shape"""
+        return self.base.get_points(geom.Point(0, 0))
 
     def get_rendering_points(self):
-        return self.base.get_points(self.position.x, self.position.y)
+        """get rendering points for the shape"""
+        return self.base.get_points(self.position)
 
     def inherit(self, s):
+        """inherit appearance and position from given shape"""
         self.appearance = copy.deepcopy(s.appearance)
         self.position = copy.deepcopy(s.position)
 
 
 class List:
+    """shape list"""
+
     def __init__(self, ls):
         self.shapes = ls
         bb = self.bbox()
         self.position = geom.Point(bb.x0 + (bb.x1 - bb.x0) / 2,
                                    bb.y0 + (bb.y1 - bb.y0) / 2)
-#        self.base = base
         self.appearance = Appearence()
 
     def move(self, dx, dy):
@@ -153,21 +104,25 @@ class List:
         dy = y - self.position.y
         self.move(dx, dy)
 
-    def scale(self, rx, ry=0):
-        if ry == 0:
-            ry = rx
+    def scale(self, fx, fy=0):
+        """scale"""
+        if fy == 0:
+            fy = fx
         for b in self.shapes:
-            b.scale(rx, ry)
+            b.scale(fx, fy)
 
     def rotate(self, x, y, a):
+        """rotate around x,y by given angle a"""
         for b in self.shapes:
             b.rotate(x, y, a)
 
     def mirror(self):
+        """mirror"""
         for b in self.shapes:
             b.mirror()
 
     def bbox(self):
+        """bounding box"""
         bb = None
         for b in self.shapes:
             if bb is None:
@@ -176,12 +131,15 @@ class List:
                 bb.join(b.bbox())
         return bb
 
-#    def inherit(self, s):
-#        for b in self.shapes:
-#            b.inherit(s)
+    def inherit(self, s):
+        """inherit appearance and position from given shape"""
+        self.appearance = copy.deepcopy(s.appearance)
+        self.set_position(s.position.x, s.position.y)
 
 
 class Appearence:
+    """Appearance for a shape: colour, opacity and stroke attributes"""
+
     def __init__(self):
         self.colour = 'black'
         self.opacity = 1
@@ -189,6 +147,7 @@ class Appearence:
         self.stroke_width = 0
 
     def set(self, c, o, s, sw):
+        """set appearance attributes"""
         self.colour = c
         self.opacity = o
         self.stroke = s
@@ -211,21 +170,60 @@ class ShapePath:
         return p
 
 
-def goldenRects2(rect, limit):
-    rs = [rect]
-    count = 1
-    while rect.width > limit:
-        r = copy.deepcopy(rect)
-        r.ratio(1 / 1.618)
-        if count % 4 == 1:
-            r.move(rect.width, 0)
-        elif count % 4 == 2:
-            r.move(rect.width - r.width, rect.height)
-        elif count % 4 == 3:
-            r.move(-r.width, rect.height - r.height)
-        else:
-            r.move(0, -r.height)
-        count = count + 1
-        rs.append(r)
-        rect = r
-    return rs
+class RectGenerator:
+    """Generator for rectangle shapes"""
+
+    def __init__(self, w, h):
+        self.w = w
+        self.h = h
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        return Shape(geom.Rect(self.w.get(), self.h.get()))
+
+
+class CircleGenerator:
+    """Generator for circle shapes"""
+
+    def __init__(self, r):
+        self.r = r
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        return Shape(geom.Circle(self.r.get()))
+
+
+class PolygonGenerator():
+    """Generator for polygon shapes"""
+
+    def __init__(self, r, corners):
+        self.r = r
+        self.corners = corners
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        count = self.corners.get()
+        return Shape(random_polygon(self.r, count))
+
+
+def random_polygon(r, count):
+    """return random polygon with given parameters:
+    r is distance from the center, count is number of points"""
+    # slice circle
+    slicea = (2 * math.pi) / count
+    points = []
+    # generate points
+    for i in range(0, count):
+        s = i * slicea
+        # get random angle within slice
+        a = random.uniform(s, s + slicea)
+        # get distance
+        d = r.get()
+        points.append(geom.Point(d * math.cos(a), d * math.sin(a)))
+    return geom.Polygon(points)

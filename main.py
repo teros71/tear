@@ -24,6 +24,8 @@ def read_config(fname):
     if play is not None:
         pg.WIDTH = play.get('w', 1000)
         pg.HEIGHT = play.get('h', 1000)
+        pg.CENTER_X = pg.WIDTH / 2
+        pg.CENTER_Y = pg.HEIGHT / 2
     return data
 
 

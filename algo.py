@@ -48,9 +48,6 @@ def generate(config, base):
 
 # ===========================================================================
 
-# TODO: add different spreading schemes:
-# - paths, fill, polar coordinates...
-
 
 def read_point(s):
     print(s)

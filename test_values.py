@@ -66,11 +66,14 @@ class TestValues(unittest.TestCase):
         self.assertEqual(c.g, 128)
         self.assertEqual(c.b, 255)
         self.assertEqual(c.get(), "#4280ff")
-        c = value.make("c:#c08000:#88ffff/20")
+        c = value.make("#c08000:#88ffff/20")
         self.assertIsInstance(c, value.ColourRange)
         self.assertEqual(c.count, 20)
         self.assertEqual(c.add.r, -56)
         print(list(itertools.islice(c, 21)))
+        c = value.make("?:#80ff00:#ff0080/1")
+        for _ in range(20):
+            print(c.get())
 
 
 tf = {

@@ -2,6 +2,7 @@
 
 import random
 import geom
+import pg
 
 
 class RandomInArea:
@@ -9,24 +10,23 @@ class RandomInArea:
 
     def __init__(self, area, out):
         self.area = area
-        if out:
-            self.bbox = None
-        else:
-            self.bbox = area.bbox()
+        self.bbox = area.bbox()
         self.out = out
 
     def get(self):
+        if self.out:
+            for _ in range(15):
+                x = random.uniform(0.0, pg.WIDTH) - pg.CENTER_X
+                y = random.uniform(0.0, pg.HEIGHT) - pg.CENTER_Y
+                p = geom.Point(x, y)
+                if not self.area.is_inside(p):
+                    return p
+            p.x = self.bbox.x0 - 0.1
+            return p
         for _ in range(15):
-            if self.out:
-                x = random.uniform(0.0, 2800)
-                y = random.uniform(0.0, 1800)
-                p = geom.Point(x, y)
-                if not self.area.contains(p):
-                    return p
-            else:
-                x = self.bbox.x0 + random.uniform(0.0, self.bbox.x1)
-                y = self.bbox.y0 + random.uniform(0.0, self.bbox.y1)
-                p = geom.Point(x, y)
-                if self.area.contains(p):
-                    return p
-        return None
+            x = self.bbox.x0 + random.uniform(0.0, self.bbox.x1)
+            y = self.bbox.y0 + random.uniform(0.0, self.bbox.y1)
+            p = geom.Point(x, y)
+            if self.area.contains(p):
+                return p
+        return geom.Point(self.area.position.x, self.area.position.y)

@@ -5,6 +5,7 @@ Add handling of recursive shape lists:
 - how are shapes spread
 - maybe add count for shape lists and a cumulative count also?
 - maybe mark a shapelist to be a leaf = no recursive applying?
+- appearance inheritance of list shapes?
 - parametrize tear algorithm to mark what is the leaf?
 - make colour ranges work within a list of colours
 - spreading according to path: open or closed paths
@@ -27,6 +28,6 @@ x.y = float
 m:n:s = range between m-n with step s
 m:n/s = range between m-n divided into s steps
 %x%value = x percents of a value
-c:#rrggbb:#rrggbb = colour range
+#rrggbb:#rrggbb/s = colour range
 [x, y, z] = list
 f:str = function where str is evaluated with parameter x (depending no the algorithm)
