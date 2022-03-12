@@ -40,7 +40,7 @@
         {
           "algorithm": "appearance",
           "opacity": 0.15,
-          "colours": "c:#ff0000:#ffff00/10",
+          "colours": "#ff0000:#ffff00/10",
           "stroke": "none"
         }
       ]

@@ -162,8 +162,7 @@ class ShapePath:
         self.current = 0
 
     def next(self):
-        p = self.s.base.point_at(
-            self.s.position.x, self.s.position.y, self.current)
+        p = self.s.base.point_at(self.s.position, self.current)
         self.current += self.step
         if self.current > self.len:
             self.current = 0

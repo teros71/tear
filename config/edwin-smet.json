@@ -29,8 +29,8 @@
         },
         {
           "algorithm": "scaler",
-          "rangeF": 1,
-          "rangeFY": "?:6.0:10.0"
+          "fx": 1,
+          "fy": "?:6.0:10.0"
         },
         {
           "algorithm": "rotate",
@@ -46,7 +46,6 @@
           "disable": false,
           "params": {
             "iterations": 12,
-            "angleVar2": 20,
             "angleVar": 0.07,
             "count": 1,
             "randomizeBase": false
@@ -55,7 +54,7 @@
         {
           "algorithm": "appearance",
           "opacity": "?:0.2:0.6",
-          "colours": "c:#0000ff:#8080ff/8",
+          "colours": "#0000ff:#8080ff/8",
           "stroke": "black",
           "strokeWidth": 1
         }
@@ -74,8 +73,8 @@
         },
         {
           "algorithm": "scaler",
-          "rangeF": 1,
-          "rangeFY": "?:6.0:10.0"
+          "fx": 1,
+          "fy": "?:6.0:10.0"
         },
         {
           "algorithm": "rotate",
@@ -91,7 +90,6 @@
           "disable": false,
           "params": {
             "iterations": 12,
-            "angleVar2": 20,
             "angleVar": 0.07,
             "count": 1,
             "randomizeBase": false
@@ -100,8 +98,8 @@
         {
           "algorithm": "appearance",
           "opacity": "?:0.2:0.6",
-          "colours": "c:#808000:#a0a080/8",
-          "colours2": "c:#008000:#80a080/8",
+          "colours": "#808000:#a0a080/8",
+          "colours2": "#008000:#80a080/8",
           "stroke": "black",
           "strokeWidth": 1
         }
@@ -132,7 +130,7 @@
         },
         {
           "algorithm": "scaler",
-          "rangeF": "?:1.0:3.0"
+          "fx": "?:1.0:3.0"
         },
         {
           "algorithm": "spread-area",

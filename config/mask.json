@@ -34,7 +34,7 @@
           "algorithm": "appearance",
           "opacity": 0.18,
           "colours": ["olivedrab", "khaki", "orange", "red"],
-          "colours2": "c:#906080:#c0c000/6"
+          "colours2": "#906080:#c0c000/6"
         },
         {
           "algorithm": "tear",
@@ -73,7 +73,7 @@
         {
           "algorithm": "appearance",
           "opacity": 0.15,
-          "colours": "c:#ff0000:#ffff00/10",
+          "colours": "#ff0000:#ffff00/10",
           "stroke": "none"
         }
       ]

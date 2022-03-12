@@ -83,7 +83,7 @@ def spread_area(config, base):
     if shap is None:
         return None
     out = config.get("out", False)
-    a = area.RandomInArea(geom.Polygon(shap.get_rendering_points()), out)
+    a = area.RandomInArea(shap, out)
 
     def do_it(s):
         p = a.get()

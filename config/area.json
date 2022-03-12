@@ -71,7 +71,7 @@
         {
           "algorithm": "appearance",
           "opacity": 0.20,
-          "colours": "c:#201080:#4030a0/10",
+          "colours": "#201080:#4030a0/10",
           "stroke": "black",
           "strokeWidth": 3
         }
@@ -94,7 +94,7 @@
         {
           "algorithm": "appearance",
           "opacity": 0.85,
-          "colours2": "c:#408060:#ff9080/10",
+          "colours2": "#408060:#ff9080/10",
           "colours": ["blue", "green", "orange", "red"]
         }
       ]
@@ -117,7 +117,7 @@
         {
           "algorithm": "appearance",
           "opacity": "?:0.15:0.35",
-          "colours": "c:#408060:#ff9080/10",
+          "colours": "#408060:#ff9080/10",
           "colours2": ["olivedrab", "khaki", "orange", "red"],
           "stroke": "blue",
           "strokeWidth": 1

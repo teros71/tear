@@ -95,7 +95,7 @@
           "algorithm": "appearance",
           "opacity": 0.25,
           "colours2": ["red", "yellow"],
-          "colours": "c:#ff8000:#dfdf20/5",
+          "colours": "#ff8000:#dfdf20/5",
           "stroke": "none",
           "strokeWidth": 6
         },

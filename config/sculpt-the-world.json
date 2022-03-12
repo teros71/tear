@@ -48,8 +48,8 @@
         {
           "algorithm": "scaler",
           "disable": true,
-          "rangeF": 1,
-          "rangeFY": "?:6.0:10.0"
+          "fx": 1,
+          "fy": "?:6.0:10.0"
         },
         {
           "algorithm": "rotate",
@@ -73,7 +73,7 @@
         {
           "algorithm": "appearance",
           "opacity": "?:0.2:0.6",
-          "colours": "c:#0000ff:#8080ff/8",
+          "colours": "#0000ff:#8080ff/8",
           "stroke": "black",
           "strokeWidth": 1
         }
@@ -95,8 +95,8 @@
         {
           "algorithm": "scaler",
           "disable": true,
-          "rangeF": 1,
-          "rangeFY": "?:6.0:10.0"
+          "fx": 1,
+          "fy": "?:6.0:10.0"
         },
         {
           "algorithm": "rotate",
@@ -121,7 +121,7 @@
         {
           "algorithm": "appearance",
           "opacity": "?:0.2:0.6",
-          "colours": "c:#806080:#8080ff/8",
+          "colours": "#806080:#8080ff/8",
           "stroke": "black",
           "strokeWidth": 0
         }
@@ -146,7 +146,7 @@
         {
           "algorithm": "scaler",
           "xrangeF": "?:1.0:3.0",
-          "rangeF": "0.01:10.0:0.025"
+          "fx": "0.01:10.0:0.025"
         },
         {
           "algorithm": "spread",
@@ -165,7 +165,7 @@
         {
           "algorithm": "appearance",
           "opacity": 0.6,
-          "colours": "c:#008020:#a0c060/100"
+          "colours": "#008020:#a0c060/100"
         }
       ]
     }

@@ -40,7 +40,7 @@ def init():
     """initialize forms"""
     def add_poly(name, pl):
         p = geom.Polygon.fromstr(pl)
-        bb = p.bbox()
+        bb = p.bbox(geom.Point(0, 0))
         p.move(-(bb.x0 + (bb.x1 - bb.x0) / 2), -(bb.y0 + (bb.y1 - bb.y0) / 2))
         add(name, shape.Shape(p))
     add_poly("man", man)
