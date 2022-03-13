@@ -236,9 +236,7 @@ class ColourRange:
 
 
 class Eval:
-    def __init__(self, x, f):
-        self.x = x
-        self.current = x
+    def __init__(self, f):
         self.f = f
         self.i = 0
 
@@ -250,20 +248,12 @@ class Eval:
         return self.get()
 
     def get(self):
+        v = eval(self.f.format(self.i))
         self.i += 1
-        self.current = eval(self.f.format(self.current, self.i))
-        return self.current
+        return v
 
     def reset(self):
-        self.current = self.x
         self.i = 0
-
-
-def str2Eval(s):
-    lst = s.split('@')
-    if len(lst) == 2:
-        return Eval(float(lst[0]), lst[1])
-    return None
 
 
 class Function:
@@ -272,6 +262,14 @@ class Function:
 
     def __call__(self, x):
         return eval(self.f.format(x))
+
+
+class Class:
+    def __init__(self, s):
+        self.obj = eval(s)
+
+    def get(self):
+        return self.obj()
 
 
 class Series:
@@ -379,7 +377,9 @@ def make_from_str(obj):
         return Function(obj[2:])
     # eval TODO: fix
     if obj.startswith('e:'):
-        return str2Eval(obj[2:])
+        return Eval(obj[2:])
+    if obj.startswith('u:'):
+        return eval(obj[2:])
     # percent
     if obj.startswith('%'):
         return Single(read_percent_value(obj[1:]))

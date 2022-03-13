@@ -122,6 +122,21 @@ def spread_f(config, base):
     return apply_recursive(config, base, do_it)
 
 
+def spread_s(config, base):
+    origo = config.get('origo', [0, 0])
+    o = read_point(origo)
+    params = config.get('params', [])
+    vals = {key: value.read(config, key) for key in params}
+    fx = value.read(config, "f")
+
+    def do_it(s):
+        args = {key: v.get() for key, v in vals.items()}
+        p = fx(s, **args)
+        s.set_position(p.x + o.x, p.y + o.y)
+        return s
+    return apply_recursive(config, base, do_it)
+
+
 def spread(config, base):
     """base is a list of shapes, they are spread"""
     rx = value.read(config, "x")
@@ -213,6 +228,7 @@ def scaler(r, base):
     def do_it(s):
         fx = rx.get()
         fy = ry.get()
+        print("scale", fx)
         s.scale(fx, fy)
         return s
     return apply_recursive(r, base, do_it)
@@ -252,6 +268,7 @@ algorithms = {
     "spread-path": spread_path,
     "spread-matrix": spread_matrix,
     "spread-f": spread_f,
+    "spread-s": spread_s,
     "tear": a_tear,
     "scaler": scaler,
     "appearance": appearance,

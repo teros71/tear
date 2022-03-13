@@ -163,6 +163,16 @@
           "f": "f:goldenratio.spiral_point({0})"
         },
         {
+          "algorithm": "spread-f",
+          "disable": true,
+          "origo": ["$CX","$CY"],
+          "params": ["x", "y", "z"],
+          "x": "0.1:24/100",
+          "y": ,
+          "z": ,
+          "f": "f:goldenratio.spiral_point({0})"
+        },
+        {
           "algorithm": "appearance",
           "opacity": 0.6,
           "colours": "#008020:#a0c060/100"

@@ -1,6 +1,5 @@
 {
   "defaults": {
-    "unitSize": 800.0,
     "tear": {
       "iterations": 18,
       "minDistance": 2.0,
@@ -9,82 +8,58 @@
       "opacity": 0.2
     }
   },
+  "playground": {
+    "w": 2800,
+    "h": 1800
+  },
   "forms": [
     {
       "name": "gr-rect",
-      "base": "rectangle",
-      "recipe": [
-        {
-          "algorithm": "goldenRatioRectangles",
-          "limit": 10.0
-        }
-      ]
-    },
-    {
-      "name": "gr-rect2",
-      "base": "new",
+      "base": "generator",
       "type": "rectangle",
-      "x": 0,
-      "y": 0,
-      "width": 800,
-      "height": 800,
+      "r": 800,
+      "w": 1600,
+      "h": 1600,
       "recipe": [
         {
-          "algorithm": "goldenRatioRectangles",
-          "limit": 10.0
-        }
-      ]
-    },
-    {
-      "name": "teared-gr-rect",
-      "base": "gr-rect",
-      "recipe": [
-        {
-          "algorithm": "tear",
-          "params": {
-            "iterations": 20,
-            "angleVar": 15,
-            "randomizeBase": false,
-            "count": 24
-          }
+          "algorithm": "generate",
+          "count": 13
         },
-        {
-          "algorithm": "appearance",
-          "opacity": 0.25,
-          "colours": ["lime","red", "orange", "yellow"]
-        }
-      ]
-    },
-    {
-      "name": "teared-gr-rect-2",
-      "base": "gr-rect2",
-      "recipe": [
         {
           "algorithm": "scaler",
-          "rangeF": [0.2, 0.8]
+          "fx": "e:1/goldenratio.VALUE**{0}"
+        },
+        {
+          "algorithm": "spread-s",
+          "origo": [900.0,900.0],
+          "xparams": ["x", "y", "z"],
+          "f": "u:goldenratio.RectSpread()"
         },
         {
           "algorithm": "tear",
+          "disable": false,
           "params": {
             "iterations": 20,
-            "angleVar": 25,
-            "randomizeBase": false,
-            "count": 15
+            "angleVar": 0.07,
+            "randomizeBase": true,
+            "count": 16
           }
         },
         {
           "algorithm": "appearance",
-          "opacity": 0.25,
-          "colours": ["blue","white", "purple"]
+          "opacity": 0.20,
+          "colours": ["blue", "red", "orange", "yellow"],
+          "stroke": "black",
+          "strokeWidth": 1
         }
       ]
     }
   ],
   "output": {
-    "background": "white",
+    "background": "#0b92b8",
     "shapes": [
       {
-        "name": "teared-gr-rect"
+        "name": "gr-rect"
       },
       {
         "name": "teared-gr-rect-2"
