@@ -145,6 +145,7 @@ class Appearence:
         self.opacity = 1
         self.stroke = 'none'
         self.stroke_width = 0
+        self.shadow = False
 
     def set(self, c, o, s, sw):
         """set appearance attributes"""

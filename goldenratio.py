@@ -39,8 +39,9 @@ def spiral_y(t):
     return math.sin(t) * (math.pow(math.e, (GOLDEN_B * t)))
 
 
-def spiral_point(t):
-    return geom.Point(spiral_x(t), spiral_y(t))
+def spiral_point(theta):
+    """return a point on golden spiral for the given angle theta"""
+    return geom.Point(spiral_x(theta), spiral_y(theta))
 
 
 class RectSpread:

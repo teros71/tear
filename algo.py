@@ -49,10 +49,10 @@ def generate(config, base):
 # ===========================================================================
 
 
-def read_point(s):
+def read_point(s, config):
     print(s)
-    x = value.make(s[0])
-    y = value.make(s[1])
+    x = value.make(s[0], config)
+    y = value.make(s[1], config)
     return geom.Point(x.get(), y.get())
 
 
@@ -110,21 +110,23 @@ def spread_path(config, base):
 
 def spread_f(config, base):
     origo = config.get('origo', [0, 0])
-    o = read_point(origo)
-    rx = value.read(config, "x")
+    o = read_point(origo, config)
     fx = value.read(config, "f")
+    shape_arg = config.get("shape-arg", False)
 
     def do_it(s):
-        x = rx.get()
-        p = fx(x)
+        if shape_arg:
+            p = fx(s)
+        else:
+            p = fx()
         s.set_position(p.x + o.x, p.y + o.y)
         return s
     return apply_recursive(config, base, do_it)
 
 
-def spread_s(config, base):
+def x_spread_s(config, base):
     origo = config.get('origo', [0, 0])
-    o = read_point(origo)
+    o = read_point(origo, config)
     params = config.get('params', [])
     vals = {key: value.read(config, key) for key in params}
     fx = value.read(config, "f")
@@ -228,7 +230,6 @@ def scaler(r, base):
     def do_it(s):
         fx = rx.get()
         fy = ry.get()
-        print("scale", fx)
         s.scale(fx, fy)
         return s
     return apply_recursive(r, base, do_it)
@@ -268,7 +269,7 @@ algorithms = {
     "spread-path": spread_path,
     "spread-matrix": spread_matrix,
     "spread-f": spread_f,
-    "spread-s": spread_s,
+    "x-spread-s": x_spread_s,
     "tear": a_tear,
     "scaler": scaler,
     "appearance": appearance,

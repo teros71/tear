@@ -13,6 +13,9 @@ Add handling of recursive shape lists:
 - improve and optimize shape path spreading
 - range step improvement: maybe generic step function
   - e.g. fibonacci multiplier or whatever
+- function improvement for getting shape as parameter
+  - generalisation f:str:[x, y, z] = function str, params are value names?
+- syntax for adding current shape into the argument list of a function
 
 DONE:
 - spread shape path
@@ -22,6 +25,8 @@ DONE:
 - fix clumsy area spread outside of area: define area boundaries (take from pg)
 - random within colour range
 - series value, fibonacci
+- function value with generic kwargs
+
 
 values:
 x = integer

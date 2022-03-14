@@ -5,6 +5,17 @@ import forms
 import geom
 
 
+def write_svg_feshadow(file, id):
+    file.write(f'<filter id="{id}">'
+               f'<feGaussianBlur in="SourceAlpha" stdDeviation="3" />'
+               f'<feOffset dx="2" dy="4" />'
+               f'<feMerge>'
+               f'<feMergeNode />'
+               f'<feMergeNode in="SourceGraphic" />'
+               f'</feMerge>'
+               f'</filter>')
+
+
 def write_svg_recursive(file, shapes):
     """write recursive form"""
     if not isinstance(shapes, list):
@@ -17,6 +28,9 @@ def write_svg_recursive(file, shapes):
         write_svg_recursive(file, shap)
 
 
+SHAPE_COUNT = 0
+
+
 def write_svg_shape(file, single):
     """write shape"""
     if isinstance(single, shape.List):
@@ -24,6 +38,8 @@ def write_svg_shape(file, single):
             write_svg_recursive(file, b)
         return
     app = single.appearance
+    if app.shadow:
+        write_svg_feshadow(file, f'shadow_n{SHAPE_COUNT}')
     if isinstance(single.base, geom.Rect):
         r = single.base
         x = single.position.x - r.width / 2
@@ -51,7 +67,10 @@ def write_svg_shape(file, single):
     file.write(
         f'style="opacity:{app.opacity};'
         f'fill:{app.colour};stroke:{app.stroke};'
-        f'stroke-width:{app.stroke_width};stroke-linejoin:round" />\n')
+        f'stroke-width:{app.stroke_width};stroke-linejoin:round"')
+    if app.shadow:
+        file.write(f' filter="url(#shadow_n{SHAPE_COUNT})"')
+    file.write(' />\n')
 
 
 def write_svg_image(file, img, w, h, bg):

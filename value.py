@@ -257,11 +257,22 @@ class Eval:
 
 
 class Function:
-    def __init__(self, f):
-        self.f = f
+    """Function object. Get the actual callable by evaluating f"""
 
-    def __call__(self, x):
-        return eval(self.f.format(x))
+    def __init__(self, f, kwargs):
+        self.f = eval(f)
+        self.kwargs = kwargs
+
+    @classmethod
+    def fromstr(cls, s, config):
+        args = make_from_dict(config.get("args", {}), config)
+        return cls(s, args)
+
+    def __call__(self, **kwargs):
+        # get values for the arguments
+        args = {key: v.get() for key, v in self.kwargs.items()}
+        args.update(kwargs)
+        return self.f(**args)
 
 
 class Class:
@@ -343,18 +354,22 @@ def read_colour(s):
 
 def read(js, name, d=42):
     v = js.get(name, d)
-    obj = make(v)
+    obj = make(v, js)
     return obj
 
 
-def make_from_list(obj):
+def make_from_list(obj, js):
     if isinstance(obj[0], str) and obj[0].startswith('#'):
         cl = [read_colour(c) for c in obj]
         return List(cl)
-    return List([make(x) for x in obj])
+    return List([make(x, js) for x in obj])
 
 
-def make_from_str(obj):
+def make_from_dict(obj, js):
+    return {key: make(v, js) for key, v in obj.items()}
+
+
+def make_from_str(obj, js):
     # colour range
     if obj.startswith('#'):
         return read_colour(obj)
@@ -374,7 +389,7 @@ def make_from_str(obj):
         return Random([val.value])
     # function
     if obj.startswith('f:'):
-        return Function(obj[2:])
+        return Function.fromstr(obj[2:], js)
     # eval TODO: fix
     if obj.startswith('e:'):
         return Eval(obj[2:])
@@ -389,13 +404,15 @@ def make_from_str(obj):
     return read_str_value(obj)
 
 
-def make(obj):
+def make(obj, js):
     """make a generic value object"""
     if isinstance(obj, (float, int)):
         return Single(obj)
     if isinstance(obj, list):
-        return make_from_list(obj)
+        return make_from_list(obj, js)
     if isinstance(obj, str):
-        return make_from_str(obj)
+        return make_from_str(obj, js)
+    if isinstance(obj, dict):
+        return make_from_dict(obj, js)
     print("WARNING: unknown value type", obj)
     return obj

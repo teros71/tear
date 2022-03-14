@@ -27,6 +27,14 @@ class Params:
         return cls(it, md, mdf, av, rb, c)
 
 
+def randomizePoint(p, max_d):
+    d = random.uniform(0, max_d)
+    a = random.uniform(0.0, 2 * math.pi)
+    x = p.x + d * math.cos(a)
+    y = p.y + d * math.sin(a)
+    return geom.Point(x, y)
+
+
 def generatePoint(p1, p2, min_d, min_df, av):
     d = geom.distance(p1, p2)
     a = geom.angle(p1, p2)
@@ -43,7 +51,21 @@ def generatePoint(p1, p2, min_d, min_df, av):
     return geom.Point(x, y)
 
 
-def randomizePoints(points, min_d, min_df, av):
+def randomizePoints(points, min_d, min_df, rb):
+    newPoints = []
+    mp = points[len(points) - 1]
+    for p in points:
+        max_d = geom.distance(mp, p) * rb
+        np = randomizePoint(p, max_d)
+        if np is not None:
+            newPoints.append(np)
+        else:
+            newPoints.append(p)
+        mp = p
+    return newPoints
+
+
+def xrandomizePoints(points, min_d, min_df, av):
     newPoints = []
     mp = points[len(points) - 1]
     for p in points:
@@ -81,8 +103,10 @@ def generate(points, it, min_d, min_df, av, rb):
     # 1st round: randomize existing points also
     newps = None
 
-    if rb:
-        newps = randomizePoints(points, min_d, min_df, av)
+    if rb < 0.0:
+        newps = xrandomizePoints(points, min_d, min_df, -rb)
+    elif rb > 0.0:
+        newps = randomizePoints(points, min_d, min_df, rb)
     else:
         newps = points
     for _ in range(it):
