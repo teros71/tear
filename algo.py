@@ -261,6 +261,29 @@ def mirror(r, base):
     return base
 
 
+def vectorfield(r, base):
+    fields = r.get("fields")
+
+    def do_it(s):
+        ox = s.position.x
+        oy = s.position.y
+        fi = 0
+        fj = 0
+        for f in fields:
+            x = ox - f[0]
+            y = oy - f[1]
+            i, j = eval(f[2])
+            print("eval", i, j)
+            fi += i
+            fj += j
+        ang = geom.angle(geom.Point(0, 0), geom.Point(fi, fj))
+        print(x, y, fi, fj, math.degrees(ang))
+        a = value.Single(math.degrees(ang))
+        s.rotate(0, 0, a)
+        return s
+    return apply_recursive(r, base, do_it)
+
+
 algorithms = {
     "position": position,
     "generate": generate,
@@ -275,7 +298,8 @@ algorithms = {
     "appearance": appearance,
     "rotate": rotate,
     "multiply": multiply,
-    "mirror": mirror
+    "mirror": mirror,
+    "vectorfield": vectorfield
 }
 
 

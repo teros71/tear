@@ -1,0 +1,74 @@
+{
+  "defaults": {
+    "tear": {
+      "iterations": 18,
+      "minDistance": 2.0,
+      "angleVar": 4,
+      "count": 6,
+      "opacity": 0.2
+    }
+  },
+  "playground": {
+    "w": 2800,
+    "h": 1800
+  },
+  "forms": [
+    {
+      "name": "gr-rect",
+      "base": "generator",
+      "type": "rectangle",
+      "w": 160,
+      "h": 160,
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": 540
+        },
+        {
+          "algorithm": "spread-matrix",
+          "x": "100:2701/26",
+          "y": "100:1701/20"
+        },
+        {
+          "algorithm": "vectorfield",
+          "fields": [
+            [1400,900,"x+y,y-x"]
+          ],
+          "xfields": [
+            [1400,900,"y,x+y"],
+            [2600,700,"y,-x"],
+            [200,900,"y,-x"]
+          ]
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 8,
+            "angleVar": 0.07,
+            "count": 1,
+            "randomizeBase": 0.0
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": 0.30,
+          "colours": ["red", "orange", "blue", "crimson"],
+          "stroke": "black",
+          "strokeWidth": 1
+        }
+      ]
+    }
+  ],
+  "output": {
+    "background": "grey",
+    "shapes": [
+      {
+        "name": "gr-rect"
+      },
+      {
+        "name": "teared-gr-rect-2"
+      }
+    ]
+  }
+}
