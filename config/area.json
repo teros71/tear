@@ -95,7 +95,8 @@
           "algorithm": "appearance",
           "opacity": 0.85,
           "colours2": "#408060:#ff9080/10",
-          "colours": ["blue", "green", "orange", "red"]
+          "colours": ["blue", "green", "orange", "red"],
+          "shadow": true
         }
       ]
     },
@@ -120,7 +121,9 @@
           "colours": "#408060:#ff9080/10",
           "colours2": ["olivedrab", "khaki", "orange", "red"],
           "stroke": "blue",
-          "strokeWidth": 1
+          "strokeWidth": 1,
+          "shadow": false,
+          "blur": false
         },
         {
           "algorithm": "tear",
@@ -129,7 +132,7 @@
             "iterations": 12,
             "angleVar": 0.04,
             "count": 2,
-            "randomizeBase": true
+            "randomizeBase": -0.04
           }
         }
       ]

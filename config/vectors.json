@@ -17,8 +17,8 @@
       "name": "gr-rect",
       "base": "generator",
       "type": "rectangle",
-      "w": 160,
-      "h": 160,
+      "w": 100,
+      "h": 100,
       "recipe": [
         {
           "algorithm": "generate",
@@ -53,7 +53,7 @@
         {
           "algorithm": "appearance",
           "opacity": 0.30,
-          "colours": ["red", "orange", "blue", "crimson"],
+          "colours": ["black", "white"],
           "stroke": "black",
           "strokeWidth": 1
         }

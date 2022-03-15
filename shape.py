@@ -146,13 +146,16 @@ class Appearence:
         self.stroke = 'none'
         self.stroke_width = 0
         self.shadow = False
+        self.blur = False
 
-    def set(self, c, o, s, sw):
+    def set(self, c, o, s, sw, shad=False, blur=False):
         """set appearance attributes"""
         self.colour = c
         self.opacity = o
         self.stroke = s
         self.stroke_width = sw
+        self.shadow = shad
+        self.blur = blur
 
 
 class ShapePath:

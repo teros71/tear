@@ -7,13 +7,19 @@ import geom
 
 def write_svg_feshadow(file, id):
     file.write(f'<filter id="{id}">'
-               f'<feGaussianBlur in="SourceAlpha" stdDeviation="3" />'
-               f'<feOffset dx="2" dy="4" />'
-               f'<feMerge>'
-               f'<feMergeNode />'
-               f'<feMergeNode in="SourceGraphic" />'
-               f'</feMerge>'
-               f'</filter>')
+               '<feGaussianBlur in="SourceAlpha" stdDeviation="3" />'
+               '<feOffset dx="2" dy="4" />'
+               '<feMerge>'
+               '<feMergeNode />'
+               '<feMergeNode in="SourceGraphic" />'
+               '</feMerge>'
+               '</filter>')
+
+
+def write_svg_feblur(file, id):
+    file.write(f'<filter id="{id}">'
+               '<feGaussianBlur in="SourceGraphic" stdDeviation="5" />'
+               '</filter>')
 
 
 def write_svg_recursive(file, shapes):
@@ -40,6 +46,8 @@ def write_svg_shape(file, single):
     app = single.appearance
     if app.shadow:
         write_svg_feshadow(file, f'shadow_n{SHAPE_COUNT}')
+    if app.blur:
+        write_svg_feblur(file, f'blur_n{SHAPE_COUNT}')
     if isinstance(single.base, geom.Rect):
         r = single.base
         x = single.position.x - r.width / 2
@@ -57,7 +65,12 @@ def write_svg_shape(file, single):
         file.write(f'<circle cx="{x}" cy="{y}" r="{r}" '
                    f'style="opacity:{app.opacity};'
                    f'fill:{app.colour};stroke:{app.stroke};'
-                   f'stroke-width:{app.stroke_width}" />\n')
+                   f'stroke-width:{app.stroke_width}"')
+        if app.shadow:
+            file.write(f' filter="url(#shadow_n{SHAPE_COUNT})"')
+        if app.blur:
+            file.write(f' filter="url(#blur_n{SHAPE_COUNT})"')
+        file.write(' />\n')
         return
     file.write('<polygon\n')
     file.write('points="')
@@ -70,6 +83,8 @@ def write_svg_shape(file, single):
         f'stroke-width:{app.stroke_width};stroke-linejoin:round"')
     if app.shadow:
         file.write(f' filter="url(#shadow_n{SHAPE_COUNT})"')
+    if app.blur:
+        file.write(f' filter="url(#blur_n{SHAPE_COUNT})"')
     file.write(' />\n')
 
 

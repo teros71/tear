@@ -159,7 +159,7 @@ def spread(config, base):
 # ===========================================================================
 
 
-def set_appearance(config, shap, colour, opacity, stroke, strokew):
+def set_appearance(config, shap, colour, opacity, stroke, strokew, shad, blur):
     """Set appearance of a shape"""
     if isinstance(shap, shape.List):
         colour.reset()
@@ -168,13 +168,13 @@ def set_appearance(config, shap, colour, opacity, stroke, strokew):
         strokew.reset()
         for inner_shape in shap.shapes:
             set_appearance(config, inner_shape, colour,
-                           opacity, stroke, strokew)
+                           opacity, stroke, strokew, shad, blur)
         return
     c = colour.get()
     if not isinstance(c, str):
         c = c.get()
     shap.appearance.set(c, opacity.get(),
-                        stroke.get(), strokew.get())
+                        stroke.get(), strokew.get(), shad, blur)
 
 # ===========================================================================
 
@@ -185,7 +185,9 @@ def appearance(config, base):
     colour = value.read(config, 'colours', d=["black"])
     stroke = value.read(config, 'stroke', d="none")
     strokew = value.read(config, 'strokeWidth', d=0)
-    set_appearance(config, base, colour, opacity, stroke, strokew)
+    shad = config.get('shadow', False)
+    blur = config.get('blur', False)
+    set_appearance(config, base, colour, opacity, stroke, strokew, shad, blur)
     return base
 
 # ===========================================================================
@@ -284,6 +286,13 @@ def vectorfield(r, base):
     return apply_recursive(r, base, do_it)
 
 
+def shadow(r, base):
+
+    def do_it(s):
+        s.appearance.shadow = True
+    return apply_recursive(r, base, do_it)
+
+
 algorithms = {
     "position": position,
     "generate": generate,
@@ -299,7 +308,8 @@ algorithms = {
     "rotate": rotate,
     "multiply": multiply,
     "mirror": mirror,
-    "vectorfield": vectorfield
+    "vectorfield": vectorfield,
+    "shadow": shadow
 }
 
 
