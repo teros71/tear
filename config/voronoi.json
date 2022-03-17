@@ -1,0 +1,123 @@
+{
+  "defaults": {
+    "tear": {
+      "iterations": 18,
+      "minDistance": 2.0,
+      "angleVar": 4,
+      "count": 6,
+      "opacity": 0.2
+    }
+  },
+  "playground": {
+    "w": 2800,
+    "h": 1800
+  },
+  "forms": [
+    {
+      "name": "gr-rect",
+      "base": "generator",
+      "type": "polygon",
+      "r": "?:200:1300",
+      "c": "?:48:50",
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": 1
+        },
+        {
+          "algorithm": "scaler",
+          "disable": true,
+          "fx": 1,
+          "fy": "0.05:1.0/20"
+        },
+        {
+          "algorithm": "voronoi",
+          "disable": false
+        },
+        {
+          "algorithm": "position",
+          "x": "$CX",
+          "y": 900
+        },
+        {
+          "algorithm": "vectorfield",
+          "fields": [
+            [1400,900,"-y,x"]
+          ]
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 8,
+            "angleVar": "0.12",
+            "count": 4,
+            "randomizeBase": 0.0
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": 0.25,
+          "colours2": ["#a00000", "#200080", "green"],
+          "colours": ["#800040:#8020ff/20", "blue"],
+          "stroke": "black",
+          "strokeWidth": 1,
+          "shadow": false
+        }
+      ]
+    },
+    {
+      "disable": true,
+      "name": "bg",
+      "base": "generator",
+      "type": "polygon",
+      "r": "?:100:200",
+      "c": 5,
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": 50
+        },
+        {
+          "algorithm": "spread",
+          "x": "?:0:2800",
+          "y": "?:1200:1800"
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 8,
+            "angleVar": 2.8,
+            "count": 1,
+            "randomizeBase": false
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "0.08",
+          "colours": ["#c0c0c0"],
+          "stroke": "none",
+          "strokeWidth": 0
+        }
+      ]
+    }
+  ],
+  "output": {
+    "background": "whilte",
+    "shapes": [
+      {
+        "name": "bg"
+      },
+      {
+        "name": "bot"
+      },
+      {
+        "name": "man3"
+      },
+      {
+        "name": "gr-rect"
+      }
+    ]
+  }
+}

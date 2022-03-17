@@ -1,0 +1,182 @@
+{
+  "defaults": {
+    "tear": {
+      "iterations": 18,
+      "minDistance": 2.0,
+      "angleVar": 4,
+      "count": 6,
+      "opacity": 0.2
+    }
+  },
+  "playground": {
+    "w": 2800,
+    "h": 1800
+  },
+  "forms": [
+    {
+      "name": "gr-rect",
+      "base": "generator",
+      "type": "rectangle",
+      "w": 400,
+      "h": 400,
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": 20
+        },
+        {
+          "algorithm": "scaler",
+          "disable": true,
+          "fx": 1,
+          "fy": "0.05:1.0/20"
+        },
+        {
+          "algorithm": "position",
+          "x": "200:2600:100",
+          "y": 900
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 8,
+            "angleVar": "0.01:1.2/20",
+            "count": 2,
+            "randomizeBase": 0.0
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": 0.15,
+          "colours": ["#00a000", "#80a040"],
+          "stroke": "black",
+          "strokeWidth": 2
+        }
+      ]
+    },
+    {
+      "name": "bot",
+      "base": "generator",
+      "type": "circle",
+      "r": 300,
+      "w": 400,
+      "h": 1400,
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": 1
+        },
+        {
+          "algorithm": "position",
+          "x": 1800,
+          "y": "$CY"
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 18,
+            "angleVar": 0.08,
+            "count": 10,
+            "randomizeBase": -0.08
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": 0.30,
+          "colours": ["red", "orange"],
+          "stroke": "black",
+          "strokeWidth": 0,
+          "shadow": true
+        }
+      ]
+    },
+    {
+      "name": "man",
+      "base": "standing-man",
+      "recipe": [
+        {
+          "algorithm": "scaler",
+          "fx": 1.0
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 10,
+            "angleVar": 0.35,
+            "count": 10,
+            "randomizeBase": false
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "0.15:0.15",
+          "colours2": ["black", "red"],
+          "colours": ["#201030"],
+          "stroke": "#ff6a18",
+          "strokeWidth": 20
+        },
+        {
+          "algorithm": "position",
+          "disable": false,
+          "x": 1800,
+          "y": "$CY"
+        }
+      ]
+    },
+    {
+      "disable": true,
+      "name": "bg",
+      "base": "generator",
+      "type": "polygon",
+      "r": "?:100:200",
+      "c": 5,
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": 50
+        },
+        {
+          "algorithm": "spread",
+          "x": "?:0:2800",
+          "y": "?:1200:1800"
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 8,
+            "angleVar": 2.8,
+            "count": 1,
+            "randomizeBase": false
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "0.08",
+          "colours": ["#c0c0c0"],
+          "stroke": "none",
+          "strokeWidth": 0
+        }
+      ]
+    }
+  ],
+  "output": {
+    "background": "whilte",
+    "shapes": [
+      {
+        "name": "bg"
+      },
+      {
+        "name": "bot"
+      },
+      {
+        "name": "man"
+      },
+      {
+        "name": "gr-rect"
+      }
+    ]
+  }
+}

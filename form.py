@@ -44,6 +44,8 @@ def apply_recipe(recipe, base):
 
 
 def generate_form(config):
+    if config.get('disable', False):
+        return
     name = config.get('name')
     base_name = config['base']
     base = None

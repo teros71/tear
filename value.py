@@ -189,6 +189,9 @@ class Colour:
         """return copy of this"""
         return Colour(self.r, self.g, self.b)
 
+    def reset(self):
+        pass
+
 
 class ColourRange:
     def __init__(self, begin, end, count):

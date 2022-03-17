@@ -10,6 +10,7 @@ import value
 import area
 import forms
 import geom
+import voronoi
 
 
 # ===========================================================================
@@ -293,6 +294,16 @@ def shadow(r, base):
     return apply_recursive(r, base, do_it)
 
 
+def a_voronoi(r, base):
+    infinite = r.get("infinite", False)
+    ps = []
+    for s in base.shapes:
+        ps.extend(s.get_points())
+    if infinite:
+        return shape.List([shape.Shape(p) for p in voronoi.all_polygons(ps)])
+    return shape.List([shape.Shape(p) for p in voronoi.finite_polygons(ps)])
+
+
 algorithms = {
     "position": position,
     "generate": generate,
@@ -309,7 +320,8 @@ algorithms = {
     "multiply": multiply,
     "mirror": mirror,
     "vectorfield": vectorfield,
-    "shadow": shadow
+    "shadow": shadow,
+    "voronoi": a_voronoi
 }
 
 
