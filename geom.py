@@ -34,6 +34,31 @@ class Point:
         self.x = (nx * c - ny * s) + x
         self.y = (nx * s + ny * c) + y
 
+    # Vector functions
+    def substract(self, v):
+        """substract another point"""
+        return Point(self.x - v.x, self.y - v.y)
+
+    def add(self, v):
+        """add another point"""
+        return Vector(self.x + v.x, self.y + v.y)
+
+    def multiply(self, v):
+        """multiply with another point"""
+        return self.x * v.x + self.y * v.y
+
+    def scale(self, f):
+        """move by factor f"""
+        return Vector(self.x * f, self.y * f)
+
+    def cross(self, v):
+        """cross product"""
+        return self.x * v.y - self.y * v.x
+
+    def is_equal(self, v):
+        """has same coordinates"""
+        return is_zero(self.x - v.x) and is_zero(self.y - v.y)
+
     def print(self):
         """print data"""
         print(self.x, self.y)
@@ -51,6 +76,11 @@ def distance(p1, p2):
 def angle(p1, p2):
     """angle of vector between points"""
     return math.atan2(p2.y - p1.y, p2.x - p1.x)
+
+
+def is_zero(d):
+    """is close enough to zero"""
+    return math.fabs(d) < 1e-10
 
 
 class BBox:
@@ -293,7 +323,7 @@ class Polygon:
 
         # Create a point for line segment from p to infinite
 #        p = shape.Point(x, y)
-        extreme = Point(0, p.y)
+        extreme = Point(-10**7, p.y)
         # Count intersections of the above line with sides of polygon
         count = 0
         i = 0
@@ -318,6 +348,38 @@ class Polygon:
         if count % 2 == 1:
             return True
         return False
+
+    def intersection(self, p1, p2):
+        """return intersecting point for the give line segment"""
+        q1 = self.points[len(self.points) - 1]
+        for q2 in self.points:
+            inters = intersect(p1, p2, q1, q2)
+            if inters is not None:
+                return inters
+        return None
+
+    def shrink_to_inside(self, poly):
+        """shrink this polygon to be completely inside the given one"""
+        # first find a starting point that is inside
+        i = 0
+        while i < len(self.points) and not poly.is_inside(self.points[i]):
+            i += 1
+        if i >= len(self.points):
+            return False
+        inters = None
+        j = i
+        p1 = self.points[j]
+        j = (j + 1) % len(self.points)
+        while j != i:
+            p2 = self.points[j]
+            inters = poly.intersection(p1, p2)
+            if inters is not None:
+                self.points[j] = inters
+                p1 = inters
+            else:
+                p1 = p2
+            j = (j + 1) % len(self.points)
+        return True
 
     def length(self):
         """total length of the polygon edges"""
@@ -350,3 +412,60 @@ class Polygon:
             d = distance(p0, p1)
         print(dist, p0.x, p0.y, p1.x, p1.y, d)
         return Point(p0.x + (p1.x - p0.x) * (dist / d), p0.y + (p1.y - p0.y) * (dist / d))
+
+
+def intersect(p1, p2, q1, q2):
+    """Test whether two line segments intersect. If so, calculate the
+    intersection point.
+    <see cref="http://stackoverflow.com/a/14143738/292237"/>
+    <param name="p1">Vector to the start point of p.</param>
+    <param name="p2">Vector to the end point of p.</param>
+    <param name="q1">Vector to the start point of q.</param>
+    <param name="q2">Vector to the end point of q.</param>
+    Returns the point of intersection, if any.
+    considerOverlapAsIntersect: Do we consider overlapping lines as
+    intersecting?
+    """
+    r = p2.substract(p1)
+    s = q2.substract(q1)
+    rxs = r.cross(s)
+    qmp = q1.substract(p1)
+    qpxr = qmp.cross(r)
+
+    # If r x s = 0 and (q - p) x r = 0, then the two lines are collinear.
+    if is_zero(rxs):
+        # if is_zero(qpxr):
+        # 1. If either  0 <= (q - p) * r <= r * r or 0 <= (p - q) * s <= * s
+        # then the two lines are overlapping,
+        #        if (considerOverlapAsIntersect)
+        #            if ((0 <= (q - p) * r && (q - p) * r <= r * r) ||
+        #            (0 <= (p - q) * s & & (p - q) * s <= s * s))
+        #                return true;
+        # 2. If neither 0 <= (q - p) * r ≤ r * r nor 0 <= (p - q) * s <= s * s
+        # then the two lines are collinear but disjoint.
+        # No need to implement this expression, as it follows from the
+        # expression above.
+        return None
+
+    # 3. If r x s = 0 and (q - p) x r != 0, then the two lines are parallel and
+    # non-intersecting.
+#    if is_zero(rxs) and !is_zero(qpxr)
+#        return None
+
+    # t = (q - p) x s / (r x s)
+    t = qmp.cross(s) / rxs
+
+    # u = (q - p) x r / (r x s)
+    u = qpxr / rxs
+
+    # 4. If r x s != 0 and 0 <= t <= 1 and 0 <= u <= 1
+    # the two line segments meet at the point p + t r = q + u s.
+    if (not is_zero(rxs)) and 0 <= t and t <= 1 and 0 <= u and u <= 1:
+        # We can calculate the intersection point using either t or u.
+        intersection = p1.add(r.scale(t))
+
+        # An intersection was found.
+        return intersection
+
+    # 5. Otherwise, the two line segments are not parallel but do not intersect.
+    return None
