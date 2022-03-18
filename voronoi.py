@@ -17,7 +17,6 @@ def all_polygons(points):
 def finite_polygons(points):
     ps = [[p.x, p.y] for p in points]
     vor = Voronoi(ps)
-
     if vor.points.shape[1] != 2:
         raise ValueError("Requires 2D input")
 

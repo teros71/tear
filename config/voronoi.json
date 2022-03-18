@@ -17,21 +17,36 @@
       "name": "gr-rect",
       "base": "generator",
       "type": "polygon",
-      "r": "?:200:1300",
-      "c": "?:48:50",
+      "r": "?:600:800",
+      "c": "?:18:20",
       "recipe": [
         {
           "algorithm": "generate",
           "count": 1
         },
         {
-          "algorithm": "scaler",
+          "algorithm": "position",
           "disable": true,
-          "fx": 1,
-          "fy": "0.05:1.0/20"
+          "x": "$CX",
+          "y": "$CY"
         },
         {
-          "algorithm": "voronoi",
+          "algorithm": "appearance",
+          "opacity": 0.25,
+          "colours": "grey",
+          "stroke": "black",
+          "strokeWidth": 1,
+          "shadow": false
+        }
+      ]
+    },
+    {
+      "name": "vor",
+      "base": "gr-rect",
+      "recipe": [
+        {
+          "algorithm": "voronoi-b",
+          "count": 40,
           "disable": false
         },
         {
@@ -40,29 +55,34 @@
           "y": 900
         },
         {
-          "algorithm": "vectorfield",
-          "fields": [
-            [1400,900,"-y,x"]
-          ]
-        },
-        {
           "algorithm": "tear",
-          "disable": false,
+          "disable": true,
           "params": {
-            "iterations": 8,
-            "angleVar": "0.12",
+            "iterations": 10,
+            "angleVar": "0.07",
             "count": 4,
-            "randomizeBase": 0.0
+            "randomizeBase": 0.07
           }
         },
         {
           "algorithm": "appearance",
-          "opacity": 0.25,
+          "opacity": 0.15,
           "colours2": ["#a00000", "#200080", "green"],
-          "colours": ["#800040:#8020ff/20", "blue"],
+          "colours": ["#800040:#8020ff/20", "blue", "red"],
           "stroke": "black",
-          "strokeWidth": 1,
+          "strokeWidth": 2,
           "shadow": false
+        }
+      ]
+    },
+    {
+      "name": "my-pol",
+      "base": "gr-rect",
+      "recipe": [
+        {
+          "algorithm": "position",
+          "x": "$CX",
+          "y": "$CY"
         }
       ]
     },
@@ -113,10 +133,10 @@
         "name": "bot"
       },
       {
-        "name": "man3"
+        "name": "vor"
       },
       {
-        "name": "gr-rect"
+        "name": "my-pol"
       }
     ]
   }

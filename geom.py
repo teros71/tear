@@ -41,7 +41,7 @@ class Point:
 
     def add(self, v):
         """add another point"""
-        return Vector(self.x + v.x, self.y + v.y)
+        return Point(self.x + v.x, self.y + v.y)
 
     def multiply(self, v):
         """multiply with another point"""
@@ -49,7 +49,7 @@ class Point:
 
     def scale(self, f):
         """move by factor f"""
-        return Vector(self.x * f, self.y * f)
+        return Point(self.x * f, self.y * f)
 
     def cross(self, v):
         """cross product"""
@@ -356,29 +356,49 @@ class Polygon:
             inters = intersect(p1, p2, q1, q2)
             if inters is not None:
                 return inters
+            q1 = q2
         return None
 
     def shrink_to_inside(self, poly):
         """shrink this polygon to be completely inside the given one"""
         # first find a starting point that is inside
-        i = 0
-        while i < len(self.points) and not poly.is_inside(self.points[i]):
-            i += 1
-        if i >= len(self.points):
+        i = -1
+        k = 0
+        inside = True
+        for p in self.points:
+            if poly.is_inside(p):
+                if i == -1:
+                    i = k
+            else:
+                inside = False
+            k += 1
+        if i == -1:
+            print("completely outside!")
+            return False
+        if inside:
+            print("completely inside!")
             return False
         inters = None
         j = i
         p1 = self.points[j]
         j = (j + 1) % len(self.points)
+        changed = False
         while j != i:
             p2 = self.points[j]
             inters = poly.intersection(p1, p2)
             if inters is not None:
+                print("intersection, moving point")
+                p2.print()
+                inters.print()
                 self.points[j] = inters
                 p1 = inters
+                changed = True
             else:
+                print("no inters")
                 p1 = p2
             j = (j + 1) % len(self.points)
+        if not changed:
+            print("no need to change")
         return True
 
     def length(self):

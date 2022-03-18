@@ -1,6 +1,7 @@
 """Algorithms for processing"""
 
 import math
+import random
 import copy
 import itertools
 import shape
@@ -304,6 +305,34 @@ def a_voronoi(r, base):
     return shape.List([shape.Shape(p) for p in voronoi.finite_polygons(ps)])
 
 
+def b_voronoi(r, base):
+    count = r.get("count", 1)
+    res = None
+    for s in base.shapes:
+        ps = []
+        bb = s.bbox()
+        for _ in range(count):
+            i = 15
+            while i > 0:
+                p = geom.Point(random.randint(int(bb.x0), int(bb.x1)),
+                               random.randint(int(bb.y0), int(bb.y1)))
+                if s.is_inside(p):
+                    ps.append(p)
+                    i = 1
+                i -= 1
+        print(count, len(ps))
+        ns = voronoi.all_polygons(ps)
+        for pol in ns:
+            pol.shrink_to_inside(s.base)
+
+        shaps = [shape.Shape(p) for p in ns]
+        if res is None:
+            res = shape.List(shaps)
+        else:
+            res.shapes.extend(shaps)
+    return res
+
+
 algorithms = {
     "position": position,
     "generate": generate,
@@ -321,7 +350,8 @@ algorithms = {
     "mirror": mirror,
     "vectorfield": vectorfield,
     "shadow": shadow,
-    "voronoi": a_voronoi
+    "voronoi": a_voronoi,
+    "voronoi-b": b_voronoi
 }
 
 

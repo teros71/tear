@@ -13,6 +13,12 @@ Add handling of recursive shape lists:
 - improve and optimize shape path spreading
 - range step improvement: maybe generic step function
   - e.g. fibonacci multiplier or whatever
+- make algorithm to create voronoi inside a shape
+  - improve voronoi to be contained inside shape
+- make some generative algorithms that create shapes according to some
+  pattern or something...
+- add lines?
+- 
 
 DONE:
 - spread shape path
@@ -29,6 +35,8 @@ DONE:
   - settled for "shape-arg": true
 - new functionality: field vector
   - needs to be applied after spreading
+- simple voronoi
+
 
 values:
 x = integer
