@@ -18,7 +18,8 @@ Add handling of recursive shape lists:
 - make some generative algorithms that create shapes according to some
   pattern or something...
 - add lines?
-- 
+- polar coordinates for some algorithms? e.g. spreading shapes along a circle?
+
 
 DONE:
 - spread shape path

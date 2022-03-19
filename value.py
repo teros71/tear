@@ -23,10 +23,11 @@ c:#rrggbb:#rrggbb/n = colour range
 f:str = function where str is evaluated with parameter x (depending no the algorithm)
 
 """
-import random
 import math
+import random
 import pg
 import goldenratio
+from colours import Colour, ColourRange
 
 
 def isfloat(num):
@@ -160,7 +161,7 @@ class Random:
         pass
 
 
-class Colour:
+class Colour2:
     """Colour"""
 
     def __init__(self, r, g, b):
@@ -191,51 +192,6 @@ class Colour:
 
     def reset(self):
         pass
-
-
-class ColourRange:
-    def __init__(self, begin, end, count):
-        self.begin = begin
-        self.end = end
-        self.add = end.substract(begin)
-        self.count = count
-        self.i = 0
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        return self.get()
-
-    def get(self):
-
-        def add(v, n, m):
-            r = int(float(v) * (float(n) / float(m)))
-            return r
-
-        if self.i > self.count:
-            self.i = 0
-        c = self.begin
-        r = Colour(c.r + add(self.add.r, self.i, self.count),
-                   c.g + add(self.add.g, self.i, self.count),
-                   c.b + add(self.add.b, self.i, self.count))
-        self.i += 1
-        return r.get()
-
-    def random(self):
-
-        def rnd(m, n):
-            vmin = min(m, n)
-            vmax = max(m, n)
-            return random.randint(vmin, vmax)
-
-        r = rnd(self.begin.r, self.end.r)
-        g = rnd(self.begin.g, self.end.g)
-        b = rnd(self.begin.b, self.end.b)
-        return Colour(r, g, b)
-
-    def reset(self):
-        self.i = 0
 
 
 class Eval:
@@ -407,7 +363,7 @@ def make_from_str(obj, js):
     return read_str_value(obj)
 
 
-def make(obj, js):
+def make(obj, js=None):
     """make a generic value object"""
     if isinstance(obj, (float, int)):
         return Single(obj)

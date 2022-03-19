@@ -1,5 +1,6 @@
 import unittest
 import value
+import colours
 import itertools
 import goldenratio
 
@@ -45,11 +46,10 @@ class TestValues(unittest.TestCase):
         self.assertIsInstance(v.range.min, float)
 
     def test_eval(self):
-        v = value.make("e:1.0@{0}*1.6")
+        v = value.make("e:{0}*1.6")
         self.assertIsInstance(v, value.Eval)
-        self.assertEqual(v.x, 1.0)
         print(list(itertools.islice(v, 5)))
-        v = value.make("e:20.0@{0}+math.fabs(math.sin((math.pi/8)*{1}))*20")
+        v = value.make("e:{0}+math.fabs(math.sin((math.pi/8)*{0}))*20")
         self.assertIsInstance(v, value.Eval)
         print(list(itertools.islice(v, 30)))
 
@@ -62,16 +62,14 @@ class TestValues(unittest.TestCase):
         self.assertEqual(v.get(), 500.0)
 
     def test_colours(self):
-        c = value.Colour.fromstr("#4280ff")
-        self.assertEqual(c.r, 66)
-        self.assertEqual(c.g, 128)
-        self.assertEqual(c.b, 255)
+        c = colours.Colour.fromstr("#4280ff")
+        self.assertEqual(c.hex, "#4280ff")
         self.assertEqual(c.get(), "#4280ff")
         c = value.make("#c08000:#88ffff/20")
-        self.assertIsInstance(c, value.ColourRange)
-        self.assertEqual(c.count, 20)
-        self.assertEqual(c.add.r, -56)
-        print(list(itertools.islice(c, 21)))
+        self.assertEqual(len(c.range), 20)
+        self.assertIsInstance(c, colours.ColourRange)
+        print(c.range)
+#        print(list(itertools.islice(c, 21)))
         c = value.make("?:#80ff00:#ff0080/1")
         for _ in range(20):
             print(c.get())

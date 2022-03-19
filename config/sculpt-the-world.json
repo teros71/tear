@@ -56,7 +56,11 @@
           "angle": "0:360/30"
         },
         {
-          "algorithm": "spread-path",
+          "algorithm": "spread-polar",
+          "origo": [1400,900],
+          "r": 600,
+          "t": "0:6.2831853/30",
+          "algorithm2": "spread-path",
           "shape": "circarea",
           "count": 30
         },
@@ -146,27 +150,18 @@
         },
         {
           "algorithm": "scaler",
-          "xrangeF": "?:1.0:3.0",
-          "fx": "0.01:10.0:0.025"
-        },
-        {
-          "algorithm": "spread",
-          "disable": true,
-          "method": "area",
-          "shape": "circarea",
-          "count": 100,
-          "area": "circarea"
+          "fx": "0.01:20.0:0.025"
         },
         {
           "algorithm": "spread-f",
           "origo": ["$CX","$CY"],
-          "args": { "theta": "0.1:24/100" },
+          "args": { "theta": "6.0:24/100" },
           "f": "f:goldenratio.spiral_point"
         },
         {
           "algorithm": "appearance",
           "opacity": 0.6,
-          "colours": "#008020:#a0c060/100",
+          "colours": "#008020:#90dd80/100",
           "shadow": true
         }
       ]

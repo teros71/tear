@@ -141,6 +141,29 @@ def x_spread_s(config, base):
     return apply_recursive(config, base, do_it)
 
 
+def spread_polar(config, base):
+    """base is a list of shapes, they are spread"""
+    origo = config.get('origo', [0, 0])
+    o = read_point(origo, config)
+    rr = value.read(config, "r")
+    rt = value.read(config, "t")
+    r = rr.get()
+    t = rt.get()
+    x = r * math.cos(t)
+    y = r * math.sin(t)
+
+    def do_it(shape):
+        shape.set_position(x + o.x, y + o.y)
+        return shape
+    for s in base.shapes:
+        apply_recursive(config, s, do_it)
+        r = rr.get()
+        t = rt.get()
+        x = r * math.cos(t)
+        y = r * math.sin(t)
+    return base
+
+
 def spread(config, base):
     """base is a list of shapes, they are spread"""
     rx = value.read(config, "x")
@@ -339,6 +362,7 @@ algorithms = {
     "spread": spread,
     "spread-area": spread_area,
     "spread-path": spread_path,
+    "spread-polar": spread_polar,
     "spread-matrix": spread_matrix,
     "spread-f": spread_f,
     "x-spread-s": x_spread_s,
