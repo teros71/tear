@@ -30,24 +30,6 @@ import goldenratio
 from colours import Colour, ColourRange
 
 
-def isfloat(num):
-    """can convert to float?"""
-    try:
-        float(num)
-        return True
-    except ValueError:
-        return False
-
-
-def isint(num):
-    """can convert to int?"""
-    try:
-        int(num)
-        return True
-    except ValueError:
-        return False
-
-
 class Single:
     """Single value, always returns the same"""
 
@@ -89,9 +71,17 @@ class List:
             return v
         raise StopIteration
 
+    def __getitem__(self, item):
+        return self.lst[item]
+
+    def depth(self):
+        return
+
     def get(self):
+        if self.i >= len(self.lst):
+            self.i = 0
         v = self.lst[self.i]
-        self.i = (self.i + 1) % len(self.lst)
+        self.i += 1
         return v
 
     def reset(self):
@@ -151,44 +141,11 @@ class Random:
             i = random.randint(0, len(self.range) - 1)
             return self.range[i]
         if isinstance(self.range, ColourRange):
-            return self.range.random().get()
+            return self.range.random()
         if isinstance(self.range.min, float):
             return random.uniform(self.range.min, self.range.max)
         if isinstance(self.range.min, int):
             return random.randint(self.range.min, self.range.max)
-
-    def reset(self):
-        pass
-
-
-class Colour2:
-    """Colour"""
-
-    def __init__(self, r, g, b):
-        self.r = r
-        self.g = g
-        self.b = b
-
-    @classmethod
-    def fromstr(cls, s):
-        """read from string #rrggbb"""
-        return cls(int(s[1:3], 16), int(s[3:5], 16), int(s[5:7], 16))
-
-    def get(self):
-        """get string value"""
-        return f'#{self.r:02x}{self.g:02x}{self.b:02x}'
-
-    def add(self, c):
-        """add another colour to this"""
-        return Colour(self.r + c.r, self.g + c.g, self.b + c.b)
-
-    def substract(self, c):
-        """substract another colour from this"""
-        return Colour(self.r - c.r, self.g - c.g, self.b - c.b)
-
-    def copy(self):
-        """return copy of this"""
-        return Colour(self.r, self.g, self.b)
 
     def reset(self):
         pass
@@ -222,11 +179,6 @@ class Function:
         self.f = eval(f)
         self.kwargs = kwargs
 
-    @classmethod
-    def fromstr(cls, s, config):
-        args = make_from_dict(config.get("args", {}), config)
-        return cls(s, args)
-
     def __call__(self, **kwargs):
         # get values for the arguments
         args = {key: v.get() for key, v in self.kwargs.items()}
@@ -248,130 +200,3 @@ class Series:
 
     def get(self):
         return self.obj.get()
-
-
-def convert_list(lst):
-    if isint(lst[0]):
-        lst = [int(x) for x in lst]
-    elif isfloat(lst[0]):
-        lst = [float(x) for x in lst]
-    else:
-        lst = [convert_value(x) for x in lst]
-    return lst
-
-
-def convert_value(val):
-    if isint(val):
-        return int(val)
-    if isfloat(val):
-        return float(val)
-    if isinstance(val, str) and val.startswith('%'):
-        return read_percent_value(val[1:])
-    return val
-
-
-def read_percent_value(s):
-    ls = s.split('%')
-    v = convert_value(ls[1])
-    return (float(ls[0]) / 100) * v
-
-
-def read_str_value(s):
-    if ',' in s:
-        lst = convert_list(s.split(','))
-        return List(lst)
-    if s[0] == '#':
-        return read_colour(s)
-    if ':' in s:
-        lst = s.split(':')
-        if len(lst) == 3:
-            return Range.fromlist(convert_list(lst))
-        if len(lst) != 2:
-            print("WARNING: invalid range syntax", s)
-        if '/' in lst[1]:
-            lst2 = lst[1].split('/')
-            minv = convert_value(lst[0])
-            maxv = convert_value(lst2[0])
-            step = (maxv - minv) / convert_value(lst2[1])
-            return Range(minv, maxv, step)
-        return Range.fromlist(convert_list(lst))
-    return Single(convert_value(s))
-
-
-def read_colour(s):
-    if s[0] != '#':
-        return s
-    if ':' in s:
-        lst = s.split(':')
-        if len(lst) != 2:
-            print("ERROR: invalid colour", s)
-            return None
-        lst2 = lst[1].split('/')
-        return ColourRange(Colour.fromstr(lst[0]), Colour.fromstr(lst2[0]), int(lst2[1]))
-    return Colour.fromstr(s)
-
-
-def read(js, name, d=42):
-    v = js.get(name, d)
-    obj = make(v, js)
-    return obj
-
-
-def make_from_list(obj, js):
-    if isinstance(obj[0], str) and obj[0].startswith('#'):
-        cl = [read_colour(c) for c in obj]
-        return List(cl)
-    return List([make(x, js) for x in obj])
-
-
-def make_from_dict(obj, js):
-    return {key: make(v, js) for key, v in obj.items()}
-
-
-def make_from_str(obj, js):
-    # colour range
-    if obj.startswith('#'):
-        return read_colour(obj)
-    # substitute variables
-    if '$' in obj:
-        obj = obj.replace("$CX", str(pg.CENTER_X))
-        obj = obj.replace("$CY", str(pg.CENTER_Y))
-        obj = obj.replace("$W", str(pg.WIDTH))
-        obj = obj.replace("$H", str(pg.HEIGHT))
-    # random value
-    if obj.startswith('?:'):
-        val = read_str_value(obj[2:])
-        if isinstance(val, List):
-            return Random(val.lst)
-        if isinstance(val, (Range, ColourRange)):
-            return Random(val)
-        return Random([val.value])
-    # function
-    if obj.startswith('f:'):
-        return Function.fromstr(obj[2:], js)
-    # eval TODO: fix
-    if obj.startswith('e:'):
-        return Eval(obj[2:])
-    if obj.startswith('u:'):
-        return eval(obj[2:])
-    # percent
-    if obj.startswith('%'):
-        return Single(read_percent_value(obj[1:]))
-    if obj.startswith('!:'):
-        return Series(obj[2:])
-    # generic string
-    return read_str_value(obj)
-
-
-def make(obj, js=None):
-    """make a generic value object"""
-    if isinstance(obj, (float, int)):
-        return Single(obj)
-    if isinstance(obj, list):
-        return make_from_list(obj, js)
-    if isinstance(obj, str):
-        return make_from_str(obj, js)
-    if isinstance(obj, dict):
-        return make_from_dict(obj, js)
-    print("WARNING: unknown value type", obj)
-    return obj
