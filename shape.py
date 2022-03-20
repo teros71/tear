@@ -148,9 +148,16 @@ class Appearence:
         self.shadow = False
         self.blur = False
 
-    def set(self, c, o, s, sw, shad=False, blur=False):
+    @property
+    def colour(self):
+        return self._colour
+
+    @colour.setter
+    def colour(self, c):
+        self._colour = c
+
+    def set(self, o, s, sw, shad=False, blur=False):
         """set appearance attributes"""
-        self.colour = c
         self.opacity = o
         self.stroke = s
         self.stroke_width = sw

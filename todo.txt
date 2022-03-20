@@ -20,6 +20,34 @@ Add handling of recursive shape lists:
 - add lines?
 - polar coordinates for some algorithms? e.g. spreading shapes along a circle?
 
+colour scheme:
+list -> list -> leaf, leaf, leaf
+     -> list -> leaf, leaf, leaf
+     -> list -> leaf, leaf, leaf
+
+basic primitive for colour is one of these (handled as possible range/random):
+"blue"
+"#1f09ff"
+"?:#1f09ff:#43249f"
+"#1f09ff:#43249f/10"
+"blue,red,yellow,#9843bb" (<- list, but no range items supported within list)
+
+to define how colours are applied to list/leaf shapes:
+[[<primitive-1>, <primitive-2>], [<primitive-3>]]
+The items in the innermost list are targeted to leafs:
+leaf-1 : primitive-1
+leaf-2 : primitive-2
+leaf-3 : primitive-1 <- list has two primitives, so it starts over
+leaf-4 (the next list) : primitive-3
+leaf-5 : primitive-3
+
+So, the lists of colours matches the list structure of the shapes.
+e.g:
+["blue,green,yellow"] => leafs on the same list get these
+[["blue"],["green"],["yellow"]] => leafs on the first list gets blue, second green...
+
+How about: a big range that does not get reset between the lists?
+
 
 DONE:
 - spread shape path

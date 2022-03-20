@@ -1,5 +1,5 @@
 import shape
-import value
+from value import reader
 import algo
 import forms
 import geom
@@ -8,15 +8,15 @@ import geom
 def make_generator_shape(config):
     t = config.get('type', 'rectangle')
     if t == 'rectangle':
-        rw = value.read(config, "w")
-        rh = value.read(config, "h")
+        rw = reader.read(config, "w")
+        rh = reader.read(config, "h")
         return shape.RectGenerator(rw, rh)
     if t == 'circle':
-        rr = value.read(config, "r")
+        rr = reader.read(config, "r")
         return shape.CircleGenerator(rr)
     if t == 'polygon':
-        rar = value.read(config, "r")
-        rap = value.read(config, "c")
+        rar = reader.read(config, "r")
+        rap = reader.read(config, "c")
         return shape.PolygonGenerator(rar, rap)
 
 

@@ -3,7 +3,7 @@ import random
 import shape
 import default
 import geom
-import value
+from value import reader
 
 
 class Params:
@@ -17,13 +17,13 @@ class Params:
 
     @classmethod
     def frommap(cls, p):
-        it = value.read(p, 'iterations', d=default.TEAR_ITERATIONS)
-        md = value.read(p, 'minDistance', d=default.TEAR_MINDISTANCE)
-        mdf = value.read(p, 'minDistanceFactor',
-                         d=default.TEAR_MINDISTANCEFACTOR)
-        av = value.read(p, 'angleVar', d=default.TEAR_ANGLEVAR)
-        rb = value.read(p, 'randomizeBase', d=default.TEAR_RANDOMIZEBASE)
-        c = value.read(p, 'count', d=default.TEAR_COUNT)
+        it = reader.read(p, 'iterations', d=default.TEAR_ITERATIONS)
+        md = reader.read(p, 'minDistance', d=default.TEAR_MINDISTANCE)
+        mdf = reader.read(p, 'minDistanceFactor',
+                          d=default.TEAR_MINDISTANCEFACTOR)
+        av = reader.read(p, 'angleVar', d=default.TEAR_ANGLEVAR)
+        rb = reader.read(p, 'randomizeBase', d=default.TEAR_RANDOMIZEBASE)
+        c = reader.read(p, 'count', d=default.TEAR_COUNT)
         return cls(it, md, mdf, av, rb, c)
 
 

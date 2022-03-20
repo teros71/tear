@@ -25,12 +25,15 @@ def write_svg_feblur(file, id):
 def write_svg_recursive(file, shapes):
     """write recursive form"""
     if not isinstance(shapes, list):
+        #print(shapes)
         single = shapes
 #        if not isinstance(shapes, shape.Shape):
 #            shap = shape.Shape(polygon.Polygon(shapes.get_points()))
         write_svg_shape(file, single)
         return
+    print("shape is list!!!")
     for shap in shapes:
+        #print(shap)
         write_svg_recursive(file, shap)
 
 
@@ -109,6 +112,7 @@ def write_form(file, config, w, h, bg):
     print(f"getting form {name}")
     sss = forms.get(name)
     if sss is not None:
+        print(sss)
         write_svg_recursive(file, sss)
     else:
         write_image(file, name, w, h, bg)

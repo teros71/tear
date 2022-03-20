@@ -12,6 +12,9 @@ class Colour(colour.Color):
         return cls(s)
 
     def get(self):
+        return self
+
+    def str(self):
         """get string value"""
         return self.hex_l
 
@@ -33,26 +36,57 @@ class Colour(colour.Color):
 
 class ColourRange:
     def __init__(self, begin, end, count):
-        self.begin = begin
-        self.end = end
-        self.range = None
-        self.count = count
         if count > 0:
+            self.count = count
             self.range = [Colour(c) for c in begin.range_to(end, count)]
+        else:
+            self.range = [begin, end]
+            self.count = 2
         self.i = 0
+
+    @classmethod
+    def fromlist(cls, lst):
+        r = cls(None, None, 0)
+        r.range = lst
+        r.count = len(lst)
+        return r
+
+    @classmethod
+    def fromranges(cls, begin, end, count):
+        ranges = []
+        i = 0
+        for c1 in begin:
+            if i < len(end):
+                c2 = end[i]
+                i += 1
+            ranges.append(ColourRange(c1, c2, count))
+        nr = []
+        for i in range(count):
+            nr.append(ColourRange.fromlist([range[i] for range in ranges]))
+        return nr
+
+    def __len__(self):
+        return self.count
+
+    def __getitem__(self, item):
+        return self.range[item]
 
     def __iter__(self):
         return self
 
     def __next__(self):
-        return self.get()
+        if self.i < self.count:
+            r = self.range[self.i]
+            self.i += 1
+            return r
+        raise StopIteration
 
     def get(self):
         if self.i >= self.count:
             self.i = 0
         r = self.range[self.i]
         self.i += 1
-        return r.get()
+        return r
 
     def random(self):
 
@@ -61,9 +95,11 @@ class ColourRange:
             vmax = max(m, n)
             return random.uniform(vmin, vmax)
 
-        r = rnd(self.begin.red, self.end.red)
-        g = rnd(self.begin.green, self.end.green)
-        b = rnd(self.begin.blue, self.end.blue)
+        start = self.range[0]
+        end = self.range[-1]
+        r = rnd(start.red, end.red)
+        g = rnd(start.green, end.green)
+        b = rnd(start.blue, end.blue)
         return Colour(rgb=(r, g, b))
 
     def reset(self):

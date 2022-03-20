@@ -7,7 +7,7 @@ import itertools
 import shape
 import goldenratio
 import tear
-import value
+from value import value, reader
 import area
 import forms
 import geom
@@ -31,8 +31,8 @@ def apply_recursive(config, base, alg):
 def position(config, base):
     """set x and y"""
 
-    vx = value.read(config, 'x')
-    vy = value.read(config, 'y')
+    vx = reader.read(config, 'x')
+    vy = reader.read(config, 'y')
 
     def do_it(base):
         base.set_position(vx.get(), vy.get())
@@ -53,8 +53,8 @@ def generate(config, base):
 
 def read_point(s, config):
     print(s)
-    x = value.make(s[0], config)
-    y = value.make(s[1], config)
+    x = reader.make(s[0], config)
+    y = reader.make(s[1], config)
     return geom.Point(x.get(), y.get())
 
 
@@ -69,8 +69,8 @@ def read_spread_s(config):
 
 
 def spread_matrix(config, base):
-    rx = value.read(config, "x")
-    ry = value.read(config, "y")
+    rx = reader.read(config, "x")
+    ry = reader.read(config, "y")
     pos = value.List([geom.Point(x, y) for y in ry for x in rx])
 
     def do_it(shape):
@@ -99,7 +99,7 @@ def spread_path(config, base):
     shap = read_spread_s(config)
     if shap is None:
         return None
-    count = value.read(config, "count")
+    count = reader.read(config, "count")
     a = shape.ShapePath(shap, count.get())
 
     def do_it(s):
@@ -113,7 +113,7 @@ def spread_path(config, base):
 def spread_f(config, base):
     origo = config.get('origo', [0, 0])
     o = read_point(origo, config)
-    fx = value.read(config, "f")
+    fx = reader.read(config, "f")
     shape_arg = config.get("shape-arg", False)
 
     def do_it(s):
@@ -130,8 +130,8 @@ def x_spread_s(config, base):
     origo = config.get('origo', [0, 0])
     o = read_point(origo, config)
     params = config.get('params', [])
-    vals = {key: value.read(config, key) for key in params}
-    fx = value.read(config, "f")
+    vals = {key: reader.read(config, key) for key in params}
+    fx = reader.read(config, "f")
 
     def do_it(s):
         args = {key: v.get() for key, v in vals.items()}
@@ -145,8 +145,8 @@ def spread_polar(config, base):
     """base is a list of shapes, they are spread"""
     origo = config.get('origo', [0, 0])
     o = read_point(origo, config)
-    rr = value.read(config, "r")
-    rt = value.read(config, "t")
+    rr = reader.read(config, "r")
+    rt = reader.read(config, "t")
     r = rr.get()
     t = rt.get()
     x = r * math.cos(t)
@@ -166,8 +166,8 @@ def spread_polar(config, base):
 
 def spread(config, base):
     """base is a list of shapes, they are spread"""
-    rx = value.read(config, "x")
-    ry = value.read(config, "y")
+    rx = reader.read(config, "x")
+    ry = reader.read(config, "y")
     x = rx.get()
     y = ry.get()
 
@@ -183,22 +183,38 @@ def spread(config, base):
 
 # ===========================================================================
 
+def set_appearance_colour(config, shap, colour):
+    if isinstance(shap, shape.Shape):
+        c = colour.get().str()
+        print("set", c)
+        shap.appearance.colour = c
+    else:
+        print("shape list")
+        for s in shap.shapes:
+            if isinstance(colour, value.List):
+                c = colour.get()
+                print("new colour from list", c)
+            else:
+                c = colour
+            set_appearance_colour(config, s, c)
+        c.reset()
 
-def set_appearance(config, shap, colour, opacity, stroke, strokew, shad, blur):
+
+def set_appearance(config, shap, opacity, stroke, strokew, shad, blur):
     """Set appearance of a shape"""
     if isinstance(shap, shape.List):
-        colour.reset()
+        #        colour.reset()
         opacity.reset()
         stroke.reset()
         strokew.reset()
         for inner_shape in shap.shapes:
-            set_appearance(config, inner_shape, colour,
+            set_appearance(config, inner_shape,
                            opacity, stroke, strokew, shad, blur)
         return
-    c = colour.get()
-    if not isinstance(c, str):
-        c = c.get()
-    shap.appearance.set(c, opacity.get(),
+#    c = colour.get()
+#    if not isinstance(c, str):
+#        c = c.get()
+    shap.appearance.set(opacity.get(),
                         stroke.get(), strokew.get(), shad, blur)
 
 # ===========================================================================
@@ -206,13 +222,23 @@ def set_appearance(config, shap, colour, opacity, stroke, strokew, shad, blur):
 
 def appearance(config, base):
     """appearance algorithm"""
-    opacity = value.read(config, 'opacity', d=1.0)
-    colour = value.read(config, 'colours', d=["black"])
-    stroke = value.read(config, 'stroke', d="none")
-    strokew = value.read(config, 'strokeWidth', d=0)
+    opacity = reader.read(config, 'opacity', d=1.0)
+    colour = reader.read_colour(config, 'colours')
+    stroke = reader.read(config, 'stroke', d="none")
+    strokew = reader.read(config, 'strokeWidth', d=0)
     shad = config.get('shadow', False)
     blur = config.get('blur', False)
-    set_appearance(config, base, colour, opacity, stroke, strokew, shad, blur)
+
+    def pit(col):
+        if isinstance(col, value.List):
+            print("list")
+            for c in col:
+                pit(c)
+            return
+        print(col)
+    pit(colour)
+    set_appearance_colour(config, base, colour)
+    set_appearance(config, base, opacity, stroke, strokew, shad, blur)
     return base
 
 # ===========================================================================
@@ -251,8 +277,8 @@ def a_tear(r, base):
 
 def scaler(r, base):
     """scale x and y"""
-    rx = value.read(r, "fx")
-    ry = value.read(r, "fy", d=0)
+    rx = reader.read(r, "fx")
+    ry = reader.read(r, "fy", d=0)
 
     def do_it(s):
         fx = rx.get()
@@ -267,7 +293,7 @@ def scaler(r, base):
 def rotate(r, base):
     #    x = value.read(r, "cx")
     #    y = value.read(r, "cy")
-    a = value.read(r, "angle")
+    a = reader.read(r, "angle")
     p = base.position
     base.rotate(p.x, p.y, a)
     return base

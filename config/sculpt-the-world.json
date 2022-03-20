@@ -70,14 +70,16 @@
           "params": {
             "iterations": 8,
             "angleVar": 0.07,
-            "count": 5,
+            "count": 4,
             "randomizeBase": 0.07
           }
         },
         {
           "algorithm": "appearance",
           "opacity": "?:0.2:0.6",
-          "colours": "#0000ff:#8080ff/8",
+          "colours3": ["#0000ff:#8080ff/8", "#00ff00:#80ff80/8"],
+          "colours": "#0000ff:#000080/4->#ff0000:#800000/4*30",
+          "colours2": [["#0000ff:#8080ff/8"], ["#00ff00:#80ff80/8"]],
           "stroke": "black",
           "strokeWidth": 1
         }
