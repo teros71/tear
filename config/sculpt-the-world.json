@@ -18,7 +18,7 @@
       "name": "circarea",
       "base": "new",
       "type": "circle",
-      "r": 600,
+      "r": 570,
       "recipe": [
         {
           "algorithm": "position",
@@ -87,7 +87,56 @@
       ]
     },
     {
-      "name": "rects2",
+      "name": "inner-shapes",
+      "base": "generator",
+      "type": "ellipse",
+      "rx": "?:55.0:90.0",
+      "ry": "?:45.0:60.0",
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": 160
+        },
+        {
+          "algorithm": "scaler",
+          "disable": false,
+          "fx": "1.0:0.2/160",
+          "fy": 0
+        },
+        {
+          "disable": false,
+          "algorithm": "rotate",
+          "angle": "0:360/26",
+          "around-leaf": true
+        },
+        {
+          "algorithm": "spread-polar",
+          "origo": [1400,900],
+          "r": "500:150/160",
+          "t": "0.0:30.0:0.24"
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 8,
+            "angleVar": 0.32,
+            "count": 2,
+            "randomizeBase": -0.17
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "0.25",
+          "colours1": "#ff0000:#800000/4->#ff00ff:#800080/4*30",
+          "colours": "#c0c0ff,#ffffc0->#405066,#000000*80",
+          "stroke": "black",
+          "strokeWidth": 1
+        }
+      ]
+    },
+    {
+      "name": "background",
       "base": "generator",
       "type": "rectangle",
       "w": 270,
@@ -136,7 +185,7 @@
       ]
     },
     {
-      "name": "circs",
+      "name": "spiral",
       "base": "new",
       "type": "rectangle",
       "r": 10,
@@ -175,7 +224,7 @@
     "background2": "#4040a0",
     "shapes": [
       {
-        "name": "rects2"
+        "name": "background"
       },
       {
         "name": "circarea"
@@ -184,7 +233,10 @@
         "name": "rects"
       },
       {
-        "name": "circs"
+        "name": "inner-shapes"
+      },
+      {
+        "name": "spiral"
       }
     ]
   }

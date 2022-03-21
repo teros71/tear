@@ -102,12 +102,18 @@ class Range:
         return self
 
     def __next__(self):
-        if self.current >= self.max:
+        if self.step >= 0:
+            if self.current >= self.max:
+                raise StopIteration
+        elif self.current <= self.max:
             raise StopIteration
         return self.get()
 
     def get(self):
-        if self.current >= self.max:
+        if self.step >= 0:
+            if self.current >= self.max:
+                self.current = self.min
+        elif self.current <= self.max:
             self.current = self.min
         r = self.current
         self.current += self.step
@@ -115,6 +121,9 @@ class Range:
 
     def reset(self):
         self.current = self.min
+
+    def __repr__(self):
+        return f'Range[{self.min},{self.max},{self.step},{self.current}]'
 
     @classmethod
     def fromlist(cls, lst):

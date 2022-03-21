@@ -34,7 +34,7 @@ def apply_recursive(config, base, alg):
 
 def read_point(config, name):
     """Helper to read a point from config"""
-    p = reader.read(config, name)
+    p = config.get(name)
     if p is None:
         return None
     if not isinstance(p, list) or len(p) != 2:
@@ -219,8 +219,7 @@ def spread_path(config, base):
 
 
 def spread_f(config, base):
-    origo = config.get('origo', [0, 0])
-    o = read_point(origo, config)
+    o = read_point(config, 'origo')
     fx = reader.read(config, "f")
     shape_arg = config.get("shape-arg", False)
 
@@ -251,24 +250,29 @@ def x_spread_s(config, base):
 
 def spread_polar(config, base):
     """base is a list of shapes, they are spread"""
-    origo = config.get('origo', [0, 0])
-    o = read_point(origo, config)
+    o = read_point(config, 'origo')
     rr = reader.read(config, "r")
     rt = reader.read(config, "t")
-    r = rr.get()
-    t = rt.get()
-    x = r * math.cos(t)
-    y = r * math.sin(t)
+#    r = rr.get()
+#    t = rt.get()
+#    x = r * math.cos(t)
+#    y = r * math.sin(t)
 
-    def do_it(shape):
-        shape.set_position(x + o.x, y + o.y)
-        return shape
-    for s in base.shapes:
-        apply_recursive(config, s, do_it)
+    def do_it(shap):
         r = rr.get()
         t = rt.get()
         x = r * math.cos(t)
         y = r * math.sin(t)
+        print("polar", rr)
+        if isinstance(shap, shape.List):
+            for s in shap:
+                apply_recursive(config, s, do_it)
+            return
+        shap.set_position(x + o.x, y + o.y)
+        return shap
+
+#    recur(base)
+    apply_recursive(config, base, do_it)
     return base
 
 

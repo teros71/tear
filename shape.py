@@ -57,7 +57,7 @@ class Shape:
 
     def rotate(self, x, y, a):
         """rotates around x,y by given angle a"""
-        if isinstance(self.base, geom.Rect):
+        if isinstance(self.base, (geom.Rect, geom.Ellipse)):
             # rectangle => convert to polygon
             self.base = geom.Polygon.fromrect(self.base)
         self.base.rotate(x, y, math.radians(a))

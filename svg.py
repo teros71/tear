@@ -26,9 +26,9 @@ def write_svg_clip(file, id, shap):
     file.write(f'<clipPath id="{id}">')
     if isinstance(shap.base, geom.Rect):
         write_svg_rect(file, shap)
-    if isinstance(shap.base, geom.Circle):
+    elif isinstance(shap.base, geom.Circle):
         write_svg_circle(file, shap)
-    if isinstance(shap.base, geom.Ellipse):
+    elif isinstance(shap.base, geom.Ellipse):
         write_svg_ellipse(file, shap)
     else:
         write_svg_polygon(file, shap)
@@ -113,9 +113,9 @@ def write_svg_shape(file, single):
         write_svg_feblur(file, f'blur_n{SHAPE_COUNT}')
     if isinstance(single.base, geom.Rect):
         write_svg_rect(file, single)
-    if isinstance(single.base, geom.Circle):
+    elif isinstance(single.base, geom.Circle):
         write_svg_circle(file, single)
-    if isinstance(single.base, geom.Ellipse):
+    elif isinstance(single.base, geom.Ellipse):
         write_svg_ellipse(file, single)
     else:
         write_svg_polygon(file, single)
