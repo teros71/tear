@@ -10,7 +10,7 @@
   },
   "playground": {
     "w": 2800,
-    "h": 1800
+    "h": 2200
   },
   "forms": [
     {
@@ -18,25 +18,26 @@
       "base": "generator",
       "type": "rectangle",
       "w": 80,
-      "h": 120,
+      "h": 110,
       "recipe": [
         {
           "algorithm": "generate",
-          "count": 540
+          "count2": 2,
+          "count": 572
         },
         {
           "algorithm": "spread-matrix",
-          "x": "100:2701/26",
-          "y": "100:1701/20"
+          "x": "100:2700/26",
+          "y": "200:2100/22"
         },
         {
           "algorithm": "vectorfield",
           "xfields": [
-            [1400,900,"1,math.sin(x**2+y**2)"]
+            [1400,1100,"1,math.sin(x**2+y**2)"]
           ],
           "fields": [
-            [800,900,"x/(x**2 + y**2 + 0.1),y/(x**2 + y**2 + 0.1)"],
-            [2000,900,"x/(x**2 + y**2 + 0.1),y/(x**2 + y**2 + 0.1)"]
+            [800,1100,"x/(x**2 + y**2 + 0.1),y/(x**2 + y**2 + 0.1)"],
+            [2000,1100,"x/(x**2 + y**2 + 0.1),y/(x**2 + y**2 + 0.1)"]
           ]
         },
         {
@@ -52,9 +53,14 @@
         {
           "algorithm": "appearance",
           "opacity": 0.20,
-          "colours": ["black", "white"],
+          "colours": "black,white",
           "stroke": "black",
           "strokeWidth": 1
+        },
+        {
+          "disable": false,
+          "algorithm": "clip",
+          "shape": "frame"
         }
       ]
     },
@@ -73,7 +79,6 @@
         {
           "algorithm": "scaler",
           "disable": false,
-          "fy": 1,
           "fx": "0.05:1.0/20"
         },
         {
@@ -94,17 +99,58 @@
         {
           "algorithm": "appearance",
           "opacity": 0.20,
-          "colours": ["red", "orange"],
+          "colours": "red,orange",
           "stroke": "black",
-          "strokeWidth": 1,
+          "strokeWidth": 0,
           "shadow": false
+        }
+      ]
+    },
+    {
+      "name": "frame",
+      "base": "new",
+      "type": "ellipse",
+      "rx": 1200,
+      "ry": 800,
+      "recipe": [
+        {
+          "algorithm": "scaler",
+          "disable": true,
+          "fy": 1,
+          "fx": "0.05:1.0/20"
+        },
+        {
+          "algorithm": "position",
+          "x": "$CX",
+          "y": "$CY"
+        },
+        {
+          "algorithm": "tear",
+          "disable": true,
+          "params": {
+            "iterations": 8,
+            "angleVar": "0.01:1.2/20",
+            "count": 2,
+            "randomizeBase": -0.8
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": 1.00,
+          "colours": "#10707e",
+          "stroke": "#1f2f3f",
+          "strokeWidth": 5,
+          "shadow": true
         }
       ]
     }
   ],
   "output": {
-    "background": "#11707e",
+    "background": "#953D0E",
     "shapes": [
+      {
+        "name": "frame"
+      },
       {
         "name": "bot"
       },

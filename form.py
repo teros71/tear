@@ -14,6 +14,10 @@ def make_generator_shape(config):
     if t == 'circle':
         rr = reader.read(config, "r")
         return shape.CircleGenerator(rr)
+    if t == 'ellipse':
+        rx = reader.read(config, "rx")
+        ry = reader.read(config, "ry")
+        return shape.EllipseGenerator(rx, ry)
     if t == 'polygon':
         rar = reader.read(config, "r")
         rap = reader.read(config, "c")
@@ -29,6 +33,8 @@ def make_new_shape(r):
         base = geom.Rect(r.get("w", 10.0), r.get("h", 10.0))
     if t == 'circle':
         base = geom.Circle(r.get("r", 10.0))
+    if t == 'ellipse':
+        base = geom.Ellipse(r.get("rx", 20.0), r.get("ry", 10.0))
     if t == 'polygon':
         base = geom.Polygon.fromstr(
             r.get("points", "0.0 0.0, 10.0 5.0, 5.0 10.0"))

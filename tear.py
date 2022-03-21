@@ -114,7 +114,7 @@ def generate(points, it, min_d, min_df, av, rb):
     return newps
 
 
-def generateShape(base, params):
+def generate_shape(base, params):
     it = params.iterations.get()
     min_d = params.minDistance.get()
     min_df = params.minDistanceFactor.get()

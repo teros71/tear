@@ -186,6 +186,31 @@ class Function:
         return self.f(**args)
 
 
+class Cartesian:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def get(self):
+        return self.x.get(), self.y.get()
+
+
+class Polar:
+    """Wrapper for polar coordinate values to cartesian"""
+
+    def __init__(self, origo, t, r):
+        self.origo = origo
+        self.t = t
+        self.r = r
+
+    def get(self):
+        t = self.t.get()
+        r = self.r.get()
+        x = r * math.cos(t)
+        y = r * math.sin(t)
+        return x + self.origo.x, y + self.origo.y
+
+
 class Class:
     def __init__(self, s):
         self.obj = eval(s)

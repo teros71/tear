@@ -10,6 +10,10 @@ class Point:
         self.x = x
         self.y = y
 
+    @classmethod
+    def fromtuple(cls, t):
+        return cls(t[0], t[1])
+
     def copy(self):
         """return copy of this point"""
         return Point(self.x, self.y)
@@ -62,6 +66,10 @@ class Point:
     def print(self):
         """print data"""
         print(self.x, self.y)
+
+
+def polar2cartesian(ox, oy, t, r):
+    return ox + r * math.cos(t), oy + r * math.sin(t)
 
 
 def mid_point(p1, p2):
@@ -160,9 +168,9 @@ class Circle:
     def __init__(self, r):
         self.r = r
 
-    def scale(self, fx, fy):
-        """scale by fx, ignore fy"""
-        self.r = self.r * fx
+    def scale(self, factor):
+        """scale by factor"""
+        self.r = self.r * factor
 
     def copy(self):
         """return copy of myself"""
@@ -198,6 +206,58 @@ class Circle:
         dist %= self.length()
         t = (2 * math.pi) * (dist / self.length())
         return Point(origo.x + self.r * math.cos(t), origo.y + self.r * math.sin(t))
+
+
+class Ellipse:
+    """Ellipse"""
+
+    def __init__(self, rx, ry):
+        self.rx = rx
+        self.ry = ry
+
+    def scale(self, fx, fy):
+        """scale by factor"""
+        self.rx = self.rx * fx
+        self.ry = self.ry * fy
+
+    def copy(self):
+        """return copy of myself"""
+        return Ellipse(self.rx, self.ry)
+
+    def is_inside(self, p):
+        """is given point inside"""
+        return p.x ** 2 / self.rx ** 2 + p.y ** 2 / self.ry ** 2 <= 1
+
+    def bbox(self, origo):
+        """bounding box with given origo"""
+        return BBox(origo.x - self.rx,
+                    origo.y - self.ry,
+                    origo.x + self.rx,
+                    origo.y + self.ry)
+
+    def get_points(self, origo):
+        """return list of points approximating the ellipse"""
+        points = []
+        t = 0.0
+        while t < math.pi * 2:
+            points.append(Point(origo.x + self.rx * math.cos(t),
+                                origo.y + self.ry * math.sin(t)))
+            t = t + math.pi / 8
+        return points
+
+    def length(self):
+        """length of the edge"""
+        amb2 = (self.rx - self.ry) ** 2
+        apb2 = (self.rx + self.ry) ** 2
+        return math.pi * (self.rx + self.ry) * \
+            (3 * ((amb2)
+                  / (apb2 * (math.sqrt(-3 * ((amb2 / apb2) + 4)) + 10))) + 1)
+
+    def point_at(self, origo, dist):
+        """return point at the edge at given distance"""
+        dist %= self.length()
+        t = (2 * math.pi) * (dist / self.length())
+        return Point(origo.x + self.rx * math.cos(t), origo.y + self.ry * math.sin(t))
 
 
 class Polygon:

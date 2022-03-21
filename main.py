@@ -41,7 +41,7 @@ def run(data, fname):
     print("write output")
     op = data.get('output')
     if op is not None:
-        svg.write(fname, 900, 1400, pg.HEIGHT, pg.WIDTH, op)
+        svg.write(fname, 1100, 1400, pg.HEIGHT, pg.WIDTH, op)
 
 
 def main(argv):

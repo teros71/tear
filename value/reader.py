@@ -138,7 +138,7 @@ def read_colour(js, name):
     return read_col(v)
 
 
-def read(js, name, d=42):
+def read(js, name, d=None):
     v = js.get(name, d)
     obj = make(v, js)
     return obj

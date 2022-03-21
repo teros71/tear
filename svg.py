@@ -22,6 +22,21 @@ def write_svg_feblur(file, id):
                '</filter>')
 
 
+def write_svg_clip(file, id, shap):
+    file.write(f'<clipPath id="{id}">')
+    if isinstance(shap.base, geom.Rect):
+        write_svg_rect(file, shap)
+    if isinstance(shap.base, geom.Circle):
+        write_svg_circle(file, shap)
+    if isinstance(shap.base, geom.Ellipse):
+        write_svg_ellipse(file, shap)
+    else:
+        write_svg_polygon(file, shap)
+    file.write(' />\n</clipPath>')
+#      <defs>
+#      </defs>
+
+
 def write_svg_recursive(file, shapes):
     """write recursive form"""
     if not isinstance(shapes, list):
@@ -40,11 +55,56 @@ def write_svg_recursive(file, shapes):
 SHAPE_COUNT = 0
 
 
+def write_svg_rect(file, rect):
+    r = rect.base
+    x = rect.position.x - r.width / 2
+    y = rect.position.y - r.height / 2
+    file.write(f'<rect x="{x}" y="{y}" '
+               f'height="{r.height}" width="{r.width}" ')
+
+
+def write_svg_circle(file, c):
+    x = c.position.x
+    y = c.position.y
+    r = c.base.r
+    file.write(f'<circle cx="{x}" cy="{y}" r="{r}" ')
+
+
+def write_svg_ellipse(file, e):
+    x = e.position.x
+    y = e.position.y
+    rx = e.base.rx
+    ry = e.base.ry
+    file.write(f'<ellipse cx="{x}" cy="{y}" rx="{rx}" ry="{ry}" ')
+
+
+def write_svg_polygon(file, poly):
+    file.write('<polygon\n')
+    file.write('points="')
+    for p in poly.get_rendering_points():
+        file.write(f'{p.x},{p.y} ')
+    file.write('"\n')
+
+
+def write_svg_style(file, app):
+    file.write(
+        f'style="opacity:{app.opacity};'
+        f'fill:{app.colour};stroke:{app.stroke};'
+        f'stroke-width:{app.stroke_width};stroke-linejoin:round"')
+
+
 def write_svg_shape(file, single):
     """write shape"""
+    global SHAPE_COUNT
+    SHAPE_COUNT += 1
     if isinstance(single, shape.List):
+        if single.appearance.clip is not None:
+            file.write(f'<g clip-path="url(#{single.appearance.clip})">')
+        else:
+            file.write('<g>')
         for b in single.shapes:
             write_svg_recursive(file, b)
+        file.write('</g>')
         return
     app = single.appearance
     if app.shadow:
@@ -52,38 +112,14 @@ def write_svg_shape(file, single):
     if app.blur:
         write_svg_feblur(file, f'blur_n{SHAPE_COUNT}')
     if isinstance(single.base, geom.Rect):
-        r = single.base
-        x = single.position.x - r.width / 2
-        y = single.position.y - r.height / 2
-        file.write(f'<rect x="{x}" y="{y}" '
-                   f'height="{r.height}" width="{r.width}" '
-                   f'style="opacity:{app.opacity};'
-                   f'fill:{app.colour};stroke:{app.stroke};'
-                   f'stroke-width:{app.stroke_width}" />\n')
-        return
+        write_svg_rect(file, single)
     if isinstance(single.base, geom.Circle):
-        x = single.position.x
-        y = single.position.y
-        r = single.base.r
-        file.write(f'<circle cx="{x}" cy="{y}" r="{r}" '
-                   f'style="opacity:{app.opacity};'
-                   f'fill:{app.colour};stroke:{app.stroke};'
-                   f'stroke-width:{app.stroke_width}"')
-        if app.shadow:
-            file.write(f' filter="url(#shadow_n{SHAPE_COUNT})"')
-        if app.blur:
-            file.write(f' filter="url(#blur_n{SHAPE_COUNT})"')
-        file.write(' />\n')
-        return
-    file.write('<polygon\n')
-    file.write('points="')
-    for p in single.get_rendering_points():
-        file.write(f'{p.x},{p.y} ')
-    file.write('"\n')
-    file.write(
-        f'style="opacity:{app.opacity};'
-        f'fill:{app.colour};stroke:{app.stroke};'
-        f'stroke-width:{app.stroke_width};stroke-linejoin:round"')
+        write_svg_circle(file, single)
+    if isinstance(single.base, geom.Ellipse):
+        write_svg_ellipse(file, single)
+    else:
+        write_svg_polygon(file, single)
+    write_svg_style(file, app)
     if app.shadow:
         file.write(f' filter="url(#shadow_n{SHAPE_COUNT})"')
     if app.blur:
@@ -94,7 +130,7 @@ def write_svg_shape(file, single):
 def write_svg_image(file, img, w, h, bg):
     """write image"""
     file.write(f'<mask id="{img.name}">'
-               f'<rect x="0" y="0" width="2800" height="1800" fill="white" />\n')
+               f'<rect x="0" y="0" width="2800" height="2000" fill="white" />\n')
     for d in img.paths:
         file.write(f'<path d="{d}" fill="black" />\n')
     file.write('</mask>\n')
@@ -129,6 +165,17 @@ def write_image(file, name, w, h, bg):
         write_svg_image(file, sss, w, h, bg)
 
 
+def write_clips(file):
+    file.write('<defs>')
+    i = 1
+    for c in forms.clip_table:
+        clip = forms.get(c)
+        clipid = f'clip_{i}'
+        write_svg_clip(file, clipid, clip)
+        i += 1
+    file.write('</defs>')
+
+
 def write(fname, height, width, wbh, wbw, config):
     bg = config.get("background", "white")
     shapes = config.get("shapes", [])
@@ -139,6 +186,7 @@ def write(fname, height, width, wbh, wbw, config):
             f'viewBox="0 0 {wbw} {wbh}" '
             f'height="{height}" width="{width}" '
             f'xmlns="http://www.w3.org/2000/svg">\n')
+        write_clips(file)
         for fn in shapes:
             write_form(file, fn, width, height, bg)
 #        for img in images:

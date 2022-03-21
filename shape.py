@@ -44,6 +44,13 @@ class Shape:
 
     def scale(self, fx, fy=0):
         """scale base shape"""
+        if isinstance(self.base, geom.Circle):
+            if fy != 0 and fy != fx:
+                self.base = geom.Ellipse(self.base.r, self.base.r)
+                self.base.scale(fx, fy)
+                return
+            self.base.scale(fx)
+            return
         if fy == 0:
             fy = fx
         self.base.scale(fx, fy)
@@ -53,7 +60,7 @@ class Shape:
         if isinstance(self.base, geom.Rect):
             # rectangle => convert to polygon
             self.base = geom.Polygon.fromrect(self.base)
-        self.base.rotate(x, y, math.radians(a.get()))
+        self.base.rotate(x, y, math.radians(a))
 
     def mirror(self):
         """mirror"""
@@ -91,6 +98,9 @@ class List:
         self.position = geom.Point(bb.x0 + (bb.x1 - bb.x0) / 2,
                                    bb.y0 + (bb.y1 - bb.y0) / 2)
         self.appearance = Appearence()
+
+    def __iter__(self):
+        return iter(self.shapes)
 
     def move(self, dx, dy):
         """move shape by dx, dy"""
@@ -147,6 +157,7 @@ class Appearence:
         self.stroke_width = 0
         self.shadow = False
         self.blur = False
+        self.clip = None
 
     @property
     def colour(self):
@@ -205,6 +216,20 @@ class CircleGenerator:
 
     def __next__(self):
         return Shape(geom.Circle(self.r.get()))
+
+
+class EllipseGenerator:
+    """Generator for ellipse shapes"""
+
+    def __init__(self, rx, ry):
+        self.rx = rx
+        self.ry = ry
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        return Shape(geom.Ellipse(self.rx.get(), self.ry.get()))
 
 
 class PolygonGenerator():

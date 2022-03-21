@@ -78,7 +78,8 @@
           "algorithm": "appearance",
           "opacity": "?:0.2:0.6",
           "colours3": ["#0000ff:#8080ff/8", "#00ff00:#80ff80/8"],
-          "colours": "#0000ff:#000080/4->#ff0000:#800000/4*30",
+          "colours": "#ff0000:#800000/4->#ff00ff:#800080/4*30",
+          "colours4": "#0000ff:#000080/4->#ff0000:#800000/4*30",
           "colours2": [["#0000ff:#8080ff/8"], ["#00ff00:#80ff80/8"]],
           "stroke": "black",
           "strokeWidth": 1

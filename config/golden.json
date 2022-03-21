@@ -48,7 +48,7 @@
         {
           "algorithm": "appearance",
           "opacity": 0.20,
-          "colours": ["blue", "red", "orange", "yellow"],
+          "colours": "blue,red,orange,yellow",
           "stroke": "black",
           "strokeWidth": 1
         }

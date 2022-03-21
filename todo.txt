@@ -1,15 +1,28 @@
 TODO:
 
 Add handling of recursive shape lists:
-- how is appearance applied
-- how are shapes spread
-- maybe add count for shape lists and a cumulative count also?
-- maybe mark a shapelist to be a leaf = no recursive applying?
-- appearance inheritance of list shapes?
-- parametrize tear algorithm to mark what is the leaf?
-- make colour ranges work within a list of colours
-- need for "save" operation for generated shapes? Like e.g. generate scaled
-  areas to be used for spreading different objects later.
+- shape list handlings:
+  - colour appliance is almost ok. In general, appliance should be decided
+    by the algorithm, not the list structure itself.
+  - how are shapes spread
+    - currently spreading is targeted for each individual shape
+    - need to be able to position the list as a whole?
+  - how angle works for lists?
+    - how about vector field?
+  - maybe add count for shape lists and a cumulative count also?
+  - maybe mark a shapelist to be a leaf = no recursive applying?
+  - appearance inheritance of list shapes?
+  - parametrize tear algorithm to mark what is the leaf?
+  - need for "save" operation for generated shapes? Like e.g. generate scaled
+    areas to be used for spreading different objects later.
+
+- add non-linear possibilities:
+  - spread shapes non-evenly to an area
+  - spread shapes non-evenly to a path
+- do stuff according to position:
+  - scale
+  - adjust colour (in one of hsl axis maybe)
+
 - improve and optimize shape path spreading
 - range step improvement: maybe generic step function
   - e.g. fibonacci multiplier or whatever
@@ -18,7 +31,6 @@ Add handling of recursive shape lists:
 - make some generative algorithms that create shapes according to some
   pattern or something...
 - add lines?
-- polar coordinates for some algorithms? e.g. spreading shapes along a circle?
 
 colour scheme:
 list -> list -> leaf, leaf, leaf
@@ -65,6 +77,9 @@ DONE:
 - new functionality: field vector
   - needs to be applied after spreading
 - simple voronoi
+- improved colour ranges
+- make colour ranges work within a list of colours
+- spread-polar
 
 
 values:

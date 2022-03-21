@@ -18,28 +18,135 @@ import voronoi
 
 
 def apply_recursive(config, base, alg):
-    """recursively apply algorithm to forms"""
+    """Recursively apply algorithm to shapes
+    Args:
+        base (Shape | List): target of operation
+        alg (function): function to be applied
+    Returns:
+        base
+    """
     if not isinstance(base, shape.List):
         return alg(base)
-    for form in base.shapes:
+    for form in base:
         apply_recursive(config, form, alg)
     return base
 
+
+def read_point(config, name):
+    """Helper to read a point from config"""
+    p = reader.read(config, name)
+    if p is None:
+        return None
+    if not isinstance(p, list) or len(p) != 2:
+        raise ValueError("invalid point")
+    x = reader.make(p[0], config)
+    y = reader.make(p[1], config)
+    return geom.Point(x.get(), y.get())
+
+
+def read_cartesian(config):
+    vx = reader.read(config, 'x')
+    if vx is None:
+        return None
+    vy = reader.read(config, 'y')
+    if vy is None:
+        return None
+    return value.Cartesian(vx, vy)
+
+
+def read_polar(config):
+    origo = read_point(config, 'origo')
+    if origo is None:
+        return None
+    t = reader.read(config, 't')
+    if t is None:
+        return None
+    r = reader.read(config, 'r')
+    if r is None:
+        return None
+    return value.Polar(origo, t, r)
+
+
 # ===========================================================================
+# The following functions have the same signature:
+# Args:
+#   config (dictionary): any parameters used by the algorithm.
+#       This is as read from json.
+#   base (shape or shape list): target of the algorithm
 
 
 def position(config, base):
-    """set x and y"""
+    """Set position of shape
+    Args for cartesian:
+        x (value): x coordinate
+        y (value): y coordinate
+    Args for polar:
+        origo: (point): origo
+        t (value): angle
+        r (value): radius
+    Args:
+        leaf (bool): apply to leaf shapes rather than compounds, default true
+    """
 
-    vx = reader.read(config, 'x')
-    vy = reader.read(config, 'y')
+    p = read_cartesian(config)
+    if p is None:
+        p = read_polar(config)
+    if p is None:
+        raise ValueError("position: not enough data")
 
     def do_it(base):
-        base.set_position(vx.get(), vy.get())
-    apply_recursive(config, base, do_it)
+        x, y = p.get()
+        base.set_position(x, y)
+    if config.get('leaf', True):
+        apply_recursive(config, base, do_it)
+    else:
+        do_it(base)
     return base
 
 # ===========================================================================
+
+
+def scaler(r, base):
+    """Scale shape by x and y
+    Args:
+        fx (value): x factor
+        fy (value): y factor, if omitted, go with the same as x
+    """
+    # scaling is meaningful only for leafs, I suppose
+
+    rx = reader.read(r, "fx")
+    ry = reader.read(r, "fy", d=0)
+
+    def do_it(s):
+        fx = rx.get()
+        fy = ry.get()
+        s.scale(fx, fy)
+        return s
+    return apply_recursive(r, base, do_it)
+
+# ===========================================================================
+
+
+def rotate(r, base):
+    """Rotate shape
+    Args:
+        angle (degrees): rotation angle
+        around-leaf (bool): rotate around leafs rather than compound,
+            default false
+    """
+    a = reader.read(r, "angle")
+    leaf = r.get("around-leaf", False)
+    bp = base.position
+
+    def do_it(s):
+        if leaf:
+            p = s.position
+        else:
+            p = bp
+        s.rotate(p.x, p.y, a.get())
+    return apply_recursive(r, base, do_it)
+#    base.rotate(p.x, p.y, a.get())
+#    return base
 
 
 def generate(config, base):
@@ -49,13 +156,6 @@ def generate(config, base):
     return shape.List(shapes)
 
 # ===========================================================================
-
-
-def read_point(s, config):
-    print(s)
-    x = reader.make(s[0], config)
-    y = reader.make(s[1], config)
-    return geom.Point(x.get(), y.get())
 
 
 def read_spread_s(config):
@@ -71,7 +171,15 @@ def read_spread_s(config):
 def spread_matrix(config, base):
     rx = reader.read(config, "x")
     ry = reader.read(config, "y")
-    pos = value.List([geom.Point(x, y) for y in ry for x in rx])
+    if rx is not None:
+        pos = value.List([geom.Point(x, y) for y in ry for x in rx])
+    else:
+        o = read_point(config, 'origo')
+        rt = reader.read(config, "t")
+        rr = reader.read(config, "r")
+        pos = value.List(
+            [geom.Point.fromtuple(geom.polar2cartesian(o.x, o.y, t, r))
+                for r in rr for t in rt])
 
     def do_it(shape):
         p = pos.get()
@@ -186,14 +294,11 @@ def spread(config, base):
 def set_appearance_colour(config, shap, colour):
     if isinstance(shap, shape.Shape):
         c = colour.get().str()
-        print("set", c)
         shap.appearance.colour = c
     else:
-        print("shape list")
         for s in shap.shapes:
             if isinstance(colour, value.List):
                 c = colour.get()
-                print("new colour from list", c)
             else:
                 c = colour
             set_appearance_colour(config, s, c)
@@ -203,7 +308,6 @@ def set_appearance_colour(config, shap, colour):
 def set_appearance(config, shap, opacity, stroke, strokew, shad, blur):
     """Set appearance of a shape"""
     if isinstance(shap, shape.List):
-        #        colour.reset()
         opacity.reset()
         stroke.reset()
         strokew.reset()
@@ -211,9 +315,6 @@ def set_appearance(config, shap, opacity, stroke, strokew, shad, blur):
             set_appearance(config, inner_shape,
                            opacity, stroke, strokew, shad, blur)
         return
-#    c = colour.get()
-#    if not isinstance(c, str):
-#        c = c.get()
     shap.appearance.set(opacity.get(),
                         stroke.get(), strokew.get(), shad, blur)
 
@@ -231,12 +332,11 @@ def appearance(config, base):
 
     def pit(col):
         if isinstance(col, value.List):
-            print("list")
             for c in col:
                 pit(c)
             return
         print(col)
-    pit(colour)
+#    pit(colour)
     set_appearance_colour(config, base, colour)
     set_appearance(config, base, opacity, stroke, strokew, shad, blur)
     return base
@@ -261,42 +361,18 @@ def a_tear(r, base):
     params = tear.Params.frommap(r.get('params'))
     if not isinstance(base, shape.List):
         print("tearing shapes;count=1")
-        return tear.generateShape(base, params)
+        return tear.generate_shape(base, params)
     print(f"tearing shapes;count={len(base.shapes)}", end='', flush=True)
     shapes = []
     for b in base.shapes:
         print(".", end='', flush=True)
-        s = tear.generateShape(b, params)
+        s = tear.generate_shape(b, params)
         if s is not None:
             shapes.append(s)
     print('')
     return shape.List(shapes)
 
 # ===========================================================================
-
-
-def scaler(r, base):
-    """scale x and y"""
-    rx = reader.read(r, "fx")
-    ry = reader.read(r, "fy", d=0)
-
-    def do_it(s):
-        fx = rx.get()
-        fy = ry.get()
-        s.scale(fx, fy)
-        return s
-    return apply_recursive(r, base, do_it)
-
-# ===========================================================================
-
-
-def rotate(r, base):
-    #    x = value.read(r, "cx")
-    #    y = value.read(r, "cy")
-    a = reader.read(r, "angle")
-    p = base.position
-    base.rotate(p.x, p.y, a)
-    return base
 
 
 def multiply(r, base):
@@ -330,8 +406,7 @@ def vectorfield(r, base):
             fi += i
             fj += j
         ang = geom.angle(geom.Point(0, 0), geom.Point(fi, fj))
-        print(x, y, fi, fj, math.degrees(ang))
-        a = value.Single(math.degrees(ang))
+        a = math.degrees(ang)
         s.rotate(0, 0, a)
         return s
     return apply_recursive(r, base, do_it)
@@ -382,6 +457,24 @@ def b_voronoi(r, base):
     return res
 
 
+def clip(r, base):
+    path = r.get('shape')
+    clipid = forms.add_clip(path)
+
+    def do_it(s):
+        if isinstance(s, shape.List):
+            if isinstance(s.shapes[0], shape.List):
+                for ss in s:
+                    do_it(ss)
+            else:
+                s.appearance.clip = clipid
+        else:
+            s.appearance.clip = clipid
+    do_it(base)
+    return base
+#    return apply_recursive(r, base, do_it)
+
+
 algorithms = {
     "position": position,
     "generate": generate,
@@ -401,7 +494,8 @@ algorithms = {
     "vectorfield": vectorfield,
     "shadow": shadow,
     "voronoi": a_voronoi,
-    "voronoi-b": b_voronoi
+    "voronoi-b": b_voronoi,
+    "clip": clip
 }
 
 

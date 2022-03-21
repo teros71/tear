@@ -3,12 +3,25 @@ import random
 import colour
 
 
+class NoColour:
+    def __init__(self):
+        pass
+
+    def get(self):
+        return self
+
+    def str(self):
+        return "none"
+
+
 class Colour(colour.Color):
     """Colour that reads rgb hex or named colour"""
 
     @classmethod
     def fromstr(cls, s):
         """read from string #rrggbb"""
+        if s == 'none':
+            return NoColour()
         return cls(s)
 
     def get(self):
