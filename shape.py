@@ -14,6 +14,7 @@ class Shape:
         self.base = base
         self.position = geom.Point(0, 0)
         self.appearance = Appearence()
+        self.angle = 0
 
     @classmethod
     def fromstr(cls, str):
@@ -57,9 +58,12 @@ class Shape:
 
     def rotate(self, x, y, a):
         """rotates around x,y by given angle a"""
-        if isinstance(self.base, (geom.Rect, geom.Ellipse)):
+        if isinstance(self.base, geom.Rect):
             # rectangle => convert to polygon
             self.base = geom.Polygon.fromrect(self.base)
+        elif isinstance(self.base, geom.Ellipse):
+            self.angle = a
+            return
         self.base.rotate(x, y, math.radians(a))
 
     def mirror(self):

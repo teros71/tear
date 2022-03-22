@@ -1,6 +1,5 @@
 {
   "defaults": {
-    "unitSize": 800.0,
     "tear": {
       "iterations": 18,
       "minDistance": 2.0,
@@ -10,43 +9,115 @@
       "opacity": 0.2
     }
   },
+  "playground": {
+    "w": 900,
+    "h": 900
+  },
   "forms": [
     {
-      "name": "well",
-      "base": "new",
-      "type": "circle",
-      "r": 800.0,
+      "name": "stacked",
+      "base": "generator",
+      "type": "ellipse",
+      "rx": "?:110.0:190.0",
+      "ry": "?:60.0:120.0",
       "recipe": [
+        {
+          "algorithm": "generate",
+          "count": 100
+        },
+        {
+          "algorithm": "scaler",
+          "disable": true,
+          "fx": "1.0:0.2/180",
+          "fy": 0
+        }
+      ]
+    },
+    {
+      "name": "stacked-1",
+      "base": "stacked",
+      "recipe": [
+        {
+          "disable": false,
+          "algorithm": "poly"
+        },
+        {
+          "disable": false,
+          "algorithm": "rotate",
+          "angle": "0:360/26",
+          "around-leaf": true
+        },
+        {
+          "algorithm": "position",
+          "x": "300",
+          "y": "$CY"
+        },
         {
           "algorithm": "tear",
           "disable": false,
           "params": {
-            "iterations": 12,
-            "angleVar": 14,
-            "count": 8
+            "iterations": 8,
+            "angleVar": 0.72,
+            "count": 1,
+            "randomizeBase": -0.47
           }
         },
         {
           "algorithm": "appearance",
-          "opacity": "0.25-0.45",
-          "colours": ["blue"],
-          "stroke": "none",
-          "strokeWidth": 40
+          "opacity": "0.1",
+          "colours": "red,blue,green,orange",
+          "stroke": "black",
+          "strokeWidth": 0
+        }
+      ]
+    },
+    {
+      "name": "stacked-2",
+      "base": "stacked",
+      "recipe": [
+        {
+          "disable": true,
+          "algorithm": "poly"
+        },
+        {
+          "disable": false,
+          "algorithm": "rotate",
+          "angle": "0:360/26",
+          "around-leaf": true
         },
         {
           "algorithm": "position",
-          "disable": false,
-          "x": 1000,
-          "y": 900
+          "x": 600,
+          "y": "$CY"
+        },
+        {
+          "algorithm": "tear",
+          "disable": true,
+          "params": {
+            "iterations": 8,
+            "angleVar": 0.72,
+            "count": 1,
+            "randomizeBase": -0.47
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "0.1",
+          "colours": "red,blue,green,orange",
+          "stroke": "black",
+          "strokeWidth": 0
         }
       ]
     }
   ],
   "output": {
-    "background": "black",
+    "background": "#420700",
     "shapes": [
       {
-        "name": "well"
+        "name": "stacked-1"
+      },
+      {
+        "name": "stacked-2"
       }
     ]
   }

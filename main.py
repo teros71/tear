@@ -8,6 +8,7 @@ import default
 import forms
 import form
 import pg
+import goldenratio
 
 
 def read_config(fname):
@@ -26,6 +27,10 @@ def read_config(fname):
         pg.HEIGHT = play.get('h', 1000)
         pg.CENTER_X = pg.WIDTH / 2
         pg.CENTER_Y = pg.HEIGHT / 2
+        pg.GR_X1 = pg.WIDTH / goldenratio.VALUE
+        pg.GR_Y1 = pg.HEIGHT / goldenratio.VALUE
+        pg.GR_X0 = pg.WIDTH - pg.GR_X1
+        pg.GR_Y0 = pg.HEIGHT - pg.GR_Y1
     return data
 
 
@@ -41,7 +46,7 @@ def run(data, fname):
     print("write output")
     op = data.get('output')
     if op is not None:
-        svg.write(fname, 1100, 1400, pg.HEIGHT, pg.WIDTH, op)
+        svg.write(fname, 900, 900, pg.HEIGHT, pg.WIDTH, op)
 
 
 def main(argv):

@@ -10,8 +10,8 @@
     }
   },
   "playground": {
-    "w": 2800,
-    "h": 1800
+    "w": 2000,
+    "h": 2000
   },
   "forms": [
     {
@@ -57,7 +57,7 @@
         },
         {
           "algorithm": "spread-polar",
-          "origo": [1400,900],
+          "origo": ["$CX","$CY"],
           "r": 600,
           "t": "0:6.2831853/30",
           "algorithm2": "spread-path",
@@ -78,7 +78,7 @@
           "algorithm": "appearance",
           "opacity": "?:0.2:0.6",
           "colours3": ["#0000ff:#8080ff/8", "#00ff00:#80ff80/8"],
-          "colours": "#ff0000:#800000/4->#ff00ff:#800080/4*30",
+          "colours": "#ff0000:#800000/4->#ff0080:#800080/4*30",
           "colours4": "#0000ff:#000080/4->#ff0000:#800000/4*30",
           "colours2": [["#0000ff:#8080ff/8"], ["#00ff00:#80ff80/8"]],
           "stroke": "black",
@@ -95,13 +95,16 @@
       "recipe": [
         {
           "algorithm": "generate",
-          "count": 160
+          "count": 180
         },
         {
           "algorithm": "scaler",
           "disable": false,
-          "fx": "1.0:0.2/160",
+          "fx": "1.0:0.2/180",
           "fy": 0
+        },
+        {
+          "algorithm": "poly"
         },
         {
           "disable": false,
@@ -111,8 +114,8 @@
         },
         {
           "algorithm": "spread-polar",
-          "origo": [1400,900],
-          "r": "500:150/160",
+          "origo": ["$CX","$CY"],
+          "r": "480:130/180",
           "t": "0.0:30.0:0.24"
         },
         {
@@ -120,16 +123,16 @@
           "disable": false,
           "params": {
             "iterations": 8,
-            "angleVar": 0.32,
-            "count": 2,
-            "randomizeBase": -0.17
+            "angleVar": 0.72,
+            "count": 4,
+            "randomizeBase": -0.47
           }
         },
         {
           "algorithm": "appearance",
           "opacity": "0.25",
           "colours1": "#ff0000:#800000/4->#ff00ff:#800080/4*30",
-          "colours": "#c0c0ff,#ffffc0->#405066,#000000*80",
+          "colours": "#c0c0e8,#cfafa0->#405066,#000000*90",
           "stroke": "black",
           "strokeWidth": 1
         }
@@ -187,10 +190,12 @@
     {
       "name": "spiral",
       "base": "new",
-      "type": "rectangle",
+      "type": "ellipse",
       "r": 10,
       "w": 20,
       "h": 20,
+      "rx": 10,
+      "ry": 20,
       "recipe": [
         {
           "algorithm": "multiply",
@@ -202,7 +207,7 @@
         },
         {
           "algorithm": "scaler",
-          "fx": "0.01:20.0:0.025"
+          "fx": "0.01:30.0:0.030"
         },
         {
           "algorithm": "spread-f",
@@ -213,15 +218,16 @@
         {
           "algorithm": "appearance",
           "opacity": 0.6,
-          "colours": "#008020:#90dd80/100",
+          "colours": "#008020:#8f0000/100",
           "shadow": true
         }
       ]
     }
   ],
   "output": {
-    "background": "#504030",
-    "background2": "#4040a0",
+    "background1": "#622222",
+    "background3": "#504030",
+    "background": "#450303",
     "shapes": [
       {
         "name": "background"

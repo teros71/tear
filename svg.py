@@ -76,6 +76,9 @@ def write_svg_ellipse(file, e):
     rx = e.base.rx
     ry = e.base.ry
     file.write(f'<ellipse cx="{x}" cy="{y}" rx="{rx}" ry="{ry}" ')
+    if e.angle != 0:
+        a = e.angle
+        file.write(f'transform="rotate({a} {x} {y})" ')
 
 
 def write_svg_polygon(file, poly):

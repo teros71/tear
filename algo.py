@@ -479,6 +479,13 @@ def clip(r, base):
 #    return apply_recursive(r, base, do_it)
 
 
+def poly(r, base):
+
+    def do_it(s):
+        s.base = geom.Polygon(s.base.get_points(s.position))
+    return apply_recursive(r, base, do_it)
+
+
 algorithms = {
     "position": position,
     "generate": generate,
@@ -499,6 +506,7 @@ algorithms = {
     "shadow": shadow,
     "voronoi": a_voronoi,
     "voronoi-b": b_voronoi,
+    "poly": poly,
     "clip": clip
 }
 

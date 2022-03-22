@@ -152,13 +152,22 @@ def make_from_dict(obj, js):
     return {key: make(v, js) for key, v in obj.items()}
 
 
+def substitute_variables(s):
+    s = s.replace("$CX", str(pg.CENTER_X))
+    s = s.replace("$CY", str(pg.CENTER_Y))
+    s = s.replace("$W", str(pg.WIDTH))
+    s = s.replace("$H", str(pg.HEIGHT))
+    s = s.replace("$GRX0", str(pg.GR_X0))
+    s = s.replace("$GRY0", str(pg.GR_Y0))
+    s = s.replace("$GRX1", str(pg.GR_X1))
+    s = s.replace("$GRY1", str(pg.GR_Y1))
+    return s
+
+
 def make_from_str(obj, js):
     # substitute variables
     if '$' in obj:
-        obj = obj.replace("$CX", str(pg.CENTER_X))
-        obj = obj.replace("$CY", str(pg.CENTER_Y))
-        obj = obj.replace("$W", str(pg.WIDTH))
-        obj = obj.replace("$H", str(pg.HEIGHT))
+        obj = substitute_variables(obj)
     # random value
     if obj.startswith('?:'):
         val = read_str_value(obj[2:])
