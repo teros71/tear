@@ -1,6 +1,6 @@
 from scipy.spatial import Voronoi
 import numpy as np
-import geom
+from geometry import geom
 
 
 def all_polygons(points):

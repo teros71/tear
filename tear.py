@@ -2,7 +2,7 @@ import math
 import random
 import shape
 import default
-import geom
+from geometry import geom
 from value import reader
 
 

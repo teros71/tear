@@ -3,7 +3,7 @@ import math
 import random
 import json
 import copy
-import geom
+from geometry import geom, path
 
 
 class Shape:
@@ -180,18 +180,25 @@ class Appearence:
         self.blur = blur
 
 
-class ShapePath:
-    def __init__(self, s, count):
+class Path:
+    """Path
+    Only curve object is supported, plus it is assumed to have absolute
+    coordinates, not relative to 0,0.
+    """
+
+    def __init__(self, s, step):
         self.s = s
-        self.len = s.base.length()
-        self.step = self.len / count
-        self.current = 0
+        if step > 1.0:
+            self.step = 1.0 / step
+        else:
+            self.step = step
+        self.current = 0.0
 
     def next(self):
-        p = self.s.base.point_at(self.s.position, self.current)
+        p = self.s.point_at(self.current)
         self.current += self.step
-        if self.current > self.len:
-            self.current = 0
+        if self.current > 1.0:
+            self.current = 0.0
         return p
 
 
@@ -266,3 +273,17 @@ def random_polygon(r, count):
         d = r.get()
         points.append(geom.Point(d * math.cos(a), d * math.sin(a)))
     return geom.Polygon(points)
+
+
+class PathGenerator:
+    def __init__(self, start, end, count, av):
+        self.start = start
+        self.end = end
+        self.count = count
+        self.av = av
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        return Shape(path.random_path(self.start, self.end, self.count, self.av, 2.0))

@@ -4,7 +4,7 @@ import math
 import form
 import forms
 import shape
-import geom
+from geometry import geom
 
 
 class TestForms(unittest.TestCase):

@@ -1,6 +1,6 @@
 import copy
 import math
-import geom
+from geometry import geom
 
 VALUE = 1.618033988749895
 GOLDEN_B = 0.3063489

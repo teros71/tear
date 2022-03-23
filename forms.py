@@ -5,7 +5,7 @@ import copy
 
 import default
 import shape
-import geom
+from geometry import geom
 
 form_table = {}
 image_table = {}

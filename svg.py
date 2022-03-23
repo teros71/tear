@@ -2,7 +2,7 @@
 
 import shape
 import forms
-import geom
+from geometry import geom, path
 
 
 def write_svg_feshadow(file, id):
@@ -89,6 +89,16 @@ def write_svg_polygon(file, poly):
     file.write('"\n')
 
 
+def write_svg_path(file, path):
+    print(path)
+    p = path.startpoint
+    file.write(f'<path d="M {p.x} {p.y} ')
+    for s in path.segments:
+        file.write(f'S {s.cp.x} {s.cp.y} {s.p1.x} {s.p1.y} ')
+    file.write('" ')
+#    file.write('" stroke="black" fill="transparent"/>')
+
+
 def write_svg_style(file, app):
     file.write(
         f'style="opacity:{app.opacity};'
@@ -120,8 +130,10 @@ def write_svg_shape(file, single):
         write_svg_circle(file, single)
     elif isinstance(single.base, geom.Ellipse):
         write_svg_ellipse(file, single)
-    else:
+    elif isinstance(single.base, geom.Polygon):
         write_svg_polygon(file, single)
+    elif isinstance(single.base, path.Path):
+        write_svg_path(file, single.base)
     write_svg_style(file, app)
     if app.shadow:
         file.write(f' filter="url(#shadow_n{SHAPE_COUNT})"')

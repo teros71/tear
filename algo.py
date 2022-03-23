@@ -10,7 +10,7 @@ import tear
 from value import value, reader
 import area
 import forms
-import geom
+from geometry import geom
 import voronoi
 
 
@@ -30,41 +30,6 @@ def apply_recursive(config, base, alg):
     for form in base:
         apply_recursive(config, form, alg)
     return base
-
-
-def read_point(config, name):
-    """Helper to read a point from config"""
-    p = config.get(name)
-    if p is None:
-        return None
-    if not isinstance(p, list) or len(p) != 2:
-        raise ValueError("invalid point")
-    x = reader.make(p[0], config)
-    y = reader.make(p[1], config)
-    return geom.Point(x.get(), y.get())
-
-
-def read_cartesian(config):
-    vx = reader.read(config, 'x')
-    if vx is None:
-        return None
-    vy = reader.read(config, 'y')
-    if vy is None:
-        return None
-    return value.Cartesian(vx, vy)
-
-
-def read_polar(config):
-    origo = read_point(config, 'origo')
-    if origo is None:
-        return None
-    t = reader.read(config, 't')
-    if t is None:
-        return None
-    r = reader.read(config, 'r')
-    if r is None:
-        return None
-    return value.Polar(origo, t, r)
 
 
 # ===========================================================================
@@ -88,9 +53,9 @@ def position(config, base):
         leaf (bool): apply to leaf shapes rather than compounds, default true
     """
 
-    p = read_cartesian(config)
+    p = reader.read_cartesian(config)
     if p is None:
-        p = read_polar(config)
+        p = reader.read_polar(config)
     if p is None:
         raise ValueError("position: not enough data")
 
@@ -174,11 +139,11 @@ def spread_matrix(config, base):
     if rx is not None:
         pos = value.List([geom.Point(x, y) for y in ry for x in rx])
     else:
-        o = read_point(config, 'origo')
+        o = reader.read_point(config, 'origo')
         rt = reader.read(config, "t")
         rr = reader.read(config, "r")
         pos = value.List(
-            [geom.Point.fromtuple(geom.polar2cartesian(o.x, o.y, t, r))
+            [geom.Point.fromtuple(geom.polar2cartesian(t, r, o.x, o.y))
                 for r in rr for t in rt])
 
     def do_it(shape):
@@ -208,7 +173,7 @@ def spread_path(config, base):
     if shap is None:
         return None
     count = reader.read(config, "count")
-    a = shape.ShapePath(shap, count.get())
+    a = shape.Path(shap, count.get())
 
     def do_it(s):
         p = a.next()
@@ -219,7 +184,7 @@ def spread_path(config, base):
 
 
 def spread_f(config, base):
-    o = read_point(config, 'origo')
+    o = reader.read_point(config, 'origo')
     fx = reader.read(config, "f")
     shape_arg = config.get("shape-arg", False)
 
@@ -235,7 +200,7 @@ def spread_f(config, base):
 
 def x_spread_s(config, base):
     origo = config.get('origo', [0, 0])
-    o = read_point(origo, config)
+    o = reader.read_point(origo, config)
     params = config.get('params', [])
     vals = {key: reader.read(config, key) for key in params}
     fx = reader.read(config, "f")
@@ -250,7 +215,7 @@ def x_spread_s(config, base):
 
 def spread_polar(config, base):
     """base is a list of shapes, they are spread"""
-    o = read_point(config, 'origo')
+    o = reader.read_point(config, 'origo')
     rr = reader.read(config, "r")
     rt = reader.read(config, "t")
 #    r = rr.get()

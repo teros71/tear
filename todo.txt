@@ -16,6 +16,9 @@ Add handling of recursive shape lists:
   - need for "save" operation for generated shapes? Like e.g. generate scaled
     areas to be used for spreading different objects later.
 
+- rotation: ellipse now has a hack for rotation, make it work smoothly with
+  tear algorithm (so no need for "poly" algorithm)
+
 - add non-linear possibilities:
   - spread shapes non-evenly to an area
   - spread shapes non-evenly to a path

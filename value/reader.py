@@ -23,12 +23,14 @@ c:#rrggbb:#rrggbb/n = colour range
 f:str = function where str is evaluated with parameter x (depending no the algorithm)
 
 """
+from geometry import geom
 import math
 import random
 import pg
 import goldenratio
 from colours import Colour, ColourRange
-from value.value import Single, Range, Random, List, Function, Eval, Series
+from value.value import Single, Range, Random, List, Function, Eval, Series, \
+    Polar, Cartesian
 
 
 def isfloat(num):
@@ -206,3 +208,41 @@ def make(obj, js=None):
         return make_from_dict(obj, js)
     print("WARNING: unknown value type", obj)
     return obj
+
+
+# read geometrical data
+
+
+def read_point(config, name):
+    """Helper to read a point from config"""
+    p = config.get(name)
+    if p is None:
+        return None
+    if not isinstance(p, list) or len(p) != 2:
+        raise ValueError("invalid point")
+    x = make(p[0], config)
+    y = make(p[1], config)
+    return geom.Point(x.get(), y.get())
+
+
+def read_cartesian(config):
+    vx = read(config, 'x')
+    if vx is None:
+        return None
+    vy = read(config, 'y')
+    if vy is None:
+        return None
+    return Cartesian(vx, vy)
+
+
+def read_polar(config):
+    origo = read_point(config, 'origo')
+    if origo is None:
+        return None
+    t = read(config, 't')
+    if t is None:
+        return None
+    r = read(config, 'r')
+    if r is None:
+        return None
+    return Polar(origo, t, r)

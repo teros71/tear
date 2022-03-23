@@ -2,7 +2,7 @@ import shape
 from value import reader
 import algo
 import forms
-import geom
+from geometry import geom, path
 
 
 def make_generator_shape(config):
@@ -22,6 +22,12 @@ def make_generator_shape(config):
         rar = reader.read(config, "r")
         rap = reader.read(config, "c")
         return shape.PolygonGenerator(rar, rap)
+    if t == 'path':
+        sp = reader.read_point(config, "start")
+        ep = reader.read_point(config, "end")
+        count = config.get("count")
+        av = config.get("av")
+        return shape.PathGenerator(sp, ep, count, av)
 
 
 def make_new_shape(r):
@@ -31,13 +37,22 @@ def make_new_shape(r):
     base = None
     if t == 'rectangle':
         base = geom.Rect(r.get("w", 10.0), r.get("h", 10.0))
-    if t == 'circle':
+    elif t == 'circle':
         base = geom.Circle(r.get("r", 10.0))
-    if t == 'ellipse':
+    elif t == 'ellipse':
         base = geom.Ellipse(r.get("rx", 20.0), r.get("ry", 10.0))
-    if t == 'polygon':
+    elif t == 'polygon':
         base = geom.Polygon.fromstr(
             r.get("points", "0.0 0.0, 10.0 5.0, 5.0 10.0"))
+    elif t == 'path':
+        #        segs = r.get("segments")
+        sp = reader.read_point(r, "start")
+        ep = reader.read_point(r, "end")
+        count = r.get("count")
+        av = r.get("av")
+        base = path.random_path(sp, ep, count, av, 2.0)
+    else:
+        raise ValueError("new shape: unknown type")
     s = shape.Shape(base)
     s.set_position(x, y)
     return s

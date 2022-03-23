@@ -1,7 +1,7 @@
 import unittest
 import math
 
-import geom
+from geometry import geom
 
 
 class TestGeom(unittest.TestCase):

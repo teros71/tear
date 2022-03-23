@@ -1,7 +1,7 @@
 """handle area related things"""
 
 import random
-import geom
+from geometry import geom
 import pg
 
 
