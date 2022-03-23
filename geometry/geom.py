@@ -63,16 +63,25 @@ class Point:
         """has same coordinates"""
         return is_zero(self.x - v.x) and is_zero(self.y - v.y)
 
-    def print(self):
+    def __repr__(self):
         """print data"""
-        print(self.x, self.y)
+        return f'Point[{self.x}, {self.y}]'
 
 
-def polar2cartesian(ox, oy, t, r):
+def polar2cartesian(t, r, ox=0, oy=0):
+    """Convert polar coordinates to cartesian
+    Args:
+        t : angle
+        r : distance
+        ox, oy : origo of polar coordinates
+    Returns:
+        x, y : cartesian coordinates
+    """
     return ox + r * math.cos(t), oy + r * math.sin(t)
 
 
 def mid_point(p1, p2):
+    """Point midway between p1 and p2"""
     return Point(p1.x + (p2.x - p1.x) / 2, p1.y + (p2.y - p1.y) / 2)
 
 
@@ -107,9 +116,9 @@ class BBox:
         self.x1 = max(self.x1, bb.x1)
         self.y1 = max(self.y1, bb.y1)
 
-    def print(self):
+    def __repr__(self):
         """print data"""
-        print(f'bbox;[{self.x0},{self.y0}]-[{self.x1},{self.y1}]')
+        return f'BBox[{self.x0},{self.y0}]-[{self.x1},{self.y1}]'
 
 
 class Rect:
@@ -146,10 +155,10 @@ class Rect:
         """total length of the edge of this rectangle"""
         return self.width * 2 + self.height * 2
 
-    def point_at(self, origo, dist):
+    def point_at(self, dist):
         """get point on the edge at given distance along the edge"""
-        p = self.get_points(origo)
-        dist = dist % self.length()
+        p = self.get_points(Point(0, 0))
+        dist = self.length() * dist
         if dist < self.height:
             return Point(p[0].x, p[0].y + dist)
         dist -= self.height
@@ -160,6 +169,9 @@ class Rect:
             return Point(p[2].x, p[2].y - dist)
         dist -= self.height
         return Point(p[3].x - dist, p[3].y)
+
+    def __repr__(self):
+        return f'Rect[{self.width},{self.height}]'
 
 
 class Circle:
@@ -201,11 +213,13 @@ class Circle:
         """length of the circle edge"""
         return 2 * math.pi * self.r
 
-    def point_at(self, origo, dist):
+    def point_at(self, dist):
         """return point at the edge at given distance"""
-        dist %= self.length()
-        t = (2 * math.pi) * (dist / self.length())
-        return Point(origo.x + self.r * math.cos(t), origo.y + self.r * math.sin(t))
+        t = 2 * math.pi * dist
+        return Point(self.r * math.cos(t), self.r * math.sin(t))
+
+    def __repr__(self):
+        return f'Circle[{self.r}]'
 
 
 class Ellipse:
@@ -253,11 +267,29 @@ class Ellipse:
             (3 * ((amb2)
                   / (apb2 * (math.sqrt(-3 * ((amb2 / apb2) + 4)) + 10))) + 1)
 
-    def point_at(self, origo, dist):
+    def point_at(self, dist):
         """return point at the edge at given distance"""
-        dist %= self.length()
-        t = (2 * math.pi) * (dist / self.length())
-        return Point(origo.x + self.rx * math.cos(t), origo.y + self.ry * math.sin(t))
+        t = 2 * math.pi * dist
+        return Point(self.rx * math.cos(t), self.ry * math.sin(t))
+
+    def __repr__(self):
+        return f'Ellipse[{self.rx},{self.ry}]'
+
+
+class Curve:
+    def __init__(self, p0, p1, cp):
+        self.p0 = p0
+        self.p1 = p1
+        self.cp = cp
+
+    def point_at(self, d):
+        t = 1 - d
+        x = t * t * self.p0.x + 2 * t * d * self.cp.x + d * d * self.p1.x
+        y = t * t * self.p0.y + 2 * t * d * self.cp.y + d * d * self.p1.y
+        return Point(x, y)
+
+    def __repr__(self):
+        return f'Curve[{self.p0},{self.p1},{self.cp}]'
 
 
 class Polygon:
@@ -472,10 +504,10 @@ class Polygon:
             i += 1
         return d
 
-    def point_at(self, origo, dist):
+    def point_at(self, dist):
         """point on the edge on given distance"""
-        dist %= self.length()
-        p = self.get_points(origo)
+        dist = self.length() * dist
+        p = self.points
         i = 0
         n = len(p)
         j = 1
@@ -492,6 +524,9 @@ class Polygon:
             d = distance(p0, p1)
         print(dist, p0.x, p0.y, p1.x, p1.y, d)
         return Point(p0.x + (p1.x - p0.x) * (dist / d), p0.y + (p1.y - p0.y) * (dist / d))
+
+    def __repr__(self):
+        return f'Polygon[{self.points}]'
 
 
 def intersect(p1, p2, q1, q2):
