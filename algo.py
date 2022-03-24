@@ -53,15 +53,15 @@ def position(config, base):
         leaf (bool): apply to leaf shapes rather than compounds, default true
     """
 
-    p = reader.read_cartesian(config)
-    if p is None:
-        p = reader.read_polar(config)
-    if p is None:
+    ps = reader.read_point(config)
+#    if p is None:
+#        p = reader.read_polar(config)
+    if ps is None:
         raise ValueError("position: not enough data")
 
     def do_it(base):
-        x, y = p.get()
-        base.set_position(x, y)
+        p = ps.next
+        base.set_position(p.x, p.y)
     if config.get('leaf', True):
         apply_recursive(config, base, do_it)
     else:
@@ -139,7 +139,7 @@ def spread_matrix(config, base):
     if rx is not None:
         pos = value.List([geom.Point(x, y) for y in ry for x in rx])
     else:
-        o = reader.read_point(config, 'origo')
+        o = reader.read_point(config, 'origo').next
         rt = reader.read(config, "t")
         rr = reader.read(config, "r")
         pos = value.List(
@@ -184,7 +184,7 @@ def spread_path(config, base):
 
 
 def spread_f(config, base):
-    o = reader.read_point(config, 'origo')
+    origo = reader.read_point(config, 'origo')
     fx = reader.read(config, "f")
     shape_arg = config.get("shape-arg", False)
 
@@ -193,21 +193,7 @@ def spread_f(config, base):
             p = fx(s)
         else:
             p = fx()
-        s.set_position(p.x + o.x, p.y + o.y)
-        return s
-    return apply_recursive(config, base, do_it)
-
-
-def x_spread_s(config, base):
-    origo = config.get('origo', [0, 0])
-    o = reader.read_point(origo, config)
-    params = config.get('params', [])
-    vals = {key: reader.read(config, key) for key in params}
-    fx = reader.read(config, "f")
-
-    def do_it(s):
-        args = {key: v.get() for key, v in vals.items()}
-        p = fx(s, **args)
+        o = origo.next
         s.set_position(p.x + o.x, p.y + o.y)
         return s
     return apply_recursive(config, base, do_it)
@@ -215,7 +201,7 @@ def x_spread_s(config, base):
 
 def spread_polar(config, base):
     """base is a list of shapes, they are spread"""
-    o = reader.read_point(config, 'origo')
+    origo = reader.read_point(config, 'origo')
     rr = reader.read(config, "r")
     rt = reader.read(config, "t")
 #    r = rr.get()
@@ -224,11 +210,11 @@ def spread_polar(config, base):
 #    y = r * math.sin(t)
 
     def do_it(shap):
-        r = rr.get()
-        t = rt.get()
+        r = rr.next
+        t = rt.next
         x = r * math.cos(t)
         y = r * math.sin(t)
-        print("polar", rr)
+        o = origo.next
         if isinstance(shap, shape.List):
             for s in shap:
                 apply_recursive(config, s, do_it)
@@ -460,7 +446,6 @@ algorithms = {
     "spread-polar": spread_polar,
     "spread-matrix": spread_matrix,
     "spread-f": spread_f,
-    "x-spread-s": x_spread_s,
     "tear": a_tear,
     "scaler": scaler,
     "appearance": appearance,

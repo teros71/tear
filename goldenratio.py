@@ -79,7 +79,8 @@ class Fibonacci:
         self.prev = 0
         self.current = 1
 
-    def get(self):
+    @property
+    def next(self):
         v = self.prev
         self.prev = self.current
         self.current = v + self.prev

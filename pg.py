@@ -25,6 +25,7 @@ PORTRAIT_4BY3 = {"h": 1200, "w": 900}
 PORTRAIT_15BY12 = {"h": 1125, "w": 900}
 PORTRAIT_1BY2 = {"h": 1800, "w": 900}
 
+# A3 in 2/3 : 280 x 420 : 3307 x 4960 (300ppi)
 
 # what to use for svg dimensions?
 # square : 1/1   : 900 x 900

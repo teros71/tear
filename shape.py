@@ -286,4 +286,8 @@ class PathGenerator:
         return self
 
     def __next__(self):
-        return Shape(path.random_path(self.start, self.end, self.count, self.av, 2.0))
+        s = geom.Point.fromtuple(self.start.get())
+        e = geom.Point.fromtuple(self.end.get())
+        print("random path", s, e)
+        return Shape(path.random_path(s, e,
+                                      self.count, self.av, 2.0))

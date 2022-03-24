@@ -24,13 +24,11 @@ f:str = function where str is evaluated with parameter x (depending no the algor
 
 """
 from geometry import geom
-import math
-import random
 import pg
-import goldenratio
 from colours import Colour, ColourRange
-from value.value import Single, Range, Random, List, Function, Eval, Series, \
-    Polar, Cartesian
+from value.value import Single, Range, Random, List
+from value.valg import Polar, Cartesian
+from value.valf import Function, Eval, Series
 
 
 def isfloat(num):
@@ -89,7 +87,7 @@ def read_str_value(s):
         if len(lst) == 3:
             return Range.fromlist(convert_list(lst))
         if len(lst) != 2:
-            print("WARNING: invalid range syntax", s)
+            raise ValueError("WARNING: invalid range syntax", s)
         if '/' in lst[1]:
             lst2 = lst[1].split('/')
             minv = convert_value(lst[0])
@@ -213,30 +211,34 @@ def make(obj, js=None):
 # read geometrical data
 
 
-def read_point(config, name):
-    """Helper to read a point from config"""
-    p = config.get(name)
-    if p is None:
-        return None
+def read_point_data(p):
+    if isinstance(p, str):
+        p = p.split(',')
     if not isinstance(p, list) or len(p) != 2:
         raise ValueError("invalid point")
-    x = make(p[0], config)
-    y = make(p[1], config)
-    return geom.Point(x.get(), y.get())
+    x = make(p[0])
+    y = make(p[1])
+    return Cartesian(x, y)
 
 
-def read_cartesian(config):
-    vx = read(config, 'x')
-    if vx is None:
+def read_cartesian(config, name=None):
+    if name is not None:
+        config = config.get(name)
+    if config is None:
         return None
-    vy = read(config, 'y')
-    if vy is None:
-        return None
-    return Cartesian(vx, vy)
+    if isinstance(config, dict):
+        vx = read(config, 'x')
+        if vx is None:
+            return None
+        vy = read(config, 'y')
+        if vy is None:
+            return None
+        return Cartesian(vx, vy)
+    return read_point_data(config)
 
 
 def read_polar(config):
-    origo = read_point(config, 'origo')
+    origo = read_cartesian(config, 'origo')
     if origo is None:
         return None
     t = read(config, 't')
@@ -246,3 +248,16 @@ def read_polar(config):
     if r is None:
         return None
     return Polar(origo, t, r)
+
+
+def read_point(config, name=None):
+    if name is not None:
+        config = config.get(name)
+    if config is None:
+        return None
+    p = read_cartesian(config, None)
+    if p is None:
+        p = read_polar(config)
+    if p is None:
+        raise ValueError("invalid point")
+    return p

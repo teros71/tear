@@ -38,6 +38,7 @@ class Single:
         self.v = True
 
     def __iter__(self):
+        self.v = True
         return self
 
     def __next__(self):
@@ -45,6 +46,14 @@ class Single:
             self.v = False
             return self.value
         raise StopIteration
+
+    @property
+    def current(self):
+        return self.value
+
+    @property
+    def next(self):
+        return self.value
 
     def get(self):
         return self.value
@@ -54,34 +63,49 @@ class Single:
 
 
 class List:
-    """List value, returns the next in the list"""
+    """List value
+    The list can be iterated in the usual fashion,
+    but the next property works like a circular buffer and always returns
+    a valid item.
+    current is the last returned item, or if none yet, then the last item
+    on the list"""
 
     def __init__(self, lst):
         self.lst = lst
         self.i = 0
+        self.exhausted = False
 
     def __iter__(self):
         self.i = 0
+        self.exhausted = False
         return self
 
     def __next__(self):
-        if self.i < len(self.lst):
-            v = self.lst[self.i]
-            self.i += 1
-            return v
-        raise StopIteration
+        if self.exhausted:
+            raise StopIteration
+        if self.i == len(self.lst) - 1:
+            self.exhausted = True
+        return self.next
 
     def __getitem__(self, item):
         return self.lst[item]
+
+    @property
+    def current(self):
+        return self.lst[self.i - 1]
+
+    @property
+    def next(self):
+        v = self.lst[self.i]
+        self.i = (self.i + 1) % len(self.lst)
+        return v
 
     def depth(self):
         return
 
     def get(self):
-        if self.i >= len(self.lst):
-            self.i = 0
         v = self.lst[self.i]
-        self.i += 1
+        self.i = (self.i + 1) % len(self.lst)
         return v
 
     def reset(self):
@@ -91,11 +115,12 @@ class List:
 class Range:
     """Range value, returns next according to the step"""
 
-    def __init__(self, min, max, step):
-        self.min = min
-        self.max = max
+    def __init__(self, min_v, max_v, step):
+        self.min = min_v
+        self.max = max_v
         self.step = step
-        self.current = self.min
+        self._current = self.min
+        self.last = self.max
 
     def __iter__(self):
         self.reset()
@@ -103,30 +128,40 @@ class Range:
 
     def __next__(self):
         if self.step >= 0:
-            if self.current >= self.max:
+            if self._current >= self.max:
                 raise StopIteration
-        elif self.current <= self.max:
+        elif self._current <= self.max:
             raise StopIteration
+        return self.get()
+
+    @property
+    def current(self):
+        return self.last
+
+    @property
+    def next(self):
         return self.get()
 
     def get(self):
         if self.step >= 0:
-            if self.current >= self.max:
-                self.current = self.min
-        elif self.current <= self.max:
-            self.current = self.min
-        r = self.current
-        self.current += self.step
-        return r
+            if self._current >= self.max:
+                self._current = self.min
+        elif self._current <= self.max:
+            self._current = self.min
+        self.last = self._current
+        self._current += self.step
+        return self.last
 
     def reset(self):
-        self.current = self.min
+        self._current = self.min
+        self.last = self.max
 
     def __repr__(self):
-        return f'Range[{self.min},{self.max},{self.step},{self.current}]'
+        return f'Range[{self.min},{self.max},{self.step},{self._current}]'
 
     @classmethod
     def fromlist(cls, lst):
+        print("range", lst)
         if len(lst) > 2:
             return cls(lst[0], lst[1], lst[2])
         return cls(lst[0], lst[1], 1)
@@ -138,99 +173,35 @@ class Random:
     def __init__(self, range):
         self.range = range
         self.method = 0
+        self.last = None
 
     def __iter__(self):
         return self
 
     def __next__(self):
+        return self.get()
+
+    @property
+    def current(self):
+        return self.last
+
+    @property
+    def next(self):
         return self.get()
 
     def get(self):
         if isinstance(self.range, list):
             i = random.randint(0, len(self.range) - 1)
-            return self.range[i]
-        if isinstance(self.range, ColourRange):
-            return self.range.random()
-        if isinstance(self.range.min, float):
-            return random.uniform(self.range.min, self.range.max)
-        if isinstance(self.range.min, int):
-            return random.randint(self.range.min, self.range.max)
+            self.last = self.range[i]
+        elif isinstance(self.range, ColourRange):
+            self.last = self.range.random()
+        elif isinstance(self.range.min, float):
+            self.last = random.uniform(self.range.min, self.range.max)
+        elif isinstance(self.range.min, int):
+            self.last = random.randint(self.range.min, self.range.max)
+        else:
+            self.last = self.range.random()
+        return self.last
 
     def reset(self):
         pass
-
-
-class Eval:
-    def __init__(self, f):
-        self.f = f
-        self.i = 0
-
-    def __iter__(self):
-        self.reset()
-        return self
-
-    def __next__(self):
-        return self.get()
-
-    def get(self):
-        v = eval(self.f.format(self.i))
-        self.i += 1
-        return v
-
-    def reset(self):
-        self.i = 0
-
-
-class Function:
-    """Function object. Get the actual callable by evaluating f"""
-
-    def __init__(self, f, kwargs):
-        self.f = eval(f)
-        self.kwargs = kwargs
-
-    def __call__(self, **kwargs):
-        # get values for the arguments
-        args = {key: v.get() for key, v in self.kwargs.items()}
-        args.update(kwargs)
-        return self.f(**args)
-
-
-class Cartesian:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-
-    def get(self):
-        return self.x.get(), self.y.get()
-
-
-class Polar:
-    """Wrapper for polar coordinate values to cartesian"""
-
-    def __init__(self, origo, t, r):
-        self.origo = origo
-        self.t = t
-        self.r = r
-
-    def get(self):
-        t = self.t.get()
-        r = self.r.get()
-        x = r * math.cos(t)
-        y = r * math.sin(t)
-        return x + self.origo.x, y + self.origo.y
-
-
-class Class:
-    def __init__(self, s):
-        self.obj = eval(s)
-
-    def get(self):
-        return self.obj()
-
-
-class Series:
-    def __init__(self, s):
-        self.obj = eval(s)
-
-    def get(self):
-        return self.obj.get()

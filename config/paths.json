@@ -11,26 +11,26 @@
   },
   "playground": {
     "w": 900,
-    "h": 900
+    "h": 1350
   },
   "forms": [
     {
       "name": "mypath",
       "base": "generator",
       "type": "path",
-      "start": [100,100],
-      "end": [800,800],
+      "start": {"origo": [450,450], "t": "0.0:6.28/200", "r": 450},
+      "end": {"x": 450, "y": 450},
       "count": 3,
       "av": 0.9,
       "recipe": [
         {
           "algorithm": "generate",
-          "count": 20
+          "count": 200
         },
         {
           "algorithm": "appearance",
-          "opacity": "0.2",
-          "colours": "red,blue",
+          "opacity": "0.12",
+          "colours": "red,blue,orange",
           "stroke": "black",
           "strokeWidth": 1
         }
@@ -40,14 +40,14 @@
       "name": "mypath2",
       "base": "generator",
       "type": "path",
-      "start": [100,800],
-      "end": [800,100],
+      "start": {"x":350, "y":725},
+      "end": {"x": 350, "y": "100.0:1251.0:1150.0"},
       "count": 3,
       "av": 0.9,
       "recipe": [
         {
           "algorithm": "generate",
-          "count": 20
+          "count": 30
         },
         {
           "disable": true,
@@ -58,7 +58,7 @@
           "disable": true,
           "params": {
             "iterations": 10,
-            "angleVar": 0.18,
+            "angleVar": 0.1,
             "count": 1,
             "randomizeBase": 0.0
           }
@@ -66,7 +66,43 @@
         {
           "algorithm": "appearance",
           "opacity": "0.3",
-          "colours": "red,blue,green,orange",
+          "colours": "yellow,green,green,yellow",
+          "stroke": "black",
+          "strokeWidth": 1
+        }
+      ]
+    },
+    {
+      "name": "mypath3",
+      "base": "generator",
+      "type": "path",
+      "start": {"x":550, "y":575},
+      "end": {"x": 550, "y": "100.0:1251.0:1150.0"},
+      "count": 3,
+      "av": 0.9,
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": 30
+        },
+        {
+          "disable": true,
+          "algorithm": "poly"
+        },
+        {
+          "algorithm": "tear",
+          "disable": true,
+          "params": {
+            "iterations": 10,
+            "angleVar": 0.1,
+            "count": 1,
+            "randomizeBase": 0.0
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "0.3",
+          "colours": "yellow,khaki,orange,orange",
           "stroke": "black",
           "strokeWidth": 1
         }
@@ -74,7 +110,7 @@
     }
   ],
   "output": {
-    "background": "white",
+    "background": "#224149",
     "shapes": [
       {
         "name": "stacked-1"
@@ -83,7 +119,7 @@
         "name": "stacked-2"
       },
       {
-        "name": "mypath"
+        "name": "mypath3"
       },
       {
         "name": "mypath2"

@@ -282,6 +282,16 @@ class Curve:
         self.p1 = p1
         self.cp = cp
 
+    def scale(self, f):
+        """scale by factor"""
+        self.p0 = self.p0.scale(f)
+        self.p1 = self.p1.scale(f)
+        self.cp = self.cp.scale(f)
+
+    def copy(self):
+        """return copy of myself"""
+        return Curve(self.p0, self.p1, self.cp)
+
     def point_at(self, d):
         t = 1 - d
         x = t * t * self.p0.x + 2 * t * d * self.cp.x + d * d * self.p1.x
@@ -515,14 +525,12 @@ class Polygon:
         p1 = p[1]
         d = distance(p0, p1)
         while dist > d:
-            print(dist, p0.x, p0.y, p1.x, p1.y, d)
             dist -= d
             i += 1
             j = (i + 1) % n
             p0 = p[i]
             p1 = p[j]
             d = distance(p0, p1)
-        print(dist, p0.x, p0.y, p1.x, p1.y, d)
         return Point(p0.x + (p1.x - p0.x) * (dist / d), p0.y + (p1.y - p0.y) * (dist / d))
 
     def __repr__(self):

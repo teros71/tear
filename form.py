@@ -50,7 +50,7 @@ def make_new_shape(r):
         ep = reader.read_point(r, "end")
         count = r.get("count")
         av = r.get("av")
-        base = path.random_path(sp, ep, count, av, 2.0)
+        base = path.random_path(sp.next, ep.next, count, av, 2.0)
     else:
         raise ValueError("new shape: unknown type")
     s = shape.Shape(base)
