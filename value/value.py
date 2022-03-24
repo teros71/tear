@@ -132,7 +132,7 @@ class Range:
                 raise StopIteration
         elif self._current <= self.max:
             raise StopIteration
-        return self.get()
+        return self.next
 
     @property
     def current(self):
@@ -140,9 +140,6 @@ class Range:
 
     @property
     def next(self):
-        return self.get()
-
-    def get(self):
         if self.step >= 0:
             if self._current >= self.max:
                 self._current = self.min
@@ -179,7 +176,7 @@ class Random:
         return self
 
     def __next__(self):
-        return self.get()
+        return self.next
 
     @property
     def current(self):
@@ -187,9 +184,6 @@ class Random:
 
     @property
     def next(self):
-        return self.get()
-
-    def get(self):
         if isinstance(self.range, list):
             i = random.randint(0, len(self.range) - 1)
             self.last = self.range[i]

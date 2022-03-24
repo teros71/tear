@@ -213,7 +213,7 @@ class RectGenerator:
         return self
 
     def __next__(self):
-        return Shape(geom.Rect(self.w.get(), self.h.get()))
+        return Shape(geom.Rect(self.w.next, self.h.next))
 
 
 class CircleGenerator:
@@ -226,7 +226,7 @@ class CircleGenerator:
         return self
 
     def __next__(self):
-        return Shape(geom.Circle(self.r.get()))
+        return Shape(geom.Circle(self.r.next))
 
 
 class EllipseGenerator:
@@ -240,7 +240,7 @@ class EllipseGenerator:
         return self
 
     def __next__(self):
-        return Shape(geom.Ellipse(self.rx.get(), self.ry.get()))
+        return Shape(geom.Ellipse(self.rx.next, self.ry.next))
 
 
 class PolygonGenerator():
@@ -254,7 +254,7 @@ class PolygonGenerator():
         return self
 
     def __next__(self):
-        count = self.corners.get()
+        count = self.corners.next
         return Shape(random_polygon(self.r, count))
 
 
@@ -270,7 +270,7 @@ def random_polygon(r, count):
         # get random angle within slice
         a = random.uniform(s, s + slicea)
         # get distance
-        d = r.get()
+        d = r.next
         points.append(geom.Point(d * math.cos(a), d * math.sin(a)))
     return geom.Polygon(points)
 
@@ -286,8 +286,8 @@ class PathGenerator:
         return self
 
     def __next__(self):
-        s = geom.Point.fromtuple(self.start.get())
-        e = geom.Point.fromtuple(self.end.get())
+        s = self.start.next
+        e = self.end.next
         print("random path", s, e)
         return Shape(path.random_path(s, e,
                                       self.count, self.av, 2.0))

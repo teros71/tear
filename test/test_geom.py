@@ -54,7 +54,6 @@ class TestGeom(unittest.TestCase):
         self.assertEqual(p.x, 9.0)
         self.assertEqual(p.y, -10.0)
 
-
     def test_line_seg_intersect(self):
         inters = geom.intersect(geom.Point(0, 0), geom.Point(5, 5),
                                 geom.Point(0, 5), geom.Point(5, 0))

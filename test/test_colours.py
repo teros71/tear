@@ -17,7 +17,7 @@ class TestColours(unittest.TestCase):
         self.assertIsInstance(c, value.Random)
         self.assertIsInstance(c.range, colours.ColourRange)
         for _ in range(20):
-            print(c.get().str())
+            print(c.next.str())
         c = reader.read_colour(tf, "colours")
         self.assertIsInstance(c, value.List)
         self.assertIsInstance(c[0], value.List)
@@ -31,6 +31,8 @@ class TestColours(unittest.TestCase):
         c2 = colours.ColourRange(reader.read_single_colour("green"),
                                  reader.read_single_colour("yellow"), 10)
         self.assertEqual(len(c1), 10)
+        self.assertEqual(c1.next, colours.Colour("blue"))
+        self.assertNotEqual(c1.next, colours.Colour("red"))
         rr = colours.ColourRange.fromranges(c1, c2, 10)
         self.assertEqual(len(rr), 10)
         for rrr in rr:

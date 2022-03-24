@@ -72,8 +72,8 @@ class Polar:
 
     def get(self):
         return self.next
-#        t = self.t.get()
-#        r = self.r.get()
+#        t = self.t.next
+#        r = self.r.next
 #        x = r * math.cos(t)
 #        y = r * math.sin(t)
 #        return x + self.origo.x, y + self.origo.y

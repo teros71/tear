@@ -13,7 +13,8 @@ class RandomInArea:
         self.bbox = area.bbox()
         self.out = out
 
-    def get(self):
+    @property
+    def next(self):
         if self.out:
             for _ in range(15):
                 x = random.uniform(0.0, pg.WIDTH)

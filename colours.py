@@ -7,7 +7,8 @@ class NoColour:
     def __init__(self):
         pass
 
-    def get(self):
+    @property
+    def next(self):
         return self
 
     def str(self):
@@ -24,7 +25,8 @@ class Colour(colour.Color):
             return NoColour()
         return cls(s)
 
-    def get(self):
+    @property
+    def next(self):
         return self
 
     def str(self):
@@ -94,7 +96,8 @@ class ColourRange:
             return r
         raise StopIteration
 
-    def get(self):
+    @property
+    def next(self):
         if self.i >= self.count:
             self.i = 0
         r = self.range[self.i]

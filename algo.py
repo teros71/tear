@@ -83,8 +83,8 @@ def scaler(r, base):
     ry = reader.read(r, "fy", d=0)
 
     def do_it(s):
-        fx = rx.get()
-        fy = ry.get()
+        fx = rx.next
+        fy = ry.next
         s.scale(fx, fy)
         return s
     return apply_recursive(r, base, do_it)
@@ -108,9 +108,9 @@ def rotate(r, base):
             p = s.position
         else:
             p = bp
-        s.rotate(p.x, p.y, a.get())
+        s.rotate(p.x, p.y, a.next)
     return apply_recursive(r, base, do_it)
-#    base.rotate(p.x, p.y, a.get())
+#    base.rotate(p.x, p.y, a.next)
 #    return base
 
 
@@ -147,7 +147,7 @@ def spread_matrix(config, base):
                 for r in rr for t in rt])
 
     def do_it(shape):
-        p = pos.get()
+        p = pos.next
         shape.set_position(p.x, p.y)
         return shape
     return apply_recursive(config, base, do_it)
@@ -161,7 +161,7 @@ def spread_area(config, base):
     a = area.RandomInArea(shap, out)
 
     def do_it(s):
-        p = a.get()
+        p = a.next
         if p is not None:
             s.set_position(p.x, p.y)
         return s
@@ -173,7 +173,7 @@ def spread_path(config, base):
     if shap is None:
         return None
     count = reader.read(config, "count")
-    a = shape.Path(shap, count.get())
+    a = shape.Path(shap, count.next)
 
     def do_it(s):
         p = a.next()
@@ -204,8 +204,8 @@ def spread_polar(config, base):
     origo = reader.read_point(config, 'origo')
     rr = reader.read(config, "r")
     rt = reader.read(config, "t")
-#    r = rr.get()
-#    t = rt.get()
+#    r = rr.next
+#    t = rt.next
 #    x = r * math.cos(t)
 #    y = r * math.sin(t)
 
@@ -231,16 +231,16 @@ def spread(config, base):
     """base is a list of shapes, they are spread"""
     rx = reader.read(config, "x")
     ry = reader.read(config, "y")
-    x = rx.get()
-    y = ry.get()
+    x = rx.next
+    y = ry.next
 
     def do_it(shape):
         shape.set_position(x, y)
         return shape
     for s in base.shapes:
         apply_recursive(config, s, do_it)
-        x = rx.get()
-        y = ry.get()
+        x = rx.next
+        y = ry.next
     return base
 
 
@@ -248,12 +248,12 @@ def spread(config, base):
 
 def set_appearance_colour(config, shap, colour):
     if isinstance(shap, shape.Shape):
-        c = colour.get().str()
+        c = colour.next.str()
         shap.appearance.colour = c
     else:
         for s in shap.shapes:
             if isinstance(colour, value.List):
-                c = colour.get()
+                c = colour.next
             else:
                 c = colour
             set_appearance_colour(config, s, c)
@@ -270,8 +270,8 @@ def set_appearance(config, shap, opacity, stroke, strokew, shad, blur):
             set_appearance(config, inner_shape,
                            opacity, stroke, strokew, shad, blur)
         return
-    shap.appearance.set(opacity.get(),
-                        stroke.get(), strokew.get(), shad, blur)
+    shap.appearance.set(opacity.next,
+                        stroke.next, strokew.next, shad, blur)
 
 # ===========================================================================
 

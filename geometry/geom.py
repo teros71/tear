@@ -489,9 +489,8 @@ class Polygon:
             p2 = self.points[j]
             inters = poly.intersection(p1, p2)
             if inters is not None:
-                print("intersection, moving point")
-                p2.print()
-                inters.print()
+                print("intersection, moving point", p2)
+                print(inters)
                 self.points[j] = inters
                 p1 = inters
                 changed = True

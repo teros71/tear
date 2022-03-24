@@ -25,6 +25,7 @@ f:str = function where str is evaluated with parameter x (depending no the algor
 """
 from geometry import geom
 import pg
+import goldenratio
 from colours import Colour, ColourRange
 from value.value import Single, Range, Random, List
 from value.valg import Polar, Cartesian
