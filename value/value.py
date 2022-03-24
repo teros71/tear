@@ -55,9 +55,6 @@ class Single:
     def next(self):
         return self.value
 
-    def get(self):
-        return self.value
-
     def reset(self):
         self.v = True
 
@@ -96,14 +93,6 @@ class List:
 
     @property
     def next(self):
-        v = self.lst[self.i]
-        self.i = (self.i + 1) % len(self.lst)
-        return v
-
-    def depth(self):
-        return
-
-    def get(self):
         v = self.lst[self.i]
         self.i = (self.i + 1) % len(self.lst)
         return v

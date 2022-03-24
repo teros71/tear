@@ -41,9 +41,6 @@ class Cartesian:
         self.last = geom.Point(self.x.next, self.y.next)
         return self.last
 
-    def get(self):
-        return self.next
-
     def __repr__(self):
         return f'Cartesian[{self.x}, {self.y}]'
 
@@ -69,11 +66,3 @@ class Polar:
         self.last = geom.Point.fromtuple(
             geom.polar2cartesian(self.t.next, self.r.next, o.x, o.y))
         return self.last
-
-    def get(self):
-        return self.next
-#        t = self.t.next
-#        r = self.r.next
-#        x = r * math.cos(t)
-#        y = r * math.sin(t)
-#        return x + self.origo.x, y + self.origo.y
