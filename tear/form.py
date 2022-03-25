@@ -1,12 +1,13 @@
-from tear import shape, algo, forms
+"""Handle new shape generation according the instructions"""
+
+from tear import shape, algo
 from tear.value import reader
 from tear.model import store
-#import algo
-#import forms
 from tear.geometry import geom, path
 
 
 def make_generator_shape(config):
+    """Make a new generator shape"""
     t = config.get('type', 'rectangle')
     if t == 'rectangle':
         rw = reader.read(config, "w")
@@ -29,9 +30,11 @@ def make_generator_shape(config):
         count = config.get("count")
         av = config.get("av")
         return shape.PathGenerator(sp, ep, count, av)
+    raise ValueError("unkown generator type", t)
 
 
 def make_new_shape(r):
+    """Make a new shape"""
     t = r.get('type', 'rectangle')
     x = r.get("x", 0.0)
     y = r.get("y", 0.0)
@@ -60,12 +63,14 @@ def make_new_shape(r):
 
 
 def apply_recipe(recipe, base):
+    """Apply shape recipe"""
     for r in recipe:
         base = algo.apply_algorithm(r, base)
     return base
 
 
 def generate_form(config):
+    """Generate a new shape according to the config"""
     if config.get('disable', False):
         return
     name = config.get('name')
@@ -73,6 +78,7 @@ def generate_form(config):
 
 
 def create_shape(name, config):
+    """Create a new shape with the given name and config"""
     base_name = config.get('base')
     if base_name is None:
         base_name = config.get('template')
@@ -87,7 +93,7 @@ def create_shape(name, config):
     elif base_name == 'new':
         base = make_new_shape(config)
     else:
-        print("\ngenerating form {0} from {1}".format(name, base_name))
+        print(f"\ngenerating form {name} from {base_name}")
         base = store.get_shape(base_name)
     new_form = apply_recipe(config.get('recipe', None), base)
     if isinstance(new_form, list):

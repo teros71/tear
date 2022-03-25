@@ -181,24 +181,46 @@ class Appearence:
 
 class Path:
     """Path
-    Only curve object is supported, plus it is assumed to have absolute
+    Only geometry.path.Path geometry.geom.Curve object is supported,
+    plus it is assumed to have absolute
     coordinates, not relative to 0,0.
     """
 
-    def __init__(self, s, step):
-        self.s = s
+    def __init__(self, g, step, angle=False):
+        if not isinstance(g, (path.Path, geom.Curve)):
+            raise ValueError("path: unsupported geometry type", g)
+        self.g = g
         if step > 1.0:
             self.step = 1.0 / step
         else:
             self.step = step
         self.current = 0.0
+        self.angle = angle
 
+    @property
     def next(self):
-        p = self.s.point_at(self.current)
+        p = self.g.point_at(self.current)
+        ang = 0
+        if self.angle:
+            ang = self.g.tangent_at(self.current)
         self.current += self.step
         if self.current > 1.0:
             self.current = 0.0
+        if self.angle:
+            return p, ang
         return p
+
+    @classmethod
+    def fromshape(cls, shap, step, angle=False):
+        # find the underlying geometry
+        def get_geom(s):
+            if isinstance(s, List):
+                return get_geom(s.shapes[0])
+            if isinstance(s, Shape):
+                return s.base
+            raise ValueError("path from shape: unsupported shape type")
+        g = get_geom(shap)
+        return cls(g, step, angle)
 
 
 class RectGenerator:

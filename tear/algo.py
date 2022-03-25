@@ -169,12 +169,18 @@ def spread_path(config, base):
     if shap is None:
         return None
     count = reader.read(config, "count")
-    a = shape.Path(shap, count.next)
+    rotate = config.get("rotate", False)
+    a = shape.Path.fromshape(shap, count.next, rotate)
 
     def do_it(s):
-        p = a.next()
+        p = a.next
         if p is not None:
-            s.set_position(p.x, p.y)
+            print("p is", p)
+            if rotate:
+                s.set_position(p[0].x, p[0].y)
+                s.rotate(p[0].x, p[0].y, math.degrees(p[1]))
+            else:
+                s.set_position(p.x, p.y)
         return s
     return apply_recursive(config, base, do_it)
 
@@ -350,6 +356,7 @@ def vectorfield(r, base):
         fi = 0
         fj = 0
         for f in fields:
+            # x and y used in eval
             x = ox - f[0]
             y = oy - f[1]
             i, j = eval(f[2])

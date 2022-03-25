@@ -53,10 +53,23 @@ class Path:
         Args:
             d : distance from start towards end [0,1]
         """
-        n = math.ceil(d * len(self.segments)) - 1
-        d = (d - n / len(self.segments)) * len(self.segments)
-        print("point at", d, n)
-        return self.segments[n].point_at(d)
+#        n = math.ceil(d * len(self.segments)) - 1
+#        d = (d - n / len(self.segments)) * len(self.segments)
+        total = 0
+        for s in self.segments:
+            total += s.length
+        i = 0
+        while d > self.segments[i].length / total:
+            d -= self.segments[i].length / total
+            i += 1
+        print("point at", d, i)
+        seg = self.segments[i]
+        d = d * total / seg.length
+        print("final d", d)
+        return seg.point_at(d)
+
+    def tangent_at(self, d):
+        return self.segments[0].tangent_at(d)
 
     def bbox(self, p):
         """Bounding box"""

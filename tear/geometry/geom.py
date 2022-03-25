@@ -281,6 +281,7 @@ class Curve:
         self.p0 = p0
         self.p1 = p1
         self.cp = cp
+        self.len = 0
 
     def scale(self, f):
         """scale by factor"""
@@ -294,9 +295,36 @@ class Curve:
 
     def point_at(self, d):
         t = 1 - d
-        x = t * t * self.p0.x + 2 * t * d * self.cp.x + d * d * self.p1.x
-        y = t * t * self.p0.y + 2 * t * d * self.cp.y + d * d * self.p1.y
+
+        def comp(p0, cp, p1):
+            return (t * t * p0) + (2 * t * d * cp) + (d * d * p1)
+        x = comp(self.p0.x, self.cp.x, self.p1.x)
+        y = comp(self.p0.y, self.cp.y, self.p1.y)
         return Point(x, y)
+
+    def tangent_at(self, d):
+        def bd1(p0, cp, p1):
+            return 2 * (1 - d) * (cp - p0) + 2 * d * (p1 - cp)
+#        slope = bd1(self.p0.y, self.cp.y, self.p1.y) / \
+#            bd1(self.p0.x, self.cp.x, self.p1.x)
+        return math.atan2(bd1(self.p0.y, self.cp.y, self.p1.y),
+                          bd1(self.p0.x, self.cp.x, self.p1.x))
+
+    @property
+    def length(self):
+        if self.len == 0:
+            self.len = self.length_approx()
+        return self.len
+
+    def length_approx(self, samples=10):
+        step = 1.0 / samples
+        p0 = self.p0
+        d = 0
+        for i in range(0, samples):
+            p = self.point_at((i+1) * step)
+            d += distance(p0, p)
+            p0 = p
+        return d
 
     def __repr__(self):
         return f'Curve[{self.p0},{self.p1},{self.cp}]'
