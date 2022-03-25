@@ -1,7 +1,7 @@
 import unittest
 import math
 
-from geometry import geom
+from tear.geometry import geom
 
 
 class TestGeom(unittest.TestCase):

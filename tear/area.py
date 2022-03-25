@@ -1,8 +1,8 @@
 """handle area related things"""
 
 import random
-from geometry import geom
-import pg
+from tear.geometry import geom
+from tear import pg
 
 
 class RandomInArea:

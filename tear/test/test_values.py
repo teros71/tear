@@ -1,9 +1,12 @@
+"""Value tests"""
+
 import unittest
-from value import value, reader
-from value.valf import Series, Eval
-import colours
+import math
 import itertools
-import goldenratio
+
+from tear.value import value, reader
+from tear.value.valf import Series, Eval
+from tear import colours, goldenratio
 
 
 class TestValues(unittest.TestCase):
@@ -81,6 +84,10 @@ class TestValues(unittest.TestCase):
         self.assertIsInstance(v.obj, goldenratio.Fibonacci)
         for _ in range(20):
             print(v.next)
+
+    def test_evals(self):
+        v = reader.make("42$(math.pi * 4)")
+        self.assertEqual(v.next, 4200 + math.pi * 4)
 
 
 tf = {

@@ -1,8 +1,7 @@
 import unittest
-import form
-import forms
-import shape
-from geometry import geom
+
+from tear import form, forms, shape
+from tear.geometry import geom
 
 
 class TestForms(unittest.TestCase):

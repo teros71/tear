@@ -1,8 +1,8 @@
-import shape
-from value import reader
-import algo
-import forms
-from geometry import geom, path
+from tear import shape, algo, forms
+from tear.value import reader
+#import algo
+#import forms
+from tear.geometry import geom, path
 
 
 def make_generator_shape(config):

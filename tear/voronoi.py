@@ -1,6 +1,8 @@
+"""Voronoi algorithm stuff"""
+
 from scipy.spatial import Voronoi
 import numpy as np
-from geometry import geom
+from tear.geometry import geom
 
 
 def all_polygons(points):

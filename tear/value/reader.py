@@ -1,35 +1,110 @@
 """
 Handling various forms of input values
-single number (int or float): 42 or 42.42
+
+Values are read from a dictionary. The resulting value objects are generic,
+and the actual value is in the 'next' property of the object.
+The value can also be a value object itself.
+
+
+single number, int or float, can be native or string.
+42, 42.42, "42", "57.434"
+
 string: "foobar"
-number range with optional step, int or float: "42:54[:1]", "0.42:42.4[:0.1]"
-linear range between: "42:54/5"
+
+number range with optional step, int or float
+"42:54[:1]", "0.42:42.4[:0.1]"
+can also be from bigger to smaller: "66:14/2"
+note that the end value is excluded.
+
+linear range between: "42:54/5", "43.21:32.4/9"
+the range is divided and step is calculated accordingly
 
 random int: "?:42:54"
 random float: "?:42.0:54.1"
 random from list: "?:1,2,3,4"
 
+basic lists:
+[1, 2, 3]
+"1, 2, 3"
+the real list supports any value type, the string format supports only
+int, float and string
+
+Evaluation in place:
+"$(math.pi * 4)" -> results a single float value
+
+
 colour: "blue" or "#0000ff"
-colour range: "c:#000000:#102030/10"
+colour range list: "blue,red,green,yellow"
+colour range: "#000000:#102030/10"
+- note: needs the divider to specify range
+random colour: "?:#2040ff:324590"
+
+colour lists:
+["blue,red", "#ffffff", "#023345:#aabd8f/10"]
+complex range:
+"#ff0000:#800000/4->#ff0080:#800080/4*30",
+This makes a range from each colour of the first range to the corresponding
+colour of the second range with *n steps.
+It can be used to make color transition for multishapes.
 
 x = integer
 x.y = float
-?:m:n = random between m-n integers or floats
-m:n:s = range between m-n with step s
+m:n[:s] = range between m-n with step s
 m:n/s = range between m-n divided into s steps
+?:m:n = random between m-n integers or floats
 %x%value = x percents of a value
-c:#rrggbb:#rrggbb/n = colour range
+#rrggbb:#rrggbb/n = colour range
+?:#rrggbb:#rrggbb = random colour
 [x, y, z] = list
+x,y,z = list (only numbers or strings or colours)
+?:x,y,z = random from list
+
+
+
 f:str = function where str is evaluated with parameter x (depending no the algorithm)
 
 """
-from geometry import geom
-import pg
-import goldenratio
-from colours import Colour, ColourRange
-from value.value import Single, Range, Random, List
-from value.valg import Polar, Cartesian
-from value.valf import Function, Eval, Series
+import math
+from tear.geometry import geom
+from tear import pg, goldenratio
+from tear.colours import Colour, ColourRange
+from tear.value.value import Single, Range, Random, List
+from tear.value.valg import Polar, Cartesian
+from tear.value.valf import Function, Eval, Series
+
+
+def read(config, name, d=None):
+    """read a generic value
+    Args:
+        config : dictionary from where to read
+        name : name of the value
+        d : default if not found
+    Returns:
+        value object which is one of:
+        Single, Range, List, Random, Eval, Function or Series
+    """
+    v = config.get(name, d)
+    obj = make(v, config)
+    return obj
+
+
+def read_colour(config, name):
+    """read a colour value
+    Args:
+        config : dictionary from where to read
+        name : name of the value
+    Returns:
+        Colour or ColourRange or List
+    """
+    v = config.get(name, 'black')
+
+    def read_col(c):
+        if isinstance(c, str):
+            return read_single_colour(c)
+        if isinstance(c, list):
+            return List([read_col(s) for s in c])
+        raise ValueError("invalid colour")
+    return read_col(v)
 
 
 def isfloat(num):
@@ -127,25 +202,8 @@ def read_single_colour(s):
     return Colour.fromstr(s)
 
 
-def read_colour(js, name):
-    v = js.get(name, 'black')
-
-    def read_col(c):
-        if isinstance(c, str):
-            return read_single_colour(c)
-        if isinstance(c, list):
-            return List([read_col(s) for s in c])
-        raise ValueError("invalid colour")
-    return read_col(v)
-
-
-def read(js, name, d=None):
-    v = js.get(name, d)
-    obj = make(v, js)
-    return obj
-
-
 def make_from_list(obj, js):
+    """Make a list of values from a list of whatever"""
     return List([make(x, js) for x in obj])
 
 
@@ -165,10 +223,26 @@ def substitute_variables(s):
     return s
 
 
+def substitute_evaluations(s):
+    i = s.find('$(')
+    if i == -1:
+        return s
+    j = s.find(')', i)
+    if j == -1:
+        return s
+    es = s[i:j+1]
+    v = eval(es[1:])
+    s = s.replace(es, str(v))
+    return substitute_evaluations(s)
+
+
 def make_from_str(obj, js):
+    """Make a value object from string"""
     # substitute variables
     if '$' in obj:
         obj = substitute_variables(obj)
+    if '(' in obj:
+        obj = substitute_evaluations(obj)
     # random value
     if obj.startswith('?:'):
         val = read_str_value(obj[2:])
@@ -176,6 +250,7 @@ def make_from_str(obj, js):
             return Random(val.lst)
         if isinstance(val, Range):
             return Random(val)
+        # only one value
         return Random([val.value])
     # function
     if obj.startswith('f:'):
@@ -198,13 +273,17 @@ def make_from_str(obj, js):
 def make(obj, js=None):
     """make a generic value object"""
     if isinstance(obj, (float, int)):
+        # float or int -> single value
         return Single(obj)
     if isinstance(obj, list):
+        # list -> list of whatever values
         return make_from_list(obj, js)
-    if isinstance(obj, str):
-        return make_from_str(obj, js)
     if isinstance(obj, dict):
+        # dict -> make a dictionary of whatever objects
         return make_from_dict(obj, js)
+    if isinstance(obj, str):
+        # str -> parse value from string
+        return make_from_str(obj, js)
     print("WARNING: unknown value type", obj)
     return obj
 
@@ -252,6 +331,27 @@ def read_polar(config):
 
 
 def read_point(config, name=None):
+    """read point value
+    Args:
+        config : dictionary
+        name : optional name of a dictionary containing the value data
+
+    If name is omitted, data is read from the given config directly.
+    Data is either for cartesian coordinates:
+        "x": value
+        "y": value
+        or
+        [x, y]
+        or
+        "x, y"
+    or for polar coordinates:
+        "origo": <cartesian point as dictionary or data>
+        "t": value for angle
+        "r": value for distance
+
+    Returns:
+        Cartesian or Polar value object
+    """
     if name is not None:
         config = config.get(name)
     if config is None:

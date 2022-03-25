@@ -4,11 +4,11 @@ import json
 import sys
 import getopt
 import svg
-import default
-import forms
-import form
-import pg
-import goldenratio
+from tear import default, forms, form, pg, goldenratio
+#import tear.forms
+#import form
+#import pg
+#import goldenratio
 
 
 def read_config(fname):
@@ -69,7 +69,3 @@ def main(argv):
     print('Output file is "', outputfile)
     data = read_config(inputfile)
     run(data, outputfile)
-
-
-if __name__ == "__main__":
-    main(sys.argv[1:])

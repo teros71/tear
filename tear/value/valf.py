@@ -24,13 +24,14 @@ f:str = function where str is evaluated with parameter x (depending no the algor
 
 """
 import math
-import goldenratio
+from tear import goldenratio
 
 
 class Eval:
     def __init__(self, f):
         self.f = f
         self.i = 0
+        self.last = None
 
     def __iter__(self):
         self.reset()

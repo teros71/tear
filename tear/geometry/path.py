@@ -2,7 +2,7 @@
 
 import math
 import random
-from geometry import geom
+from tear.geometry import geom
 
 
 def generate_point(p1, p2, av, min_d, min_df, max_df):
@@ -40,23 +40,31 @@ class Path:
 
     @property
     def startpoint(self):
+        """Start of the path"""
         return self.segments[0].p0
 
     @property
     def endpoint(self):
+        """End of the path"""
         return self.segments[-1].p1
 
     def point_at(self, d):
+        """Point on the path
+        Args:
+            d : distance from start towards end [0,1]
+        """
         n = math.ceil(d * len(self.segments)) - 1
         d = (d - n / len(self.segments)) * len(self.segments)
         print("point at", d, n)
         return self.segments[n].point_at(d)
 
     def bbox(self, p):
+        """Bounding box"""
         return geom.BBox(self.startpoint.x, self.startpoint.y,
                          self.endpoint.x, self.endpoint.y)
 
     def get_points(self, origo, count=25):
+        """Get points that approximate the curve"""
         ps = [self.startpoint]
         ds = (1 / count * i for i in range(1, count + 1))
 #        for seg in self.segments:

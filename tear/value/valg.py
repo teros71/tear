@@ -23,7 +23,7 @@ c:#rrggbb:#rrggbb/n = colour range
 f:str = function where str is evaluated with parameter x (depending no the algorithm)
 
 """
-from geometry import geom
+from tear.geometry import geom
 
 
 class Cartesian:

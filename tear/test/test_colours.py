@@ -1,6 +1,6 @@
 import unittest
-from value import value, reader
-import colours
+from tear.value import value, reader
+from tear import colours
 
 
 class TestColours(unittest.TestCase):

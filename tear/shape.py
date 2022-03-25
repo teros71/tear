@@ -1,9 +1,8 @@
 """Shape related stuff"""
 import math
 import random
-import json
 import copy
-from geometry import geom, path
+from tear.geometry import geom, path
 
 
 class Shape:

@@ -25,9 +25,17 @@ f:str = function where str is evaluated with parameter x (depending no the algor
 """
 import math
 import random
-import pg
-import goldenratio
-from colours import Colour, ColourRange
+from tear import pg, goldenratio
+from tear.colours import Colour, ColourRange
+
+
+def final(val):
+    """Return the actual value
+    Useful in case of hierarchical value object
+    """
+    if hasattr(val, 'next'):
+        return final(val.next)
+    return val
 
 
 class Single:

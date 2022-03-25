@@ -1,8 +1,7 @@
 """svg writing"""
 
-import shape
-import forms
-from geometry import geom, path
+from tear import shape, forms
+from tear.geometry import geom, path
 
 
 def write_svg_feshadow(file, id):

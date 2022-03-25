@@ -4,14 +4,9 @@ import math
 import random
 import copy
 import itertools
-import shape
-import goldenratio
-import tear
-from value import value, reader
-import area
-import forms
-from geometry import geom
-import voronoi
+from tear import shape, goldenratio, tear, area, forms, voronoi
+from tear.value import value, reader
+from tear.geometry import geom
 
 
 # ===========================================================================
