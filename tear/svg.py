@@ -1,7 +1,8 @@
 """svg writing"""
 
-from tear import shape, forms
+from tear import shape
 from tear.geometry import geom, path
+from tear.model import store
 
 
 def write_svg_feshadow(file, id):
@@ -159,32 +160,28 @@ def write_form(file, config, w, h, bg):
     name = config.get('name')
     if name is None:
         return
-    print(f"getting form {name}")
-    sss = forms.get(name)
+    print(f"getting shape {name}")
+    sss = store.get_shape(name)
     if sss is not None:
-        print(sss)
+        #        print(sss)
         write_svg_recursive(file, sss)
-    else:
-        write_image(file, name, w, h, bg)
+#    else:
+#        write_image(file, name, w, h, bg)
 
 
-def write_image(file, name, w, h, bg):
-    """write an image"""
-#    name = config.get('name')
-#    if name is None:
-#        return
-    print(f"getting image {name}")
-    sss = forms.get_image(name)
-    if sss is not None:
-        write_svg_image(file, sss, w, h, bg)
+#def write_image(file, name, w, h, bg):
+#    """write an image"""
+#    print(f"getting image {name}")
+#    sss = forms.get_image(name)
+#    if sss is not None:
+#        write_svg_image(file, sss, w, h, bg)
 
 
 def write_clips(file):
     file.write('<defs>')
     i = 1
-    for c in forms.clip_table:
-        clip = forms.get(c)
-        clipid = f'clip_{i}'
+    for clipid, name in store.get_clips():
+        clip = store.get_shape(name)
         write_svg_clip(file, clipid, clip)
         i += 1
     file.write('</defs>')

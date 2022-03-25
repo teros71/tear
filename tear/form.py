@@ -1,5 +1,6 @@
 from tear import shape, algo, forms
 from tear.value import reader
+from tear.model import store
 #import algo
 #import forms
 from tear.geometry import geom, path
@@ -68,7 +69,18 @@ def generate_form(config):
     if config.get('disable', False):
         return
     name = config.get('name')
-    base_name = config['base']
+    create_shape(name, config)
+
+
+def create_shape(name, config):
+    base_name = config.get('base')
+    if base_name is None:
+        base_name = config.get('template')
+        if base_name is None:
+            raise ValueError("no base for shape")
+        conf = config.get('params')
+        create_shape(name, store.get_template(base_name, conf))
+        return
     base = None
     if base_name == 'generator':
         base = make_generator_shape(config)
@@ -76,8 +88,8 @@ def generate_form(config):
         base = make_new_shape(config)
     else:
         print("\ngenerating form {0} from {1}".format(name, base_name))
-        base = forms.get(base_name)
+        base = store.get_shape(base_name)
     new_form = apply_recipe(config.get('recipe', None), base)
     if isinstance(new_form, list):
         new_form = shape.List(new_form)
-    forms.add(name, new_form)
+    store.add_shape(name, new_form)

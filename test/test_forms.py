@@ -1,8 +1,8 @@
 import unittest
 
 from tear import form, shape
-from tear.geometry import geom
 from tear.model import store
+from tear.geometry import geom
 
 
 class TestForms(unittest.TestCase):

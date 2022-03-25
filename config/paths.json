@@ -13,6 +13,30 @@
     "w": 900,
     "h": 1350
   },
+  "templates": [
+    {
+      "name": "path",
+      "base": "generator",
+      "type": "path",
+      "start": {"x":"$STARTX", "y":"$STARTY"},
+      "end": {"x": "$ENDX", "y": "100.0:1251.0:1150.0"},
+      "count": 3,
+      "av": 0.9,
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": 30
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "0.3",
+          "colours": "$COLOURS",
+          "stroke": "black",
+          "strokeWidth": 1
+        }
+      ]
+    }
+  ],
   "forms": [
     {
       "name": "mypath",
@@ -38,75 +62,23 @@
     },
     {
       "name": "mypath2",
-      "base": "generator",
-      "type": "path",
-      "start": {"x":350, "y":725},
-      "end": {"x": 350, "y": "100.0:1251.0:1150.0"},
-      "count": 3,
-      "av": 0.9,
-      "recipe": [
-        {
-          "algorithm": "generate",
-          "count": 30
-        },
-        {
-          "disable": true,
-          "algorithm": "poly"
-        },
-        {
-          "algorithm": "tear",
-          "disable": true,
-          "params": {
-            "iterations": 10,
-            "angleVar": 0.1,
-            "count": 1,
-            "randomizeBase": 0.0
-          }
-        },
-        {
-          "algorithm": "appearance",
-          "opacity": "0.3",
-          "colours": "yellow,green,green,yellow",
-          "stroke": "black",
-          "strokeWidth": 1
-        }
-      ]
+      "template": "path",
+      "params": {
+        "$STARTX": "350",
+        "$STARTY": "775",
+        "$ENDX": "350",
+        "$COLOURS": "yellow,green,green,yellow"
+      }
     },
     {
       "name": "mypath3",
-      "base": "generator",
-      "type": "path",
-      "start": {"x":550, "y":575},
-      "end": {"x": 550, "y": "100.0:1251.0:1150.0"},
-      "count": 3,
-      "av": 0.9,
-      "recipe": [
-        {
-          "algorithm": "generate",
-          "count": 30
-        },
-        {
-          "disable": true,
-          "algorithm": "poly"
-        },
-        {
-          "algorithm": "tear",
-          "disable": true,
-          "params": {
-            "iterations": 10,
-            "angleVar": 0.1,
-            "count": 1,
-            "randomizeBase": 0.0
-          }
-        },
-        {
-          "algorithm": "appearance",
-          "opacity": "0.3",
-          "colours": "yellow,khaki,orange,orange",
-          "stroke": "black",
-          "strokeWidth": 1
-        }
-      ]
+      "template": "path",
+      "params": {
+        "$STARTX": "550",
+        "$STARTY": "575",
+        "$ENDX": "550",
+        "$COLOURS": "yellow,khaki,orange,orange"
+      }
     }
   ],
   "output": {

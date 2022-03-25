@@ -4,9 +4,10 @@ import math
 import random
 import copy
 import itertools
-from tear import shape, goldenratio, tear, area, forms, voronoi
+from tear import shape, goldenratio, tear, area, voronoi
 from tear.value import value, reader
 from tear.geometry import geom
+from tear.model import store
 
 
 # ===========================================================================
@@ -124,7 +125,7 @@ def read_spread_s(config):
         shap = shape.Shape.fromstr(name)
     else:
         name = config.get("shape")
-        shap = forms.get(name)
+        shap = store.get_shape(name)
     return shap
 
 
@@ -409,7 +410,7 @@ def b_voronoi(r, base):
 
 def clip(r, base):
     path = r.get('shape')
-    clipid = forms.add_clip(path)
+    clipid = store.add_clip(path)
 
     def do_it(s):
         if isinstance(s, shape.List):

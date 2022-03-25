@@ -3,8 +3,9 @@
 import json
 import sys
 import getopt
-import svg
-from tear import default, forms, form, pg, goldenratio
+from tear import default, form, pg, goldenratio, svg
+from tear.model import store
+
 #import tear.forms
 #import form
 #import pg
@@ -37,7 +38,16 @@ def read_config(fname):
 def run(data, fname):
     """run the generation"""
     print("initializing form table")
-    forms.init()
+    store.init()
+    print("make templates")
+    temp_data = data.get('templates')
+    if temp_data is not None:
+        if not isinstance(temp_data, list):
+            raise ValueError("invalid template data")
+        print(f"{len(temp_data)} templates")
+        for temp in temp_data:
+            name = temp.get('name')
+            store.add_template(name, temp)
     print("generate forms")
     form_data = data.get('forms')
     if form_data is not None:
