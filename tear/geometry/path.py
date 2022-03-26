@@ -113,7 +113,7 @@ def random_path_quadratic(startpoint, endpoint, count, av, min_d):
                 # new control point
                 cp = generate_point(p0, p, av, min_d, 0, 1)
             if cp is not None:
-                cl.append(geom.QuadraticCurve(p0, p, cp))
+                cl.append(geom.QuadraticCurve(p0, cp, p))
                 # next cp is mirror of previous
                 cp = p.mirror(cp)
             p0 = p
@@ -122,7 +122,7 @@ def random_path_quadratic(startpoint, endpoint, count, av, min_d):
         if cp is None:
             cp = generate_point(p0, endpoint, av, min_d, 0, 1)
         if cp is not None:
-            cl.append(geom.QuadraticCurve(p0, endpoint, cp))
+            cl.append(geom.QuadraticCurve(p0, cp, endpoint))
     return Path(cl)
 
 

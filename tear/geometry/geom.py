@@ -283,10 +283,10 @@ class Ellipse:
 class QuadraticCurve:
     """Quadratic bezier curve"""
 
-    def __init__(self, p0, p1, cp):
+    def __init__(self, p0, cp, p1):
         self.p0 = p0
-        self.p1 = p1
         self.cp = cp
+        self.p1 = p1
         self.len = 0
 
     @property
@@ -300,27 +300,25 @@ class QuadraticCurve:
     def scale(self, f):
         """scale by factor"""
         self.p0 = self.p0.scale(f)
-        self.p1 = self.p1.scale(f)
         self.cp = self.cp.scale(f)
+        self.p1 = self.p1.scale(f)
 
     def copy(self):
         """return copy of myself"""
-        return QuadraticCurve(self.p0, self.p1, self.cp)
+        return QuadraticCurve(self.p0, self.cp, self.p1)
 
-    def point_at(self, d):
-        t = 1 - d
+    def point_at(self, t):
+        d = 1 - t
 
         def comp(p0, cp, p1):
-            return (t * t * p0) + (2 * t * d * cp) + (d * d * p1)
+            return (d * d * p0) + (2 * d * t * cp) + (t * t * p1)
         x = comp(self.p0.x, self.cp.x, self.p1.x)
         y = comp(self.p0.y, self.cp.y, self.p1.y)
         return Point(x, y)
 
-    def tangent_at(self, d):
+    def tangent_at(self, t):
         def bd1(p0, cp, p1):
-            return 2 * (1 - d) * (cp - p0) + 2 * d * (p1 - cp)
-#        slope = bd1(self.p0.y, self.cp.y, self.p1.y) / \
-#            bd1(self.p0.x, self.cp.x, self.p1.x)
+            return 2 * (1 - t) * (cp - p0) + 2 * t * (p1 - cp)
         return math.atan2(bd1(self.p0.y, self.cp.y, self.p1.y),
                           bd1(self.p0.x, self.cp.x, self.p1.x))
 
@@ -331,7 +329,7 @@ class QuadraticCurve:
         return self.len
 
     def __repr__(self):
-        return f'QuadraticCurve[{self.p0},{self.p1},{self.cp}]'
+        return f'QuadraticCurve[{self.p0},{self.cp},{self.p1}]'
 
 
 class CubicCurve:

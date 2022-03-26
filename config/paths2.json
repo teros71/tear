@@ -6,7 +6,16 @@
       "minDistanceFactor": 0,
       "angleVar": 4,
       "count": 6,
-      "opacity": 0.2
+      "opacity": 0.2,
+      "kasumi-mato": {
+        "nakashiro": "r = 3.6 cm",
+        "ichi no kuro": "r=2*3.6 cm",
+        "ni no shiro": "r=2*3.6+3.0 cm",
+        "ni no kuro": "r=2*3.6+3.0+1.5 cm",
+        "san no shiro": "r=2*3.6+3.0+1.5+3.0 cm",
+        "sotokuro": "r=2*3.6+3.0+1.5+3.0+3.3 cm",
+        "seikoku o eru": "hit the bull's-eye"
+      }
     }
   },
   "playground": {
@@ -18,15 +27,15 @@
       "name": "path",
       "base": "generator",
       "type": "path",
-      "start": {"x":"$STARTX", "y":"$STARTY"},
-      "end": {"x": "$ENDX", "y": "100.0:1251.0:1150.0"},
+      "start": {"origo": "500,500", "t":"$START_T", "r":"100"},
+      "end": {"origo": "500,500", "t":"$END_T", "r":"600"},
       "count": 3,
       "av": 0.9,
       "curve": "quad",
       "recipe": [
         {
           "algorithm": "generate",
-          "count": 30
+          "count": 20
         },
         {
           "algorithm": "appearance",
@@ -41,37 +50,15 @@
   "forms": [
     {
       "name": "mypath",
-      "base": "generator",
-      "type": "path",
-      "start": {"origo": [450,450], "t": "0.0:6.28/200", "r": 450},
-      "end": {"x": 450, "y": 450},
-      "count": 3,
-      "av": 0.9,
-      "recipe": [
-        {
-          "algorithm": "generate",
-          "count": 200
-        },
-        {
-          "algorithm": "appearance",
-          "opacity": "0.12",
-          "colours": "red,blue,orange",
-          "stroke": "black",
-          "strokeWidth": 1
-        }
-      ]
-    },
-    {
-      "name": "mypath2",
       "template": "path",
       "params": {
-        "$STARTX": "350",
-        "$STARTY": "775",
-        "$ENDX": "350",
+        "$START_T": "0.0:$(2 * math.pi)/20",
+        "$END_T": "$(math.pi/2):$(math.pi/2 + 2*math.pi)/20",
         "$COLOURS": "yellow,green,green,yellow"
       }
     },
     {
+      "disable": true,
       "name": "mypath3",
       "template": "path",
       "params": {
@@ -86,16 +73,10 @@
     "background": "#224149",
     "shapes": [
       {
-        "name": "stacked-1"
-      },
-      {
-        "name": "stacked-2"
-      },
-      {
         "name": "mypath3"
       },
       {
-        "name": "mypath2"
+        "name": "mypath"
       }
     ]
   }

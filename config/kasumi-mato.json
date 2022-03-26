@@ -1,0 +1,87 @@
+{
+  "defaults": {
+    "tear": {
+      "iterations": 18,
+      "minDistance": 2.0,
+      "minDistanceFactor": 0,
+      "angleVar": 4,
+      "count": 6,
+      "opacity": 0.2,
+      "kasumi-mato": {
+        "nakashiro": "r = 3.6 cm",
+        "ichi no kuro": "r=2*3.6 cm",
+        "ni no shiro": "r=2*3.6+3.0 cm",
+        "ni no kuro": "r=2*3.6+3.0+1.5 cm",
+        "san no shiro": "r=2*3.6+3.0+1.5+3.0 cm",
+        "sotokuro": "r=2*3.6+3.0+1.5+3.0+3.3 cm",
+        "seikoku o eru": "hit the bull's-eye"
+      }
+    }
+  },
+  "playground": {
+    "w": 900,
+    "h": 1350
+  },
+  "templates": [
+    {
+      "name": "kasumi-mato",
+      "base": "generator",
+      "type": "circle",
+      "r": "18.0,14.7,11.7,10.2,7.2,3.6",
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": 6
+        },
+        {
+          "disable": false,
+          "algorithm": "scaler",
+          "fx": 10
+        },
+        {
+          "algorithm": "position",
+          "x": "$PX",
+          "y": "$PY"
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "0.5",
+          "colours": "$COLOURS",
+          "stroke": "black",
+          "strokeWidth": 1
+        }
+      ]
+    }
+  ],
+  "forms": [
+    {
+      "name": "target",
+      "template": "kasumi-mato",
+      "params": {
+        "$PX": "400",
+        "$PY": "400",
+        "$COLOURS": "black,white"
+      }
+    },
+    {
+      "name": "target2",
+      "template": "kasumi-mato",
+      "params": {
+        "$PX": "472",
+        "$PY": "400",
+        "$COLOURS": "black,white"
+      }
+    }
+  ],
+  "output": {
+    "background": "white",
+    "shapes": [
+      {
+        "name": "target"
+      },
+      {
+        "name": "target2"
+      }
+    ]
+  }
+}
