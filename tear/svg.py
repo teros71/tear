@@ -90,13 +90,51 @@ def write_svg_polygon(file, poly):
 
 
 def write_svg_path(file, path):
+    """Write path"""
+    def write_cubic(segs):
+        first = True
+        for s in segs:
+            if first:
+                file.write(
+                    f'C {s.c0.x} {s.c0.y} {s.c1.x} {s.c1.y} {s.p1.x} {s.p1.y} ')
+                first = False
+            else:
+                file.write(f'S {s.c1.x} {s.c1.y} {s.p1.x} {s.p1.y} ')
+
+    def write_quadratic(segs):
+        first = True
+        for s in segs:
+            if first:
+                file.write(
+                    f'Q {s.cp.x} {s.cp.y} {s.p1.x} {s.p1.y} ')
+                first = False
+            else:
+                file.write(f'T {s.p1.x} {s.p1.y} ')
+
     print(path)
     p = path.startpoint
     file.write(f'<path d="M {p.x} {p.y} ')
-    for s in path.segments:
-        file.write(f'S {s.cp.x} {s.cp.y} {s.p1.x} {s.p1.y} ')
+    if isinstance(path.segments[0], geom.CubicCurve):
+        write_cubic(path.segments)
+    else:
+        write_quadratic(path.segments)
     file.write('" ')
-#    file.write('" stroke="black" fill="transparent"/>')
+
+
+def write_svg_path_debug(file, path):
+    def wp(p, c):
+        file.write(
+            f'<circle cx="{p.x}" cy="{p.y}" r="10" fill="{c}" opacity="0.5"/>')
+    for s in path.segments:
+        if isinstance(s, geom.CubicCurve):
+            wp(s.p0, "black")
+            wp(s.p1, "white")
+            wp(s.c0, "green")
+            wp(s.c1, "blue")
+        else:
+            wp(s.p0, "black")
+            wp(s.p1, "white")
+            wp(s.cp, "green")
 
 
 def write_svg_style(file, app):
@@ -140,6 +178,8 @@ def write_svg_shape(file, single):
     if app.blur:
         file.write(f' filter="url(#blur_n{SHAPE_COUNT})"')
     file.write(' />\n')
+    #if isinstance(single.base, path.Path):
+    #    write_svg_path_debug(file, single.base)
 
 
 def write_svg_image(file, img, w, h, bg):

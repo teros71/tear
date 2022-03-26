@@ -187,7 +187,7 @@ class Path:
     """
 
     def __init__(self, g, step, angle=False):
-        if not isinstance(g, (path.Path, geom.Curve)):
+        if not isinstance(g, (path.Path, geom.QuadraticCurve, geom.CubicCurve)):
             raise ValueError("path: unsupported geometry type", g)
         self.g = g
         if step > 1.0:
@@ -297,7 +297,8 @@ def random_polygon(r, count):
 
 
 class PathGenerator:
-    def __init__(self, start, end, count, av):
+    def __init__(self, curve_type, start, end, count, av):
+        self.curve_type = curve_type
         self.start = start
         self.end = end
         self.count = count
@@ -309,6 +310,8 @@ class PathGenerator:
     def __next__(self):
         s = self.start.next
         e = self.end.next
-        print("random path", s, e)
-        return Shape(path.random_path(s, e,
-                                      self.count, self.av, 2.0))
+        if self.curve_type == 'cubic':
+            return Shape(path.random_path_cubic(s, e,
+                                                self.count, self.av, 2.0))
+        return Shape(path.random_path_quadratic(s, e,
+                                                self.count, self.av, 2.0))

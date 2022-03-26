@@ -38,6 +38,10 @@ class Point:
         self.x = (nx * c - ny * s) + x
         self.y = (nx * s + ny * c) + y
 
+    def mirror(self, p):
+        """Mirror point of p in regard of this point"""
+        return Point(self.x + (self.x - p.x), self.y + (self.y - p.y))
+
     # Vector functions
     def substract(self, v):
         """substract another point"""
@@ -276,12 +280,22 @@ class Ellipse:
         return f'Ellipse[{self.rx},{self.ry}]'
 
 
-class Curve:
+class QuadraticCurve:
+    """Quadratic bezier curve"""
+
     def __init__(self, p0, p1, cp):
         self.p0 = p0
         self.p1 = p1
         self.cp = cp
         self.len = 0
+
+    @property
+    def startpoint(self):
+        return self.p0
+
+    @property
+    def endpoint(self):
+        return self.p1
 
     def scale(self, f):
         """scale by factor"""
@@ -291,7 +305,7 @@ class Curve:
 
     def copy(self):
         """return copy of myself"""
-        return Curve(self.p0, self.p1, self.cp)
+        return QuadraticCurve(self.p0, self.p1, self.cp)
 
     def point_at(self, d):
         t = 1 - d
@@ -313,21 +327,80 @@ class Curve:
     @property
     def length(self):
         if self.len == 0:
-            self.len = self.length_approx()
+            self.len = approx_length(self)
         return self.len
 
-    def length_approx(self, samples=10):
-        step = 1.0 / samples
-        p0 = self.p0
-        d = 0
-        for i in range(0, samples):
-            p = self.point_at((i+1) * step)
-            d += distance(p0, p)
-            p0 = p
-        return d
+    def __repr__(self):
+        return f'QuadraticCurve[{self.p0},{self.p1},{self.cp}]'
+
+
+class CubicCurve:
+    """Cubic bezier curve"""
+
+    def __init__(self, p0, c0, c1, p1):
+        self.p0 = p0
+        self.c0 = c0
+        self.c1 = c1
+        self.p1 = p1
+        self.len = 0
+
+    @property
+    def startpoint(self):
+        return self.p0
+
+    @property
+    def endpoint(self):
+        return self.p1
+
+    def scale(self, f):
+        """scale by factor"""
+        self.p0 = self.p0.scale(f)
+        self.p1 = self.p1.scale(f)
+        self.c0 = self.c0.scale(f)
+        self.c1 = self.c1.scale(f)
+
+    def copy(self):
+        """return copy of myself"""
+        return CubicCurve(self.p0, self.c0, self.c1, self.p1)
+
+    def point_at(self, t):
+        d = 1 - t
+
+        def comp(p0, c0, c1, p1):
+            return (d ** 3 * p0) + (3 * d * d * t * c0) + \
+                (3 * d * t * t * c1) + (t ** 3 * p1)
+        x = comp(self.p0.x, self.c0.x, self.c1.x, self.p1.x)
+        y = comp(self.p0.y, self.c0.y, self.c1.y, self.p1.y)
+        return Point(x, y)
+
+    def tangent_at(self, t):
+        d = 1 - t
+
+        def bd1(p0, c0, c1, p1):
+            return 3 * d * d * (c0 - p0) + 6 * d * t * (c1 - c0) + \
+                3 * t * t * (p1 - c1)
+        return math.atan2(bd1(self.p0.y, self.c0.y, self.c1.y, self.p1.y),
+                          bd1(self.p0.x, self.c0.x, self.c1.x, self.p1.x))
+
+    @property
+    def length(self):
+        if self.len == 0:
+            self.len = approx_length(self)
+        return self.len
 
     def __repr__(self):
-        return f'Curve[{self.p0},{self.p1},{self.cp}]'
+        return f'CubicCurve[{self.p0},{self.c0},{self.c1},{self.p1}]'
+
+
+def approx_length(g, samples=10):
+    step = 1.0 / samples
+    p0 = g.startpoint
+    d = 0
+    for i in range(0, samples):
+        p = g.point_at((i+1) * step)
+        d += distance(p0, p)
+        p0 = p
+    return d
 
 
 class Polygon:

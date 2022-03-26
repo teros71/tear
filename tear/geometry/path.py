@@ -41,35 +41,40 @@ class Path:
     @property
     def startpoint(self):
         """Start of the path"""
-        return self.segments[0].p0
+        return self.segments[0].startpoint
 
     @property
     def endpoint(self):
         """End of the path"""
-        return self.segments[-1].p1
+        return self.segments[-1].endpoint
 
-    def point_at(self, d):
+    def point_at(self, t):
         """Point on the path
         Args:
-            d : distance from start towards end [0,1]
+            t : distance from start towards end in range [0,1]
         """
-#        n = math.ceil(d * len(self.segments)) - 1
-#        d = (d - n / len(self.segments)) * len(self.segments)
+        s, t = self.find_segment(t)
+        return s.point_at(t)
+
+    def tangent_at(self, t):
+        s, t = self.find_segment(t)
+        return s.tangent_at(t)
+
+    def find_segment(self, t):
+        if len(self.segments) == 1:
+            return self.segments[0], t
         total = 0
         for s in self.segments:
             total += s.length
         i = 0
-        while d > self.segments[i].length / total:
-            d -= self.segments[i].length / total
+        while t > self.segments[i].length / total:
+            t -= self.segments[i].length / total
             i += 1
-        print("point at", d, i)
+        print("point at", t, i)
         seg = self.segments[i]
-        d = d * total / seg.length
-        print("final d", d)
-        return seg.point_at(d)
-
-    def tangent_at(self, d):
-        return self.segments[0].tangent_at(d)
+        t = t * total / seg.length
+        print("final t", t)
+        return seg, t
 
     def bbox(self, p):
         """Bounding box"""
@@ -89,7 +94,7 @@ class Path:
         return f'Path[{self.segments}]'
 
 
-def random_path(startpoint, endpoint, count, av, min_d):
+def random_path_quadratic(startpoint, endpoint, count, av, min_d):
     """Generate random path from curves
     Args:
         startpoint
@@ -100,16 +105,58 @@ def random_path(startpoint, endpoint, count, av, min_d):
     """
     cl = []
     p0 = startpoint
+    cp = None
     for i in range(count - 1):
         p = generate_point(p0, endpoint, av, min_d, 0, (i+1) / count)
         if p is not None:
-            cp = generate_point(p0, p, av, min_d, 0, 1)
+            if cp is None:
+                # new control point
+                cp = generate_point(p0, p, av, min_d, 0, 1)
             if cp is not None:
-                cl.append(geom.Curve(p0, p, cp))
-        p0 = p
+                cl.append(geom.QuadraticCurve(p0, p, cp))
+                # next cp is mirror of previous
+                cp = p.mirror(cp)
+            p0 = p
     # last to the end
     if p0 is not None:
-        cp = generate_point(p0, endpoint, av, min_d, 0, 1)
+        if cp is None:
+            cp = generate_point(p0, endpoint, av, min_d, 0, 1)
         if cp is not None:
-            cl.append(geom.Curve(p0, endpoint, cp))
+            cl.append(geom.QuadraticCurve(p0, endpoint, cp))
+    return Path(cl)
+
+
+def random_path_cubic(startpoint, endpoint, count, av, min_d):
+    """Generate random path from curves
+    Args:
+        startpoint
+        endpoint
+        count : how many segments
+        av : anglevariation for randomizing
+        min_d : minimum distance between segment start and end points
+    """
+    cl = []
+    p0 = startpoint
+    c0 = None
+    c1 = None
+    for i in range(count - 1):
+        p1 = generate_point(p0, endpoint, av, min_d, 0, (i+1) / count)
+        if p1 is not None:
+            if c0 is None:
+                # new control point
+                c0 = generate_point(p0, p1, av, min_d, 0, 1)
+            c1 = generate_point(p1, p0, av, min_d, 0, 1)
+            if c0 is not None and c1 is not None:
+                cl.append(geom.CubicCurve(p0, c0, c1, p1))
+                # next cp is mirror of previous
+                c0 = p1.mirror(c1)
+            p0 = p1
+    # last to the end
+    if p0 is not None:
+        if c0 is None:
+            # new control point
+            c0 = generate_point(p0, endpoint, av, min_d, 0, 1)
+        c1 = generate_point(endpoint, p0, av, min_d, 0, 1)
+        if c0 is not None and c1 is not None:
+            cl.append(geom.CubicCurve(p0, c0, c1, endpoint))
     return Path(cl)

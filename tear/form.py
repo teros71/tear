@@ -29,7 +29,8 @@ def make_generator_shape(config):
         ep = reader.read_point(config, "end")
         count = config.get("count")
         av = config.get("av")
-        return shape.PathGenerator(sp, ep, count, av)
+        typ = config.get("curve")
+        return shape.PathGenerator(typ, sp, ep, count, av)
     raise ValueError("unkown generator type", t)
 
 
