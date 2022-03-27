@@ -1,32 +1,37 @@
 """
-Handling various forms of input values
-single number (int or float): 42 or 42.42
-string: "foobar"
-number range with optional step, int or float: "42:54[:1]", "0.42:42.4[:0.1]"
-linear range between: "42:54/5"
+Geometry related value types
 
-random int: "?:42:54"
-random float: "?:42.0:54.1"
-random from list: "?:1,2,3,4"
+Returning points:
+cartesian : x, y
+polar : origo, t, r
+coordinate matrix : cart: y * x polar: (origo, r) * t
+positional matrix : y * x
+function : n => x,y
+relative: origo, fx, fy applied to base
 
-colour: "blue" or "#0000ff"
-colour range: "c:#000000:#102030/10"
+triangular: n*(n+1)/2
+to make pyramid, base:
+n => x: n, y: floor(sqrt(2n) + 1/2)
+inverse of triangular number: floor(sqrt(2n) + 1/2)
++
+positional with moving origo...
 
-x = integer
-x.y = float
-?:m:n = random between m-n integers or floats
-m:n:s = range between m-n with step s
-m:n/s = range between m-n divided into s steps
-%x%value = x percents of a value
-c:#rrggbb:#rrggbb/n = colour range
-[x, y, z] = list
-f:str = function where str is evaluated with parameter x (depending no the algorithm)
+Relative with Cartesian with x: e:{0}+1  y: u:InverseTriangular()
+
+field matrix: x: "1:n" y: "10"
+
+x = n - m*(m+1)/2
+where m = floor(sqrt(2n) + 1/2) - 1
+i.e. x = n - triangular(inverseTriangular(n)-1)
 
 """
 from tear.geometry import geom
+from tear.value import value, reader
 
 
 class Cartesian:
+    """Cartesian points, defined by x and y"""
+
     def __init__(self, x, y):
         self.x = x
         self.y = y
@@ -46,7 +51,7 @@ class Cartesian:
 
 
 class Polar:
-    """Wrapper for polar coordinate values to cartesian"""
+    """Polar points defined by origo, t and r"""
 
     def __init__(self, origo, t, r):
         self.origo = origo
@@ -66,3 +71,101 @@ class Polar:
         self.last = geom.Point.fromtuple(
             geom.polar2cartesian(self.t.next, self.r.next, o.x, o.y))
         return self.last
+
+
+class Relative:
+    """Relative points defined by origo and factors xf and yf
+    applied to base points
+    """
+
+    def __init__(self, origo, fx, fy, base):
+        self.origo = origo
+        self.fx = fx
+        self.fy = fy
+        self.base = base
+
+    @property
+    def next(self):
+        p = self.base.next
+        o = self.origo.next
+        return geom.Point(o.x + (p.x * self.fx), o.y + (p.y * self.fy))
+
+
+def triangular_matrix(n, add=-0.5):
+    """Simple list of triangular positions"""
+    return value.List([geom.Point(x+(y-1)*add, y-1) for y in range(n+1) for x in range(y)])
+
+
+# functions to read points from dict
+
+def read_point_data(p):
+    if isinstance(p, str):
+        p = p.split(',')
+    if not isinstance(p, list) or len(p) != 2:
+        raise ValueError("invalid point")
+    x = reader.make(p[0])
+    y = reader.make(p[1])
+    return Cartesian(x, y)
+
+
+def read_cartesian(config, name=None):
+    if name is not None:
+        config = config.get(name)
+    if config is None:
+        return None
+    if isinstance(config, dict):
+        vx = reader.read(config, 'x')
+        if vx is None:
+            return None
+        vy = reader.read(config, 'y')
+        if vy is None:
+            return None
+        return Cartesian(vx, vy)
+    return read_point_data(config)
+
+
+def read_polar(config):
+    origo = read_cartesian(config, 'origo')
+    if origo is None:
+        return None
+    t = reader.read(config, 't')
+    if t is None:
+        return None
+    r = reader.read(config, 'r')
+    if r is None:
+        return None
+    return Polar(origo, t, r)
+
+
+def read(config, name=None):
+    """read point value
+    Args:
+        config : dictionary
+        name : optional name of a dictionary containing the value data
+
+    If name is omitted, data is read from the given config directly.
+    Data is either for cartesian coordinates:
+        "x": value
+        "y": value
+        or
+        [x, y]
+        or
+        "x, y"
+    or for polar coordinates:
+        "origo": <cartesian point as dictionary or data>
+        "t": value for angle
+        "r": value for distance
+
+    Returns:
+        Cartesian or Polar value object
+    """
+    if name is not None:
+        config = config.get(name)
+    if config is None:
+        return None
+    p = read_cartesian(config, None)
+    if p is None:
+        p = read_polar(config)
+    if p is None:
+        raise ValueError("invalid point")
+    return p
