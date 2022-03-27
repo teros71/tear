@@ -64,13 +64,11 @@ x,y,z = list (only numbers or strings or colours)
 f:str = function where str is evaluated with parameter x (depending no the algorithm)
 
 """
-import math
-from tear.geometry import geom
-from tear import pg, goldenratio
 from tear.colours import Colour, ColourRange
 from tear.value.value import Single, Range, Random, List
-from tear.value.valg import Polar, Cartesian
-from tear.value.valf import Function, Eval, Series
+from tear.value.valf import Function
+from tear.value import ev
+from tear import pg
 
 
 def read(config, name, d=None):
@@ -84,6 +82,9 @@ def read(config, name, d=None):
         Single, Range, List, Random, Eval, Function or Series
     """
     v = config.get(name, d)
+    if v is None:
+        # not found and no default
+        return None
     obj = make(v, config)
     return obj
 
@@ -231,7 +232,7 @@ def substitute_evaluations(s):
     if j == -1:
         return s
     es = s[i:j+1]
-    v = eval(es[1:])
+    v = ev.evaluate(es[1:])
     s = s.replace(es, str(v))
     return substitute_evaluations(s)
 
@@ -258,14 +259,14 @@ def make_from_str(obj, js):
         return Function(obj[2:], args)
     # eval TODO: fix
     if obj.startswith('e:'):
-        return Eval(obj[2:])
+        return ev.Eval(obj[2:])
     if obj.startswith('u:'):
-        return eval(obj[2:])
+        return ev.evaluate(obj[2:])
     # percent
     if obj.startswith('%'):
         return Single(read_percent_value(obj[1:]))
-    if obj.startswith('!:'):
-        return Series(obj[2:])
+#    if obj.startswith('!:'):
+#        return Series(obj[2:])
     # generic string
     return read_str_value(obj)
 
@@ -285,80 +286,5 @@ def make(obj, js=None):
         # str -> parse value from string
         return make_from_str(obj, js)
     print("WARNING: unknown value type", obj)
+    raise ValueError("WARNING: unknown value type", obj)
     return obj
-
-
-# read geometrical data
-
-
-def read_point_data(p):
-    if isinstance(p, str):
-        p = p.split(',')
-    if not isinstance(p, list) or len(p) != 2:
-        raise ValueError("invalid point")
-    x = make(p[0])
-    y = make(p[1])
-    return Cartesian(x, y)
-
-
-def read_cartesian(config, name=None):
-    if name is not None:
-        config = config.get(name)
-    if config is None:
-        return None
-    if isinstance(config, dict):
-        vx = read(config, 'x')
-        if vx is None:
-            return None
-        vy = read(config, 'y')
-        if vy is None:
-            return None
-        return Cartesian(vx, vy)
-    return read_point_data(config)
-
-
-def read_polar(config):
-    origo = read_cartesian(config, 'origo')
-    if origo is None:
-        return None
-    t = read(config, 't')
-    if t is None:
-        return None
-    r = read(config, 'r')
-    if r is None:
-        return None
-    return Polar(origo, t, r)
-
-
-def read_point(config, name=None):
-    """read point value
-    Args:
-        config : dictionary
-        name : optional name of a dictionary containing the value data
-
-    If name is omitted, data is read from the given config directly.
-    Data is either for cartesian coordinates:
-        "x": value
-        "y": value
-        or
-        [x, y]
-        or
-        "x, y"
-    or for polar coordinates:
-        "origo": <cartesian point as dictionary or data>
-        "t": value for angle
-        "r": value for distance
-
-    Returns:
-        Cartesian or Polar value object
-    """
-    if name is not None:
-        config = config.get(name)
-    if config is None:
-        return None
-    p = read_cartesian(config, None)
-    if p is None:
-        p = read_polar(config)
-    if p is None:
-        raise ValueError("invalid point")
-    return p

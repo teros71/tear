@@ -1,7 +1,7 @@
 """Handle new shape generation according the instructions"""
 
 from tear import shape, algo
-from tear.value import reader
+from tear.value import reader, points
 from tear.model import store
 from tear.geometry import geom, path
 
@@ -25,8 +25,8 @@ def make_generator_shape(config):
         rap = reader.read(config, "c")
         return shape.PolygonGenerator(rar, rap)
     if t == 'path':
-        sp = reader.read_point(config, "start")
-        ep = reader.read_point(config, "end")
+        sp = points.read(config, "start")
+        ep = points.read(config, "end")
         count = config.get("count")
         av = config.get("av")
         typ = config.get("curve")
@@ -51,11 +51,15 @@ def make_new_shape(r):
             r.get("points", "0.0 0.0, 10.0 5.0, 5.0 10.0"))
     elif t == 'path':
         #        segs = r.get("segments")
-        sp = reader.read_point(r, "start")
-        ep = reader.read_point(r, "end")
+        sp = points.read(r, "start")
+        ep = points.read(r, "end")
         count = r.get("count")
         av = r.get("av")
-        base = path.random_path(sp.next, ep.next, count, av, 2.0)
+        typ = r.get("curve")
+        if typ == "cubic":
+            base = path.random_path_quadratic(sp.next, ep.next, count, av, 2.0)
+        else:
+            base = path.random_path_cubic(sp.next, ep.next, count, av, 2.0)
     else:
         raise ValueError("new shape: unknown type")
     s = shape.Shape(base)

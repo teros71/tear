@@ -56,13 +56,10 @@
           "angle": "0:360/30"
         },
         {
-          "algorithm": "spread-polar",
+          "algorithm": "spread",
           "origo": ["$CX","$CY"],
           "r": 600,
-          "t": "0:6.2831853/30",
-          "algorithm2": "spread-path",
-          "shape": "circarea",
-          "count": 30
+          "t": "0:6.2831853/30"
         },
         {
           "algorithm": "tear",
@@ -113,7 +110,7 @@
           "around-leaf": true
         },
         {
-          "algorithm": "spread-polar",
+          "algorithm": "spread",
           "origo": ["$CX","$CY"],
           "r": "480:130/180",
           "t": "0.0:30.0:0.24"

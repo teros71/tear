@@ -5,7 +5,7 @@ import random
 import copy
 import itertools
 from tear import shape, goldenratio, tear, area, voronoi
-from tear.value import value, reader
+from tear.value import value, reader, points
 from tear.geometry import geom
 from tear.model import store
 
@@ -49,7 +49,7 @@ def position(config, base):
         leaf (bool): apply to leaf shapes rather than compounds, default true
     """
 
-    ps = reader.read_point(config)
+    ps = points.read(config)
 #    if p is None:
 #        p = reader.read_polar(config)
     if ps is None:
@@ -135,7 +135,7 @@ def spread_matrix(config, base):
     if rx is not None:
         pos = value.List([geom.Point(x, y) for y in ry for x in rx])
     else:
-        o = reader.read_point(config, 'origo').next
+        o = points.read(config, 'origo').next
         rt = reader.read(config, "t")
         rr = reader.read(config, "r")
         pos = value.List(
@@ -169,14 +169,14 @@ def spread_path(config, base):
     if shap is None:
         return None
     count = reader.read(config, "count")
-    rotate = config.get("rotate", False)
+    rot = config.get("rotate", False)
     a = shape.Path.fromshape(shap, count.next, rotate)
 
     def do_it(s):
         p = a.next
         if p is not None:
             print("p is", p)
-            if rotate:
+            if rot:
                 s.set_position(p[0].x, p[0].y)
                 s.rotate(p[0].x, p[0].y, math.degrees(p[1]))
             else:
@@ -186,7 +186,7 @@ def spread_path(config, base):
 
 
 def spread_f(config, base):
-    origo = reader.read_point(config, 'origo')
+    origo = points.read(config, 'origo')
     fx = reader.read(config, "f")
     shape_arg = config.get("shape-arg", False)
 
@@ -201,15 +201,12 @@ def spread_f(config, base):
     return apply_recursive(config, base, do_it)
 
 
-def spread_polar(config, base):
+# obsolete
+def x_spread_polar(config, base):
     """base is a list of shapes, they are spread"""
-    origo = reader.read_point(config, 'origo')
+    origo = points.read(config, 'origo')
     rr = reader.read(config, "r")
     rt = reader.read(config, "t")
-#    r = rr.next
-#    t = rt.next
-#    x = r * math.cos(t)
-#    y = r * math.sin(t)
 
     def do_it(shap):
         r = rr.next
@@ -231,18 +228,15 @@ def spread_polar(config, base):
 
 def spread(config, base):
     """base is a list of shapes, they are spread"""
-    rx = reader.read(config, "x")
-    ry = reader.read(config, "y")
-    x = rx.next
-    y = ry.next
+    ps = points.read(config)
+    point = ps.next
 
-    def do_it(shape):
-        shape.set_position(x, y)
-        return shape
+    def do_it(shap):
+        shap.set_position(point.x, point.y)
+        return shap
     for s in base.shapes:
         apply_recursive(config, s, do_it)
-        x = rx.next
-        y = ry.next
+        point = ps.next
     return base
 
 
@@ -433,6 +427,24 @@ def clip(r, base):
 #    return apply_recursive(r, base, do_it)
 
 
+def mask(r, base):
+    path = r.get('shape')
+    maskid = store.add_mask(path)
+
+    def do_it(s):
+        if isinstance(s, shape.List):
+            if isinstance(s.shapes[0], shape.List):
+                for ss in s:
+                    do_it(ss)
+            else:
+                s.appearance.mask = maskid
+        else:
+            s.appearance.mask = maskid
+    do_it(base)
+    return base
+#    return apply_recursive(r, base, do_it)
+
+
 def poly(r, base):
 
     def do_it(s):
@@ -446,7 +458,6 @@ algorithms = {
     "spread": spread,
     "spread-area": spread_area,
     "spread-path": spread_path,
-    "spread-polar": spread_polar,
     "spread-matrix": spread_matrix,
     "spread-f": spread_f,
     "tear": a_tear,
@@ -460,7 +471,8 @@ algorithms = {
     "voronoi": a_voronoi,
     "voronoi-b": b_voronoi,
     "poly": poly,
-    "clip": clip
+    "clip": clip,
+    "mask": mask
 }
 
 

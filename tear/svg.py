@@ -37,6 +37,17 @@ def write_svg_clip(file, id, shap):
 #      </defs>
 
 
+def write_svg_mask(file, id, shap):
+    """write image"""
+    file.write(f'<mask id="{id}">')
+    file.write(
+        f'<rect x="0" y="0" width="100%" height="100%" fill="white" />\n')
+    write_svg_geom(file, shap)
+    file.write('fill="black" />')
+    file.write('</mask>\n')
+    return
+
+
 def write_svg_recursive(file, shapes):
     """write recursive form"""
     if not isinstance(shapes, list):
@@ -144,6 +155,19 @@ def write_svg_style(file, app):
         f'stroke-width:{app.stroke_width};stroke-linejoin:round"')
 
 
+def write_svg_geom(file, shap):
+    if isinstance(shap.base, geom.Rect):
+        write_svg_rect(file, shap)
+    elif isinstance(shap.base, geom.Circle):
+        write_svg_circle(file, shap)
+    elif isinstance(shap.base, geom.Ellipse):
+        write_svg_ellipse(file, shap)
+    elif isinstance(shap.base, geom.Polygon):
+        write_svg_polygon(file, shap)
+    elif isinstance(shap.base, path.Path):
+        write_svg_path(file, shap.base)
+
+
 def write_svg_shape(file, single):
     """write shape"""
     global SHAPE_COUNT
@@ -162,21 +186,14 @@ def write_svg_shape(file, single):
         write_svg_feshadow(file, f'shadow_n{SHAPE_COUNT}')
     if app.blur:
         write_svg_feblur(file, f'blur_n{SHAPE_COUNT}')
-    if isinstance(single.base, geom.Rect):
-        write_svg_rect(file, single)
-    elif isinstance(single.base, geom.Circle):
-        write_svg_circle(file, single)
-    elif isinstance(single.base, geom.Ellipse):
-        write_svg_ellipse(file, single)
-    elif isinstance(single.base, geom.Polygon):
-        write_svg_polygon(file, single)
-    elif isinstance(single.base, path.Path):
-        write_svg_path(file, single.base)
+    write_svg_geom(file, single)
     write_svg_style(file, app)
     if app.shadow:
         file.write(f' filter="url(#shadow_n{SHAPE_COUNT})"')
     if app.blur:
         file.write(f' filter="url(#blur_n{SHAPE_COUNT})"')
+    if app.mask is not None:
+        file.write(f' mask="url(#{app.mask})"')
     file.write(' />\n')
     #if isinstance(single.base, path.Path):
     #    write_svg_path_debug(file, single.base)
@@ -219,11 +236,12 @@ def write_form(file, config, w, h, bg):
 
 def write_clips(file):
     file.write('<defs>')
-    i = 1
     for clipid, name in store.get_clips():
         clip = store.get_shape(name)
         write_svg_clip(file, clipid, clip)
-        i += 1
+    for maskid, name in store.get_masks():
+        mask = store.get_shape(name)
+        write_svg_mask(file, maskid, mask)
     file.write('</defs>')
 
 

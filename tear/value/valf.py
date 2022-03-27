@@ -23,42 +23,16 @@ c:#rrggbb:#rrggbb/n = colour range
 f:str = function where str is evaluated with parameter x (depending no the algorithm)
 
 """
+
 import math
-from tear import goldenratio
-
-
-class Eval:
-    def __init__(self, f):
-        self.f = f
-        self.i = 0
-        self.last = None
-
-    def __iter__(self):
-        self.reset()
-        return self
-
-    def __next__(self):
-        return self.next
-
-    @property
-    def current(self):
-        return self.last
-
-    @property
-    def next(self):
-        self.last = eval(self.f.format(self.i))
-        self.i += 1
-        return self.last
-
-    def reset(self):
-        self.i = 0
+from tear.value import ev
 
 
 class Function:
     """Function object. Get the actual callable by evaluating f"""
 
     def __init__(self, f, kwargs):
-        self.f = eval(f)
+        self.f = ev.evaluate(f)
         self.kwargs = kwargs
 
     def __call__(self, **kwargs):
@@ -68,6 +42,26 @@ class Function:
         return self.f(**args)
 
 
+class Triangular:
+    def __init__(self):
+        self.n = 0
+
+    @property
+    def next(self):
+        self.n += 1
+        return self.n * (self.n + 1) / 2
+
+
+class InverseTriangular:
+    def __init__(self):
+        self.n = 0
+
+    @property
+    def next(self):
+        self.n += 1
+        return math.floor(math.sqrt(2 * self.n) + 0.5)
+
+
 class Class:
     def __init__(self, s):
         self.obj = eval(s)
@@ -75,12 +69,3 @@ class Class:
     @property
     def next(self):
         return self.obj()
-
-
-class Series:
-    def __init__(self, s):
-        self.obj = eval(s)
-
-    @property
-    def next(self):
-        return self.obj.next

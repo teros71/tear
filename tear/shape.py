@@ -161,6 +161,7 @@ class Appearence:
         self.shadow = False
         self.blur = False
         self.clip = None
+        self.mask = None
 
     @property
     def colour(self):

@@ -7,27 +7,19 @@
       "angleVar": 4,
       "count": 6,
       "opacity": 0.2,
-      "kasumi-mato": {
-        "nakashiro": "r = 3.6 cm",
-        "ichi no kuro": "r=2*3.6 cm",
-        "ni no shiro": "r=2*3.6+3.0 cm",
-        "ni no kuro": "r=2*3.6+3.0+1.5 cm",
-        "san no shiro": "r=2*3.6+3.0+1.5+3.0 cm",
-        "sotokuro": "r=2*3.6+3.0+1.5+3.0+3.3 cm",
-        "seikoku o eru": "hit the bull's-eye"
-      }
     }
   },
   "playground": {
     "w": 900,
-    "h": 1350
+    "h": 900
   },
   "templates": [
     {
-      "name": "kasumi-mato",
+      "name": "side",
       "base": "generator",
-      "type": "circle",
-      "r": "18.0,14.7,11.7,10.2,7.2,3.6",
+      "type": "rectangle",
+      "h": "10",
+      "w": "20",
       "recipe": [
         {
           "algorithm": "generate",
@@ -39,8 +31,9 @@
           "fx": 10
         },
         {
-          "algorithm": "position",
-          "x": "$PX",
+          "algorithm": "spread",
+          "x": "f:",
+          "args": ,
           "y": "$PY"
         },
         {
