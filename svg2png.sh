@@ -126,6 +126,7 @@ fi
 # and width, BECAUSE IT'S SUPPOSE TO BE TOTALLY SCALABLE!
 echo "set dpi=$DPI ($PPM ppm) with exiftool"
 #DPI300_PPM=11811
+year=$(date +%Y)
 if [ -z "$TRIAL" ]; then
-  exiftool -PixelsPerUnitX=$PPM -PixelsPerUnitY=$PPM $output
+  exiftool -Software="TeArt" -Artist="Tero Suomela" -Copyright="$year Tero Suomela" -PixelsPerUnitX=$PPM -PixelsPerUnitY=$PPM $output
 fi
