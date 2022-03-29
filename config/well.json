@@ -186,10 +186,10 @@
     "background": "#420700",
     "shapes": [
       {
-        "name": "xstacked-1"
+        "name": "stacked-1"
       },
       {
-        "name": "xstacked-2"
+        "name": "stacked-2"
       },
       {
         "name": "mypath"

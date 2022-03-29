@@ -1,24 +1,23 @@
 """Main for generating art"""
 
+import logging
+import os
 import json
 import sys
 import getopt
 from tear import default, form, pg, goldenratio, svg
 from tear.model import store
 
-#import tear.forms
-#import form
-#import pg
-#import goldenratio
+log = logging.getLogger(__name__)
 
 
 def read_config(fname):
     """Read json config"""
-    print("reading config")
+    log.info("reading config")
     with open(fname, 'r', encoding="utf-8") as conf_file:
         # json to dictionary
         data = json.load(conf_file)
-    print("init defaults")
+    log.info("init defaults")
     defs = data.get('defaults')
     if defs is not None:
         default.read(defs)
@@ -35,37 +34,39 @@ def read_config(fname):
     return data
 
 
-def run(data, fname):
-    """run the generation"""
-    print("initializing form table")
+def process(data, fname):
+    """Process the input data and generate output"""
+    log.info("initializing form table")
     store.init()
-    print("make templates")
+    log.info("make templates")
     temp_data = data.get('templates')
     if temp_data is not None:
         if not isinstance(temp_data, list):
             raise ValueError("invalid template data")
-        print(f"{len(temp_data)} templates")
+        log.info(f"{len(temp_data)} templates")
         for temp in temp_data:
             name = temp.get('name')
             store.add_template(name, temp)
-    print("generate forms")
+    log.info("generate forms")
     form_data = data.get('forms')
     if form_data is not None:
         for fd in form_data:
             form.generate_form(fd)
-    print("write output")
+    log.info("write output")
     op = data.get('output')
     if op is not None:
-        svg.write(fname, 900, 900, pg.HEIGHT, pg.WIDTH, op)
+        svg.write(fname, pg.HEIGHT, pg.WIDTH, pg.HEIGHT, pg.WIDTH, op)
 
 
 def main(argv):
+    """main"""
+    logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
     inputfile = ''
     outputfile = ''
     try:
         opts, _ = getopt.getopt(argv, "hi:o:", ["ifile=", "ofile="])
     except getopt.GetoptError:
-        print('main.py -i <inputfile> -o <outputfile>')
+        print('main.py -i <configfile> -o <outputfile>')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
@@ -75,7 +76,7 @@ def main(argv):
             inputfile = arg
         elif opt in ("-o", "--ofile"):
             outputfile = arg
-    print('Input file is "', inputfile)
-    print('Output file is "', outputfile)
+    log.info('Input file: %s', inputfile)
+    log.info('Output file: %s', outputfile)
     data = read_config(inputfile)
-    run(data, outputfile)
+    process(data, outputfile)

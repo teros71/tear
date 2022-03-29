@@ -64,11 +64,15 @@ x,y,z = list (only numbers or strings or colours)
 f:str = function where str is evaluated with parameter x (depending no the algorithm)
 
 """
+import logging
 from tear.colours import Colour, ColourRange
 from tear.value.value import Single, Range, Random, List
 from tear.value.valf import Function
 from tear.value import ev
 from tear import pg
+
+
+log = logging.getLogger(__name__)
 
 
 def read(config, name, d=None):
@@ -213,6 +217,7 @@ def make_from_dict(obj, js):
 
 
 def substitute_variables(s):
+    log.debug("substituting variables;str=%s", s)
     s = s.replace("$CX", str(pg.CENTER_X))
     s = s.replace("$CY", str(pg.CENTER_Y))
     s = s.replace("$W", str(pg.WIDTH))
@@ -285,6 +290,6 @@ def make(obj, js=None):
     if isinstance(obj, str):
         # str -> parse value from string
         return make_from_str(obj, js)
-    print("WARNING: unknown value type", obj)
+    log.warning(f"WARNING: unknown value type {obj}")
     raise ValueError("WARNING: unknown value type", obj)
     return obj

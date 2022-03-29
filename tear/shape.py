@@ -1,8 +1,11 @@
 """Shape related stuff"""
+import logging
 import math
 import random
 import copy
 from tear.geometry import geom, path
+
+log = logging.getLogger(__name__)
 
 
 class Shape:
@@ -188,7 +191,8 @@ class Path:
     """
 
     def __init__(self, g, step, angle=False):
-        if not isinstance(g, (path.Path, geom.QuadraticCurve, geom.CubicCurve)):
+        if not isinstance(g, (path.Path, geom.QuadraticCurve, geom.CubicCurve,
+            geom.Ellipse)):
             raise ValueError("path: unsupported geometry type", g)
         self.g = g
         if step > 1.0:
@@ -311,6 +315,7 @@ class PathGenerator:
     def __next__(self):
         s = self.start.next
         e = self.end.next
+        log.info(f"path generator;s={s};e={e}")
         if self.curve_type == 'cubic':
             return Shape(path.random_path_cubic(s, e,
                                                 self.count, self.av, 2.0))

@@ -274,7 +274,14 @@ class Ellipse:
     def point_at(self, dist):
         """return point at the edge at given distance"""
         t = 2 * math.pi * dist
-        return Point(self.rx * math.cos(t), self.ry * math.sin(t))
+        p = Point(self.rx * math.cos(t), self.ry * math.sin(t))
+        print(f"ellipse: point at {dist} {p}")
+        return p
+
+    def tangent_at(self, dist):
+        t = 2 * math.pi * dist
+        slope = -(self.ry * math.cos(t) / self.rx * math.sin(t))
+        return math.atan(slope)
 
     def __repr__(self):
         return f'Ellipse[{self.rx},{self.ry}]'

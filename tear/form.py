@@ -1,9 +1,12 @@
 """Handle new shape generation according the instructions"""
 
+import logging
 from tear import shape, algo
 from tear.value import reader, points
 from tear.model import store
 from tear.geometry import geom, path
+
+log = logging.getLogger(__name__)
 
 
 def make_generator_shape(config):
@@ -64,6 +67,8 @@ def make_new_shape(r):
         raise ValueError("new shape: unknown type")
     s = shape.Shape(base)
     s.set_position(x, y)
+    log.info(f"new shape;type={t};x={x};y={y}")
+    log.debug(f"shape={s}")
     return s
 
 
@@ -98,7 +103,7 @@ def create_shape(name, config):
     elif base_name == 'new':
         base = make_new_shape(config)
     else:
-        print(f"\ngenerating form {name} from {base_name}")
+        log.info(f"\ngenerating form {name} from {base_name}")
         base = store.get_shape(base_name)
     new_form = apply_recipe(config.get('recipe', None), base)
     if isinstance(new_form, list):

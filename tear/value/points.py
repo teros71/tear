@@ -27,6 +27,8 @@ i.e. x = n - triangular(inverseTriangular(n)-1)
 """
 from tear.geometry import geom
 from tear.value import value, reader
+from tear.model import store
+from tear.shape import Path
 
 
 class Cartesian:
@@ -137,6 +139,15 @@ def read_polar(config):
     return Polar(origo, t, r)
 
 
+def read_path(config):
+    name = config.get("path")
+    if name is None:
+        return None
+    count = config.get("count", 1)
+    shap = store.get_shape(name)
+    return Path.fromshape(shap, float(count))
+
+
 def read(config, name=None):
     """read point value
     Args:
@@ -155,6 +166,9 @@ def read(config, name=None):
         "origo": <cartesian point as dictionary or data>
         "t": value for angle
         "r": value for distance
+    or for path:
+        "path": <shape name>
+        "count": how many steps on path
 
     Returns:
         Cartesian or Polar value object
@@ -166,6 +180,8 @@ def read(config, name=None):
     p = read_cartesian(config, None)
     if p is None:
         p = read_polar(config)
+    if p is None:
+        p = read_path(config)
     if p is None:
         raise ValueError("invalid point")
     return p

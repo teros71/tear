@@ -33,6 +33,7 @@
           "fy": "?:6.0:10.0"
         },
         {
+          "disable": true,
           "algorithm": "rotate",
           "angle": "?:-20:20"
         },
@@ -40,6 +41,12 @@
           "algorithm": "spread",
           "x": "?:0.0:1800.0",
           "y": "?:0.0:1800.0"
+        },
+        {
+          "algorithm": "vectorfield",
+          "fields": [
+            [1800,1800,"x+y,y-x"]
+          ]
         },
         {
           "algorithm": "tear",
@@ -78,6 +85,7 @@
           "fy": "?:6.0:10.0"
         },
         {
+          "disable": true,
           "algorithm": "rotate",
           "angle": "?:-20:20"
         },
@@ -85,6 +93,12 @@
           "algorithm": "spread",
           "x": "?:0.0:1800.0",
           "y": "?:0.0:1800.0"
+        },
+        {
+          "algorithm": "vectorfield",
+          "fields": [
+            [0,1800,"x+y,y-x"]
+          ]
         },
         {
           "algorithm": "tear",
@@ -141,7 +155,8 @@
     }
   ],
   "output": {
-    "background": "#4040a0",
+    "background": "#0b0717",
+    "background2": "#f52439",
     "shapes": [
       {
         "name": "rects2"

@@ -1,0 +1,206 @@
+{
+  "defaults": {
+    "tear": {
+      "iterations": 18,
+      "minDistance": 2.0,
+      "minDistanceFactor": 0,
+      "angleVar": 4,
+      "count": 6,
+      "opacity": 0.2
+    }
+  },
+  "playground": {
+    "w": 1350,
+    "h": 900
+  },
+  "templates": [
+    {
+      "name": "path",
+      "base": "generator",
+      "type": "path",
+      "start": {"origo": "$ORIGO", "t":"$START_T", "r":"300"},
+      "end": {"origo": "$ORIGO", "t":"$END_T", "r":"300"},
+      "count": 3,
+      "av": 0.4,
+      "curve": "quad",
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": "$COUNT"
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "0.1",
+          "colours": "$COLOURS",
+          "stroke": "black",
+          "strokeWidth": 0
+        }
+      ]
+    },
+    {
+      "name": "stacked",
+      "base": "generator",
+      "type": "ellipse",
+      "rx": "?:110.0:190.0",
+      "ry": "?:60.0:120.0",
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": "$COUNT"
+        },
+        {
+          "algorithm": "poly"
+        },
+        {
+          "algorithm": "rotate",
+          "angle": "0:360/26",
+          "around-leaf": true
+        },
+        {
+          "algorithm": "position",
+          "point": "$POSITION"
+        },
+        {
+          "algorithm": "tear",
+          "params": {
+            "iterations": 8,
+            "angleVar": 0.72,
+            "count": 1,
+            "randomizeBase": -0.47
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "0.05",
+          "colours": "$COLOURS",
+          "stroke": "black",
+          "strokeWidth": 0
+        }
+      ]
+    },
+    {
+      "name": "black-c",
+      "base": "new",
+      "type": "circle",
+      "r": 200,
+      "recipe": [
+        {
+          "algorithm": "position",
+          "point": "$POSITION"
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "1",
+          "colours": "#302040",
+          "stroke": "black",
+          "strokeWidth": 0,
+          "blur": true
+        }
+      ]
+    }
+  ],
+  "forms": [
+    {
+      "name": "frame",
+      "base": "new",
+      "type": "ellipse",
+      "rx": 600,
+      "ry": 400,
+      "recipe": [
+        {
+          "algorithm": "position",
+          "x": "$CX",
+          "y": "$CY"
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": 1.00,
+          "colours": "black",
+          "stroke": "#6f4f3f",
+          "strokeWidth": 5,
+          "shadow": true
+        }
+      ]
+    },
+    {
+      "name": "mypath-circle",
+      "template": "path",
+      "params": {
+        "$ORIGO": "490,$CY",
+        "$START_T": "0:$(math.pi*2)/280",
+        "$END_T": "$(math.pi/2):$(math.pi/2 + math.pi*2)/280",
+        "$COUNT": "280",
+        "$COLOURS": "red,orange"
+      }
+    },
+    {
+      "name": "mypath-circle2",
+      "template": "path",
+      "params": {
+        "$ORIGO": "860,$CY",
+        "$START_T": "0:$(math.pi*2)/280",
+        "$END_T": "$(math.pi/2):$(math.pi/2 + math.pi*2)/280",
+        "$COUNT": "280",
+        "$COLOURS": "red,orange"
+      }
+    },
+    {
+      "name": "black-c1",
+      "template": "black-c",
+      "params": {
+        "$POSITION": "490,$CY"
+      }
+    },
+    {
+      "name": "black-c2",
+      "template": "black-c",
+      "params": {
+        "$POSITION": "860,$CY"
+      }
+    },
+    {
+      "disable": true,
+      "name": "stacked-1",
+      "template": "stacked",
+      "params": {
+        "$COUNT": "100",
+        "$POSITION": "490,$CY",
+        "$COLOURS": "#404080,#4040ff,#606090"
+      }
+    },
+    {
+      "disable": true,
+      "name": "mypath3",
+      "template": "path",
+      "params": {
+        "$STARTX": "550",
+        "$STARTY": "575",
+        "$ENDX": "550",
+        "$COLOURS": "yellow,khaki,orange,orange"
+      }
+    }
+  ],
+  "output": {
+    "background": "#333d00",
+    "shapes": [
+      {
+        "name": "frame"
+      },
+      {
+        "name": "mypath-circle"
+      },
+      {
+        "name": "mypath-circle2"
+      },
+      {
+        "name": "black-c1"
+      },
+      {
+        "name": "black-c2"
+      },
+      {
+        "name": "stacked-1"
+      }
+    ]
+  }
+}

@@ -5,7 +5,7 @@ import random
 import copy
 import itertools
 from tear import shape, goldenratio, tear, area, voronoi
-from tear.value import value, reader, points
+from tear.value import value, reader, points, ev
 from tear.geometry import geom
 from tear.model import store
 
@@ -48,8 +48,10 @@ def position(config, base):
     Args:
         leaf (bool): apply to leaf shapes rather than compounds, default true
     """
+    ps = points.read(config, "point")
+    if ps is None:
+        ps = points.read(config)
 
-    ps = points.read(config)
 #    if p is None:
 #        p = reader.read_polar(config)
     if ps is None:
@@ -113,7 +115,7 @@ def rotate(r, base):
 def generate(config, base):
     """base must be generative shape"""
     count = config.get('count', 2)
-    shapes = list(itertools.islice(base, count))
+    shapes = list(itertools.islice(base, int(count)))
     return shape.List(shapes)
 
 # ===========================================================================
@@ -354,7 +356,6 @@ def vectorfield(r, base):
             x = ox - f[0]
             y = oy - f[1]
             i, j = eval(f[2])
-            print("eval", i, j)
             fi += i
             fj += j
         ang = geom.angle(geom.Point(0, 0), geom.Point(fi, fj))

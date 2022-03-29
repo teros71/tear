@@ -1,11 +1,13 @@
 """For storing forms"""
-
+import logging
 from xml.dom import minidom
 import copy
 import json
 
 from tear import shape
 from tear.geometry import geom
+
+log = logging.getLogger(__name__)
 
 _templates = {}
 _shapes = {}
@@ -20,7 +22,7 @@ def add_template(name, t):
     # store it in string format
     ts = json.dumps(t)
     _templates[name] = ts
-    print(f"added template {name}")
+    log.info(f"added template {name}")
 
 
 def get_template(name, config):
@@ -40,7 +42,7 @@ def get_template(name, config):
 def add_shape(name, s):
     """Add shape"""
     _shapes[name] = s
-    print(f"added shape {name}")
+    log.info(f"added shape {name}")
 
 
 def get_shape(name):
@@ -55,6 +57,7 @@ def add_clip(name):
     """Add a clip, returns the id for later reference"""
     clip_id = f'clip_{len(_clips)}'
     _clips[clip_id] = name
+    log.info("added clip;id=%s;name=%s", clip_id, name)
     return clip_id
 
 
@@ -72,6 +75,7 @@ def add_mask(name):
     """Add a mask, returns the id for later reference"""
     mask_id = f'mask_{len(_masks)}'
     _masks[mask_id] = name
+    log.info("added mask;id=%s;name=%s", mask_id, name)
     return mask_id
 
 

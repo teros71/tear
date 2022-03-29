@@ -10,34 +10,15 @@
     }
   },
   "playground": {
-    "w": 1800,
-    "h": 1800
+    "w": 900,
+    "h": 900
   },
   "forms": [
     {
-      "name": "rarea",
-      "base": "new",
-      "type": "rectangle",
-      "w": 600,
-      "h": 400,
-      "recipe": [
-        {
-          "algorithm": "position",
-          "x": 400,
-          "y": 400
-        },
-        {
-          "algorithm": "appearance",
-          "opacity": 0.25,
-          "colours": ["green"]
-        }
-      ]
-    },
-    {
-      "name": "carea",
+      "name": "centerarea",
       "base": "new",
       "type": "circle",
-      "r": 600.0,
+      "r": 250.0,
       "recipe": [
         {
           "algorithm": "position",
@@ -54,10 +35,10 @@
       ]
     },
     {
-      "name": "carea2",
+      "name": "circles",
       "base": "generator",
       "type": "circle",
-      "r": "604.0:1000.0:30",
+      "r": "312.0:350.0:30",
       "recipe": [
         {
           "algorithm": "generate",
@@ -65,15 +46,15 @@
         },
         {
           "algorithm": "spread",
-          "x": "?:%45%$W:%55%$W",
-          "y": "?:%45%$H:%55%$H"
+          "x": "?:$(0.45*$W):$(0.55*$W)",
+          "y": "?:$(0.45*$H):$(0.55*$H)"
         },
         {
           "algorithm": "appearance",
           "opacity": 0.20,
           "colours": "#201080:#4030a0/10",
           "stroke": "black",
-          "strokeWidth": 3
+          "strokeWidth": 2
         }
       ]
     },
@@ -81,7 +62,7 @@
       "name": "rounds",
       "base": "generator",
       "type": "circle",
-      "r": "?:20.0:50.0",
+      "r": "?:8.0:18.0",
       "recipe": [
         {
           "algorithm": "generate",
@@ -89,7 +70,7 @@
         },
         {
           "algorithm": "spread-area",
-          "shape": "carea"
+          "shape": "centerarea"
         },
         {
           "algorithm": "appearance",
@@ -104,16 +85,16 @@
       "name": "poly1",
       "base": "generator",
       "type": "polygon",
-      "r": "?:60.0:100.0",
+      "r": "?:20.0:35.0",
       "c": "?:3:12",
       "recipe": [
         {
           "algorithm": "generate",
-          "count": 80
+          "count": 100
         },
         {
           "algorithm": "spread-area",
-          "shape": "carea"
+          "shape": "centerarea"
         },
         {
           "algorithm": "appearance",
@@ -139,13 +120,13 @@
     }
   ],
   "output": {
-    "background": "#4030a0",
+    "background": "#601515",
     "shapes": [
       {
-        "name": "carea2"
+        "name": "centerarea"
       },
       {
-        "name": "carea"
+        "name": "circles"
       },
       {
         "name": "rounds"

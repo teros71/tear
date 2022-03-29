@@ -1,8 +1,11 @@
 """svg writing"""
 
+import logging
 from tear import shape
 from tear.geometry import geom, path
 from tear.model import store
+
+log = logging.getLogger(__name__)
 
 
 def write_svg_feshadow(file, id):
@@ -57,9 +60,8 @@ def write_svg_recursive(file, shapes):
 #            shap = shape.Shape(polygon.Polygon(shapes.get_points()))
         write_svg_shape(file, single)
         return
-    print("shape is list!!!")
+    log.debug("recursive list shape")
     for shap in shapes:
-        #print(shap)
         write_svg_recursive(file, shap)
 
 
@@ -122,7 +124,7 @@ def write_svg_path(file, path):
             else:
                 file.write(f'T {s.p1.x} {s.p1.y} ')
 
-    print(path)
+    log.debug(f"path element:path={path}")
     p = path.startpoint
     file.write(f'<path d="M {p.x} {p.y} ')
     if isinstance(path.segments[0], geom.CubicCurve):
@@ -217,7 +219,7 @@ def write_form(file, config, w, h, bg):
     name = config.get('name')
     if name is None:
         return
-    print(f"getting shape {name}")
+    log.info(f"getting shape {name}")
     sss = store.get_shape(name)
     if sss is not None:
         #        print(sss)
