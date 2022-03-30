@@ -4,7 +4,7 @@ from xml.dom import minidom
 import copy
 import json
 
-from tear import shape
+from tear.model import shape
 from tear.geometry import geom
 
 log = logging.getLogger(__name__)
@@ -119,8 +119,7 @@ def init():
     """initialize forms"""
     def add_poly(name, pl):
         p = geom.Polygon.fromstr(pl)
-        bb = p.bbox(geom.Point(0, 0))
-        p.move(-(bb.x0 + (bb.x1 - bb.x0) / 2), -(bb.y0 + (bb.y1 - bb.y0) / 2))
+        p.position = geom.Point(0.0, 0.0)
         add_shape(name, shape.Shape(p))
     add_poly("man", man)
     add_poly("dancer", dancer)

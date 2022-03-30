@@ -28,7 +28,7 @@ i.e. x = n - triangular(inverseTriangular(n)-1)
 from tear.geometry import geom
 from tear.value import value, reader
 from tear.model import store
-from tear.shape import Path
+from tear.model.shape import Path
 
 
 class Cartesian:

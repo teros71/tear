@@ -54,8 +54,12 @@ def process(data, fname):
             form.generate_form(fd)
     log.info("write output")
     op = data.get('output')
-    if op is not None:
-        svg.write(fname, pg.HEIGHT, pg.WIDTH, pg.HEIGHT, pg.WIDTH, op)
+    if op is None:
+        log.warning("no output defined!")
+        return
+    if not isinstance(op, dict):
+        raise ValueError("invalid output configuration")
+    svg.write(fname, pg.HEIGHT, pg.WIDTH, pg.HEIGHT, pg.WIDTH, op)
 
 
 def main(argv):

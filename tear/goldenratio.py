@@ -69,8 +69,10 @@ class RectSpread:
             dx = (bb.x1 - bb.x0) / 2
             dy = (bb.y0 - bb.y1) / 2
         self.count += 1
-        p = self.current.move(dx, dy)
-        self.current = p.move(dx, dy)
+        p = self.current.copy()
+        p.move(dx, dy)
+        self.current = p.copy()
+        self.current.move(dx, dy)
         return p
 
 

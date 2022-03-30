@@ -11,43 +11,18 @@
   },
   "forms": [
     {
-      "name": "circle-tear",
-      "base": "circle",
-      "recipe": [
-        {
-          "algorithm": "list"
-        },
-        {
-          "algorithm": "tear",
-          "params": {
-            "iterations": 10,
-            "angleVar": 4,
-            "count": 8,
-            "opacity": 0.2,
-            "colours": ["blue", "red"]
-          }
-        }
-      ]
-    },
-    {
-      "name": "shape-c",
-      "base": "circle",
-      "recipe": [
-        {
-          "algorithm": "shape"
-        }
-      ]
-    },
-    {
       "name": "shape-spiral",
-      "base": "rectangle",
+      "base": "new",
+      "type": "rectangle",
+      "w": 1000,
+      "h": 1000,
       "recipe": [
         {
-          "algorithm": "scale",
-          "ratio": 0.1
+          "algorithm": "scaler",
+          "fx": 0.1
         },
         {
-          "algorithm": "random",
+          "algorithm": "multiply",
           "count": 5
         },
         {
@@ -57,20 +32,10 @@
           "growth": 0
         },
         {
-          "algorithm": "line",
-          "x0": 100,
-          "y0": 800,
-          "x1": 900,
-          "y1": 200,
-          "acceleration": 0,
-          "velocity": 5,
-          "growth": 0
-        },
-        {
           "algorithm": "tear",
           "params": {
             "iterations": 10,
-            "angleVar": 3,
+            "angleVar": 0.1,
             "count": 8,
             "opacity": 0.1,
             "colours": ["blue", "red", "orange"]
@@ -79,7 +44,9 @@
       ]
     }
   ],
-  "output": [
-    "shape-spiral"
-  ]
+  "output": {
+    "shapes": [
+      { "name": "shape-spiral" }
+    ]
+  }
 }

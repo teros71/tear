@@ -1,14 +1,16 @@
 """Algorithms for processing"""
 
+import logging
 import math
 import random
 import copy
 import itertools
-from tear import shape, goldenratio, tear, area, voronoi
+from tear import goldenratio, tear, area, voronoi
 from tear.value import value, reader, points, ev
 from tear.geometry import geom
-from tear.model import store
+from tear.model import store, shape
 
+log = logging.getLogger(__name__)
 
 # ===========================================================================
 
@@ -98,15 +100,15 @@ def rotate(r, base):
             default false
     """
     a = reader.read(r, "angle")
-    leaf = r.get("around-leaf", False)
-    bp = base.position
+#    leaf = r.get("around-leaf", False)
+#    bp = base.position
 
     def do_it(s):
-        if leaf:
-            p = s.position
-        else:
-            p = bp
-        s.rotate(p.x, p.y, a.next)
+#        if leaf:
+#            p = s.position
+#        else:
+#            p = bp
+        s.rotate(a.next)
     return apply_recursive(r, base, do_it)
 #    base.rotate(p.x, p.y, a.next)
 #    return base
@@ -144,10 +146,10 @@ def spread_matrix(config, base):
             [geom.Point.fromtuple(geom.polar2cartesian(t, r, o.x, o.y))
                 for r in rr for t in rt])
 
-    def do_it(shape):
+    def do_it(s):
         p = pos.next
-        shape.set_position(p.x, p.y)
-        return shape
+        s.set_position(p.x, p.y)
+        return s
     return apply_recursive(config, base, do_it)
 
 
@@ -177,10 +179,9 @@ def spread_path(config, base):
     def do_it(s):
         p = a.next
         if p is not None:
-            print("p is", p)
             if rot:
                 s.set_position(p[0].x, p[0].y)
-                s.rotate(p[0].x, p[0].y, math.degrees(p[1]))
+                s.rotate(math.degrees(p[1]))
             else:
                 s.set_position(p.x, p.y)
         return s
@@ -191,6 +192,8 @@ def spread_f(config, base):
     origo = points.read(config, 'origo')
     fx = reader.read(config, "f")
     shape_arg = config.get("shape-arg", False)
+
+    log.debug("spread-f;fx=%s", fx)
 
     def do_it(s):
         if shape_arg:
@@ -360,7 +363,7 @@ def vectorfield(r, base):
             fj += j
         ang = geom.angle(geom.Point(0, 0), geom.Point(fi, fj))
         a = math.degrees(ang)
-        s.rotate(0, 0, a)
+        s.rotate(a)
         return s
     return apply_recursive(r, base, do_it)
 
@@ -449,7 +452,7 @@ def mask(r, base):
 def poly(r, base):
 
     def do_it(s):
-        s.base = geom.Polygon(s.base.get_points(s.position))
+        s.g = geom.Polygon(s.g.get_points())
     return apply_recursive(r, base, do_it)
 
 
@@ -497,8 +500,6 @@ def apply_algorithm(r, base):
         limit = r.get('limit', 10)
         # base is a rectangle, result is a list of rectangles
         return goldenratio.spiralOfRectangles(base, limit)
-    if alg == 'goldenRatioSpiral':
-        return goldenratio.toPath(base)
 #    elif alg == 'line':
 #        return lineUp(base)
     print(f"WARNING: unknown algorithm {alg}")

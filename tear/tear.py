@@ -1,8 +1,9 @@
 import math
 import random
-from tear import shape, default
+from tear import default
 from tear.geometry import geom
 from tear.value import reader
+from tear.model import shape
 
 
 class Params:

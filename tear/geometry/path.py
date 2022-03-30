@@ -76,7 +76,7 @@ class Path:
         print("final t", t)
         return seg, t
 
-    def bbox(self, p):
+    def bbox(self):
         """Bounding box"""
         return geom.BBox(self.startpoint.x, self.startpoint.y,
                          self.endpoint.x, self.endpoint.y)

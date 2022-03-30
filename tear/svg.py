@@ -1,7 +1,7 @@
 """svg writing"""
 
 import logging
-from tear import shape
+from tear.model import shape
 from tear.geometry import geom, path
 from tear.model import store
 
@@ -33,14 +33,14 @@ def write_svg_clip(file, id, shap):
             for ss in s:
                 write_one_clip(ss)
             return
-        if isinstance(s, geom.Rect):
-            write_svg_rect(file, s)
-        elif isinstance(s, geom.Circle):
-            write_svg_circle(file, s)
-        elif isinstance(s, geom.Ellipse):
+        if isinstance(s.g, geom.Rect):
+            write_svg_rect(file, s.g)
+        elif isinstance(s.g, geom.Circle):
+            write_svg_circle(file, s.g)
+        elif isinstance(s.g, geom.Ellipse):
             write_svg_ellipse(file, s)
         else:
-            write_svg_polygon(file, s)
+            write_svg_polygon(file, s.g)
         file.write(' />\n')
     write_one_clip(shap)
     file.write('</clipPath>')
@@ -76,26 +76,25 @@ def write_svg_recursive(file, shapes):
 SHAPE_COUNT = 0
 
 
-def write_svg_rect(file, rect):
-    r = rect.base
-    x = rect.position.x - r.width / 2
-    y = rect.position.y - r.height / 2
+def write_svg_rect(file, g):
+    x = g.position.x - g.width / 2
+    y = g.position.y - g.height / 2
     file.write(f'<rect x="{x}" y="{y}" '
-               f'height="{r.height}" width="{r.width}" ')
+               f'height="{g.height}" width="{g.width}" ')
 
 
-def write_svg_circle(file, c):
-    x = c.position.x
-    y = c.position.y
-    r = c.base.r
-    file.write(f'<circle cx="{x}" cy="{y}" r="{r}" ')
+def write_svg_circle(file, g):
+    x = g.position.x
+    y = g.position.y
+    file.write(f'<circle cx="{x}" cy="{y}" r="{g.radius}" ')
 
 
 def write_svg_ellipse(file, e):
-    x = e.position.x
-    y = e.position.y
-    rx = e.base.rx
-    ry = e.base.ry
+    g = e.g
+    x = g.position.x
+    y = g.position.y
+    rx = g.rx
+    ry = g.ry
     file.write(f'<ellipse cx="{x}" cy="{y}" rx="{rx}" ry="{ry}" ')
     if e.angle != 0:
         a = e.angle
@@ -105,47 +104,41 @@ def write_svg_ellipse(file, e):
 def write_svg_polygon(file, poly):
     file.write('<polygon\n')
     file.write('points="')
-    for p in poly.get_rendering_points():
+    for p in poly.get_points():
         file.write(f'{p.x},{p.y} ')
     file.write('"\n')
 
 
-def write_svg_path(file, shap):
+def write_svg_path(file, g):
     """Write path"""
-    pos = shap.position
-    pat = shap.base
 
     def write_cubic(segs):
         first = True
         for s in segs:
             if first:
                 file.write(
-                    f'C {pos.x + s.c0.x} {pos.y + s.c0.y} \
-                    {pos.x + s.c1.x} {pos.y + s.c1.y} \
-                    {pos.x + s.p1.x} {pos.y + s.p1.y} ')
+                    f'C {s.c0.x} {s.c0.y} {s.c1.x} {s.c1.y} {s.p1.x} {s.p1.y} ')
                 first = False
             else:
-                file.write(f'S {pos.x + s.c1.x} {pos.y + s.c1.y} \
-                {pos.x + s.p1.x} {pos.y + s.p1.y} ')
+                file.write(f'S {s.c1.x} {s.c1.y} {s.p1.x} {s.p1.y} ')
 
     def write_quadratic(segs):
         first = True
         for s in segs:
             if first:
                 file.write(
-                    f'Q {pos.x + s.cp.x} {pos.y + s.cp.y} \
-                    {pos.x + s.p1.x} {pos.y + s.p1.y} ')
+                    f'Q {s.cp.x} {s.cp.y} {s.p1.x} {s.p1.y} ')
                 first = False
             else:
-                file.write(f'T {pos.x + s.p1.x} {pos.y + s.p1.y} ')
+                file.write(f'T {s.p1.x} {s.p1.y} ')
 
-    log.debug("path element:path={%s}", pat)
-    p = pat.startpoint
-    file.write(f'<path d="M {pos.x + p.x} {pos.y + p.y} ')
-    if isinstance(pat.segments[0], geom.CubicCurve):
-        write_cubic(pat.segments)
+    log.debug("path element:path={%s}", g)
+    p = g.startpoint
+    file.write(f'<path d="M {p.x} {p.y} ')
+    if isinstance(g.segments[0], geom.CubicCurve):
+        write_cubic(g.segments)
     else:
-        write_quadratic(pat.segments)
+        write_quadratic(g.segments)
     file.write('" ')
 
 
@@ -173,16 +166,16 @@ def write_svg_style(file, app):
 
 
 def write_svg_geom(file, shap):
-    if isinstance(shap.base, geom.Rect):
-        write_svg_rect(file, shap)
-    elif isinstance(shap.base, geom.Circle):
-        write_svg_circle(file, shap)
-    elif isinstance(shap.base, geom.Ellipse):
+    if isinstance(shap.g, geom.Rect):
+        write_svg_rect(file, shap.g)
+    elif isinstance(shap.g, geom.Circle):
+        write_svg_circle(file, shap.g)
+    elif isinstance(shap.g, geom.Ellipse):
         write_svg_ellipse(file, shap)
-    elif isinstance(shap.base, geom.Polygon):
-        write_svg_polygon(file, shap)
-    elif isinstance(shap.base, path.Path):
-        write_svg_path(file, shap)
+    elif isinstance(shap.g, geom.Polygon):
+        write_svg_polygon(file, shap.g)
+    elif isinstance(shap.g, path.Path):
+        write_svg_path(file, shap.g)
 
 
 def write_svg_shape(file, single):
@@ -231,9 +224,12 @@ def write_svg_image(file, img, w, h, bg):
 
 def write_form(file, config, w, h, bg):
     """write a form"""
-    name = config.get('name')
-    if name is None:
-        return
+    if isinstance(config, dict):
+        name = config.get('name')
+        if name is None:
+            return
+    elif isinstance(config, str):
+        name = config
     log.info(f"getting shape {name}")
     sss = store.get_shape(name)
     if sss is not None:

@@ -1,9 +1,9 @@
 """Handle new shape generation according the instructions"""
 
 import logging
-from tear import shape, algo
+from tear import algo
 from tear.value import reader, points
-from tear.model import store
+from tear.model import store, shape
 from tear.geometry import geom, path
 
 log = logging.getLogger(__name__)
