@@ -9,14 +9,55 @@ log = logging.getLogger(__name__)
 
 
 class Shape:
-    """Shape wraps a base geometrical element and adds position
-    and appearance"""
+    """Shape wraps a geometrical element and adds appearance
+    This is the object which algorithms are mostly working with
+    so a lot is passed to the underlying geometry"""
 
-    def __init__(self, base):
-        self.base = base
-        self.position = geom.Point(0, 0)
+    def __init__(self, g):
+        self.g = g
         self.appearance = Appearence()
         self.angle = 0
+
+    @property
+    def position(self):
+        return self.g.position
+
+    @position.setter
+    def position(self, p):
+        self.g.position = p
+
+    def set_position(self, x, y):
+        """set absolute position to x,y"""
+        self.g.position = geom.Point(x, y)
+
+    def move(self, dx, dy):
+        """move shape by dx, dy"""
+        npx = self.g.position.x + dx
+        npy = self.g.position.y + dy
+        self.g.position = geom.Point(npx, npy)
+
+    def scale(self, fx, fy=0):
+        """scale shape"""
+        if isinstance(self.g, geom.Circle):
+            if fy not in (0, fx):
+                self.g = geom.Ellipse(self.g.r, self.g.r)
+                self.g.scale(fx, fy)
+                return
+            self.g.scale(fx)
+            return
+        if fy == 0:
+            fy = fx
+        self.g.scale(fx, fy)
+
+    def rotate(self, a):
+        """rotates by given angle a"""
+        if isinstance(self.g, geom.Rect):
+            # rectangle => convert to polygon
+            self.g = geom.Polygon.fromrect(self.g)
+        elif isinstance(self.g, geom.Ellipse):
+            self.angle = a
+            return
+        self.g.rotate(math.radians(a))
 
     @classmethod
     def fromstr(cls, str):
@@ -28,71 +69,31 @@ class Shape:
         x = float(sl[0])
         y = float(sl[1])
         if len(sl) == 3:
-            base = geom.Circle(float(sl[2]))
+            g = geom.Circle(float(sl[2]), geom.Point(x, y))
         else:
-            base = geom.Rect(float(sl[2]), float(sl[3]))
-        s = cls(base)
-        s.set_position(x, y)
+            g = geom.Rect(float(sl[2]), float(sl[3]), geom.Point(x, y))
+        s = cls(g)
         return s
-
-    def move(self, dx, dy):
-        """move shape by dx, dy"""
-        self.position.x += dx
-        self.position.y += dy
-
-    def set_position(self, x, y):
-        """set absolute position to x,y"""
-        self.position.x = x
-        self.position.y = y
-
-    def scale(self, fx, fy=0):
-        """scale base shape"""
-        if isinstance(self.base, geom.Circle):
-            if fy != 0 and fy != fx:
-                self.base = geom.Ellipse(self.base.r, self.base.r)
-                self.base.scale(fx, fy)
-                return
-            self.base.scale(fx)
-            return
-        if fy == 0:
-            fy = fx
-        self.base.scale(fx, fy)
-
-    def rotate(self, x, y, a):
-        """rotates around x,y by given angle a"""
-        if isinstance(self.base, geom.Rect):
-            # rectangle => convert to polygon
-            self.base = geom.Polygon.fromrect(self.base)
-        elif isinstance(self.base, geom.Ellipse):
-            self.angle = a
-            return
-        self.base.rotate(x, y, math.radians(a))
 
     def mirror(self):
         """mirror"""
-        self.base.mirror()
+        self.g.mirror()
 
     def bbox(self):
         """return bounding box"""
-        return self.base.bbox(self.position)
+        return self.g.bbox()
 
     def is_inside(self, p):
         """is point inside of shape"""
-        pp = p.move(-self.position.x, -self.position.y)
-        return self.base.is_inside(pp)
+        return self.g.is_inside(p)
 
     def get_points(self):
         """get list of points for the shape"""
-        return self.base.get_points(geom.Point(0, 0))
-
-    def get_rendering_points(self):
-        """get rendering points for the shape"""
-        return self.base.get_points(self.position)
+        return self.g.get_points()
 
     def inherit(self, s):
         """inherit appearance and position from given shape"""
         self.appearance = copy.deepcopy(s.appearance)
-        self.position = copy.deepcopy(s.position)
 
 
 class List:
@@ -101,36 +102,38 @@ class List:
     def __init__(self, ls):
         self.shapes = ls
         bb = self.bbox()
-        self.position = geom.Point(bb.x0 + (bb.x1 - bb.x0) / 2,
-                                   bb.y0 + (bb.y1 - bb.y0) / 2)
+        self.p = geom.Point(bb.x0 + (bb.x1 - bb.x0) / 2,
+                            bb.y0 + (bb.y1 - bb.y0) / 2)
         self.appearance = Appearence()
 
     def __iter__(self):
         return iter(self.shapes)
 
-    def move(self, dx, dy):
-        """move shape by dx, dy"""
-        self.position.move(dx, dy)
-        for b in self.shapes:
-            b.move(dx, dy)
+    @property
+    def position(self):
+        return self.p
 
     def set_position(self, x, y):
         """mark our position and move underlying shapes"""
-        dx = x - self.position.x
-        dy = y - self.position.y
+        dx = x - self.p.x
+        dy = y - self.p.y
         self.move(dx, dy)
+
+    def move(self, dx, dy):
+        """move shape by dx, dy"""
+        self.p.move(dx, dy)
+        for b in self.shapes:
+            b.move(dx, dy)
 
     def scale(self, fx, fy=0):
         """scale"""
-        if fy == 0:
-            fy = fx
         for b in self.shapes:
             b.scale(fx, fy)
 
-    def rotate(self, x, y, a):
+    def rotate(self, a):
         """rotate around x,y by given angle a"""
         for b in self.shapes:
-            b.rotate(x, y, a)
+            b.rotate(a)
 
     def mirror(self):
         """mirror"""
@@ -148,7 +151,7 @@ class List:
         return bb
 
     def inherit(self, s):
-        """inherit appearance and position from given shape"""
+        """inherit appearance from given shape"""
         self.appearance = copy.deepcopy(s.appearance)
         self.set_position(s.position.x, s.position.y)
 
@@ -192,7 +195,7 @@ class Path:
 
     def __init__(self, g, step, angle=False):
         if not isinstance(g, (path.Path, geom.QuadraticCurve, geom.CubicCurve,
-            geom.Ellipse)):
+                              geom.Ellipse)):
             raise ValueError("path: unsupported geometry type", g)
         self.g = g
         if step > 1.0:
@@ -222,7 +225,7 @@ class Path:
             if isinstance(s, List):
                 return get_geom(s.shapes[0])
             if isinstance(s, Shape):
-                return s.base
+                return s.g
             raise ValueError("path from shape: unsupported shape type")
         g = get_geom(shap)
         return cls(g, step, angle)
