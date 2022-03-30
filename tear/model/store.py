@@ -68,7 +68,7 @@ def get_clip(cid):
 
 def get_clips():
     """Get clip dictionary"""
-    return _clips
+    return _clips.items()
 
 
 def add_mask(name):

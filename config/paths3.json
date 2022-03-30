@@ -145,6 +145,31 @@
       }
     },
     {
+      "name": "black-c",
+      "base": "generator",
+      "type": "circle",
+      "r": 200,
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": 2
+        },
+        {
+          "algorithm": "spread",
+          "x": "490,860",
+          "y": "$CY"
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "1",
+          "colours": "#302040",
+          "stroke": "black",
+          "strokeWidth": 0,
+          "blur": true
+        }
+      ]
+    },
+    {
       "name": "black-c1",
       "template": "black-c",
       "params": {
@@ -178,6 +203,53 @@
         "$ENDX": "550",
         "$COLOURS": "yellow,khaki,orange,orange"
       }
+    },
+    {
+      "name": "gr-rect",
+      "base": "generator",
+      "type": "rectangle",
+      "w": 25,
+      "h": 50,
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": 520
+        },
+        {
+          "algorithm": "spread-matrix",
+          "x": "100:$W/25",
+          "y": "100:$H/20"
+        },
+        {
+          "algorithm": "vectorfield",
+          "fields": [
+            [490,450,"x/(x**2 + y**2 + 0.1),y/(x**2 + y**2 + 0.1)"],
+            [860,450,"x/(x**2 + y**2 + 0.1),y/(x**2 + y**2 + 0.1)"]
+          ]
+        },
+        {
+          "disable": true,
+          "algorithm": "tear",
+          "params": {
+            "iterations": 8,
+            "angleVar": 0.07,
+            "count": 1,
+            "randomizeBase": 0.0
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": 0.30,
+          "colours": ["red", "white"],
+          "stroke": "black",
+          "strokeWidth": 1
+        },
+        {
+          "disable": false,
+          "algorithm": "clip",
+          "shape": "black-c"
+        }
+      ]
     }
   ],
   "output": {
@@ -193,10 +265,10 @@
         "name": "mypath-circle2"
       },
       {
-        "name": "black-c1"
+        "name": "black-c"
       },
       {
-        "name": "black-c2"
+        "name": "gr-rect"
       },
       {
         "name": "stacked-1"

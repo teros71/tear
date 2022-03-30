@@ -222,6 +222,10 @@ class Circle:
         t = 2 * math.pi * dist
         return Point(self.r * math.cos(t), self.r * math.sin(t))
 
+    def tangent_at(self, dist):
+        t = 2 * math.pi * dist
+        return math.atan2(math.cos(t), -math.sin(t))
+
     def __repr__(self):
         return f'Circle[{self.r}]'
 
@@ -280,8 +284,8 @@ class Ellipse:
 
     def tangent_at(self, dist):
         t = 2 * math.pi * dist
-        slope = -(self.ry * math.cos(t) / self.rx * math.sin(t))
-        return math.atan(slope)
+#        slope = -(self.ry * math.cos(t) / self.rx * math.sin(t))
+        return math.atan2(self.ry * math.cos(t), - self.rx * math.sin(t))
 
     def __repr__(self):
         return f'Ellipse[{self.rx},{self.ry}]'

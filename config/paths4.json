@@ -78,26 +78,6 @@
           "strokeWidth": 0
         }
       ]
-    },
-    {
-      "name": "black-c",
-      "base": "new",
-      "type": "circle",
-      "r": 200,
-      "recipe": [
-        {
-          "algorithm": "position",
-          "point": "$POSITION"
-        },
-        {
-          "algorithm": "appearance",
-          "opacity": "1",
-          "colours": "#302040",
-          "stroke": "black",
-          "strokeWidth": 0,
-          "blur": true
-        }
-      ]
     }
   ],
   "forms": [
@@ -148,13 +128,32 @@
       }
     },
     {
-      "name": "black-c1",
-      "template": "black-c",
-      "params": {
-        "$POSITION": "490,$CY"
-      }
+      "name": "black-c",
+      "base": "generator",
+      "type": "circle",
+      "r": 200,
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": "2"
+        },
+        {
+          "algorithm": "spread",
+          "x": "490,860",
+          "y": "$CY"
+        }
+        {
+          "algorithm": "appearance",
+          "opacity": "1",
+          "colours": "#302040",
+          "stroke": "black",
+          "strokeWidth": 0,
+          "blur": true
+        }
+      ]
     },
     {
+      "disable": true,
       "name": "black-c2",
       "template": "black-c",
       "params": {
@@ -185,7 +184,7 @@
         "name": "mypath-circle2"
       },
       {
-        "name": "black-c12"
+        "name": "black-c"
       },
       {
         "name": "black-c22"
