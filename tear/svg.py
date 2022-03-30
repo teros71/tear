@@ -27,15 +27,23 @@ def write_svg_feblur(file, id):
 
 def write_svg_clip(file, id, shap):
     file.write(f'<clipPath id="{id}">')
-    if isinstance(shap.base, geom.Rect):
-        write_svg_rect(file, shap)
-    elif isinstance(shap.base, geom.Circle):
-        write_svg_circle(file, shap)
-    elif isinstance(shap.base, geom.Ellipse):
-        write_svg_ellipse(file, shap)
-    else:
-        write_svg_polygon(file, shap)
-    file.write(' />\n</clipPath>')
+
+    def write_one_clip(s):
+        if isinstance(s, shape.List):
+            for ss in s:
+                write_one_clip(ss)
+            return
+        if isinstance(s, geom.Rect):
+            write_svg_rect(file, s)
+        elif isinstance(s, geom.Circle):
+            write_svg_circle(file, s)
+        elif isinstance(s, geom.Ellipse):
+            write_svg_ellipse(file, s)
+        else:
+            write_svg_polygon(file, s)
+        file.write(' />\n')
+    write_one_clip(shap)
+    file.write('</clipPath>')
 #      <defs>
 #      </defs>
 
@@ -102,35 +110,42 @@ def write_svg_polygon(file, poly):
     file.write('"\n')
 
 
-def write_svg_path(file, path):
+def write_svg_path(file, shap):
     """Write path"""
+    pos = shap.position
+    pat = shap.base
+
     def write_cubic(segs):
         first = True
         for s in segs:
             if first:
                 file.write(
-                    f'C {s.c0.x} {s.c0.y} {s.c1.x} {s.c1.y} {s.p1.x} {s.p1.y} ')
+                    f'C {pos.x + s.c0.x} {pos.y + s.c0.y} \
+                    {pos.x + s.c1.x} {pos.y + s.c1.y} \
+                    {pos.x + s.p1.x} {pos.y + s.p1.y} ')
                 first = False
             else:
-                file.write(f'S {s.c1.x} {s.c1.y} {s.p1.x} {s.p1.y} ')
+                file.write(f'S {pos.x + s.c1.x} {pos.y + s.c1.y} \
+                {pos.x + s.p1.x} {pos.y + s.p1.y} ')
 
     def write_quadratic(segs):
         first = True
         for s in segs:
             if first:
                 file.write(
-                    f'Q {s.cp.x} {s.cp.y} {s.p1.x} {s.p1.y} ')
+                    f'Q {pos.x + s.cp.x} {pos.y + s.cp.y} \
+                    {pos.x + s.p1.x} {pos.y + s.p1.y} ')
                 first = False
             else:
-                file.write(f'T {s.p1.x} {s.p1.y} ')
+                file.write(f'T {pos.x + s.p1.x} {pos.y + s.p1.y} ')
 
-    log.debug(f"path element:path={path}")
-    p = path.startpoint
-    file.write(f'<path d="M {p.x} {p.y} ')
-    if isinstance(path.segments[0], geom.CubicCurve):
-        write_cubic(path.segments)
+    log.debug("path element:path={%s}", pat)
+    p = pat.startpoint
+    file.write(f'<path d="M {pos.x + p.x} {pos.y + p.y} ')
+    if isinstance(pat.segments[0], geom.CubicCurve):
+        write_cubic(pat.segments)
     else:
-        write_quadratic(path.segments)
+        write_quadratic(pat.segments)
     file.write('" ')
 
 
@@ -167,7 +182,7 @@ def write_svg_geom(file, shap):
     elif isinstance(shap.base, geom.Polygon):
         write_svg_polygon(file, shap)
     elif isinstance(shap.base, path.Path):
-        write_svg_path(file, shap.base)
+        write_svg_path(file, shap)
 
 
 def write_svg_shape(file, single):
@@ -238,6 +253,7 @@ def write_form(file, config, w, h, bg):
 
 def write_clips(file):
     file.write('<defs>')
+    log.info(f"clips {store.get_clips()}")
     for clipid, name in store.get_clips():
         clip = store.get_shape(name)
         write_svg_clip(file, clipid, clip)
