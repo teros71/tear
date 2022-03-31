@@ -2,7 +2,7 @@
 
 import logging
 from tear.model import shape
-from tear.geometry import geom, path, image
+from tear.geometry import geom, path, image, text
 from tear.model import store
 
 log = logging.getLogger(__name__)
@@ -65,7 +65,8 @@ def write_shape(file, shap):
         write_feshadow(file, f'shadow_n{SHAPE_COUNT}')
     if app.blur:
         write_feblur(file, f'blur_n{SHAPE_COUNT}')
-    write_geom(file, shap)
+    if write_geom(file, shap):
+        return
     write_style(file, app)
     if app.shadow:
         file.write(f' filter="url(#shadow_n{SHAPE_COUNT})"')
@@ -112,6 +113,10 @@ def write_geom(file, shap):
         write_path(file, shap.g)
     elif isinstance(shap.g, image.Image):
         write_image(file, shap.g)
+    elif isinstance(shap.g, text.Text):
+        write_text(file, shap)
+        return True
+    return False
 
 
 def write_rect(file, g):
@@ -205,6 +210,17 @@ def write_image(file, img):
     file.write(f'<image href="{img.path}" '
                f'x="{x}" y="{y}" '
                f'height="{img.height}" width="{img.width}" ')
+
+
+def write_text(file, txt):
+    x = txt.position.x
+    y = txt.position.y
+    file.write(f'<text x="{x}" y="{y}" text-anchor="middle" '
+               f'font-size="{txt.g.size}px" ')
+    write_style(file, txt.appearance)
+    file.write('>')
+    file.write(txt.g.text)
+    file.write('</text>')
 
 
 def write_style(file, app):

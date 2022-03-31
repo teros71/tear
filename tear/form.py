@@ -4,7 +4,7 @@ import logging
 from tear import algo
 from tear.value import reader, points
 from tear.model import store, shape
-from tear.geometry import geom, path, image
+from tear.geometry import geom, path, image, text
 
 log = logging.getLogger(__name__)
 
@@ -55,6 +55,9 @@ def get_base_shape(config):
     base_name = config.get('png')
     if base_name is not None:
         return make_png_shape(base_name, config)
+    base_name = config.get('text')
+    if base_name is not None:
+        return make_text_shape(base_name, config)
     return None
 
 
@@ -123,6 +126,11 @@ def make_png_shape(fname, config):
     w = config.get('width', 100)
     h = config.get('height', 100)
     return shape.Shape(image.Image(fname, w, h))
+
+
+def make_text_shape(txt, config):
+    size = config.get('size', 10)
+    return shape.Shape(text.Text(txt, size))
 
 
 def apply_recipe(recipe, base):
