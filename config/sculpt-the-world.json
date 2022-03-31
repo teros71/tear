@@ -16,8 +16,7 @@
   "forms": [
     {
       "name": "circarea",
-      "base": "new",
-      "type": "circle",
+      "new": "circle",
       "r": 570,
       "recipe": [
         {
@@ -34,8 +33,7 @@
     },
     {
       "name": "rects",
-      "base": "generator",
-      "type": "rectangle",
+      "generator": "rectangle",
       "w": 70,
       "h": 130,
       "r": "?:20.0:40.0",
@@ -85,8 +83,7 @@
     },
     {
       "name": "inner-shapes",
-      "base": "generator",
-      "type": "ellipse",
+      "generator": "ellipse",
       "rx": "?:55.0:90.0",
       "ry": "?:45.0:60.0",
       "recipe": [
@@ -137,8 +134,7 @@
     },
     {
       "name": "background",
-      "base": "generator",
-      "type": "rectangle",
+      "generator": "rectangle",
       "w": 270,
       "h": 170,
       "r": "?:20.0:40.0",
@@ -186,8 +182,7 @@
     },
     {
       "name": "spiral",
-      "base": "new",
-      "type": "ellipse",
+      "new": "ellipse",
       "r": 10,
       "w": 20,
       "h": 20,
@@ -226,21 +221,11 @@
     "background3": "#504030",
     "background": "#450303",
     "shapes": [
-      {
-        "name": "background"
-      },
-      {
-        "name": "circarea"
-      },
-      {
-        "name": "rects"
-      },
-      {
-        "name": "inner-shapes"
-      },
-      {
-        "name": "spiral"
-      }
+      "background",
+      "circarea",
+      "rects",
+      "inner-shapes",
+      "spiral"
     ]
   }
 }

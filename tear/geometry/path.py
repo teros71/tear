@@ -70,10 +70,8 @@ class Path:
         while t > self.segments[i].length / total:
             t -= self.segments[i].length / total
             i += 1
-        print("point at", t, i)
         seg = self.segments[i]
         t = t * total / seg.length
-        print("final t", t)
         return seg, t
 
     def bbox(self):

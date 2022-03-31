@@ -25,8 +25,7 @@
   "templates": [
     {
       "name": "path",
-      "base": "generator",
-      "type": "path",
+      "generator": "path",
       "start": {"origo": "500,500", "t":"$START_T", "r":"100"},
       "end": {"origo": "500,500", "t":"$END_T", "r":"600"},
       "count": 3,
@@ -72,12 +71,8 @@
   "output": {
     "background": "#224149",
     "shapes": [
-      {
-        "name": "mypath3"
-      },
-      {
-        "name": "mypath"
-      }
+      "mypath3",
+      "mypath"
     ]
   }
 }

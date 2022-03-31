@@ -16,8 +16,7 @@
   "templates": [
     {
       "name": "path",
-      "base": "generator",
-      "type": "path",
+      "generator": "path",
       "start": {"x":"$STARTX", "y":"$STARTY"},
       "end": {"x": "$ENDX", "y": "100.0:1251.0:1150.0"},
       "count": 3,
@@ -41,8 +40,7 @@
   "forms": [
     {
       "name": "mypath",
-      "base": "generator",
-      "type": "path",
+      "generator": "path",
       "start": {"origo": [450,450], "t": "0.0:6.28/200", "r": 450},
       "end": {"x": 450, "y": 450},
       "count": 3,

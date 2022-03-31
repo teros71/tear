@@ -9,9 +9,54 @@ from tear.geometry import geom, path
 log = logging.getLogger(__name__)
 
 
-def make_generator_shape(config):
+def generate_form(config):
+    """Generate a new shape according to the config"""
+    if config.get('disable', False):
+        return
+    name = config.get('name')
+    shap = create_shape(config)
+    store.add_shape(name, shap)
+
+
+def create_shape(config):
+    """Create a new shape based on config"""
+    base = get_base_shape(config)
+    if base is None:
+        raise ValueError("no base for shape")
+    recipe = config.get('recipe')
+    if recipe is not None:
+        new_form = apply_recipe(recipe, base)
+    else:
+        new_form = base
+    if isinstance(new_form, list):
+        new_form = shape.List(new_form)
+    return new_form
+
+
+def get_base_shape(config):
+    """Get base shape for a new shape"""
+    base_name = config.get('base')
+    if base_name is not None:
+        log.info("base shape;name=%s", base_name)
+        return store.get_shape(base_name)
+    base_name = config.get('generator')
+    if base_name is not None:
+        log.info("generator shape;type=%s", base_name)
+        return make_generator_shape(base_name, config)
+    base_name = config.get('new')
+    if base_name is not None:
+        log.info("new shape;type=%s", base_name)
+        return make_new_shape(base_name, config)
+    base_name = config.get('template')
+    if base_name is not None:
+        log.info("from template;name=%s", base_name)
+        conf = config.get('params')
+        return create_shape(store.get_template(base_name, conf))
+    return None
+
+
+def make_generator_shape(t, config):
     """Make a new generator shape"""
-    t = config.get('type', 'rectangle')
     if t == 'rectangle':
         rw = reader.read(config, "w")
         rh = reader.read(config, "h")
@@ -37,9 +82,8 @@ def make_generator_shape(config):
     raise ValueError("unkown generator type", t)
 
 
-def make_new_shape(r):
+def make_new_shape(t, r):
     """Make a new shape"""
-    t = r.get('type', 'rectangle')
     x = r.get("x", 0.0)
     y = r.get("y", 0.0)
     base = None
@@ -77,35 +121,3 @@ def apply_recipe(recipe, base):
     for r in recipe:
         base = algo.apply_algorithm(r, base)
     return base
-
-
-def generate_form(config):
-    """Generate a new shape according to the config"""
-    if config.get('disable', False):
-        return
-    name = config.get('name')
-    create_shape(name, config)
-
-
-def create_shape(name, config):
-    """Create a new shape with the given name and config"""
-    base_name = config.get('base')
-    if base_name is None:
-        base_name = config.get('template')
-        if base_name is None:
-            raise ValueError("no base for shape")
-        conf = config.get('params')
-        create_shape(name, store.get_template(base_name, conf))
-        return
-    base = None
-    if base_name == 'generator':
-        base = make_generator_shape(config)
-    elif base_name == 'new':
-        base = make_new_shape(config)
-    else:
-        log.info(f"\ngenerating form {name} from {base_name}")
-        base = store.get_shape(base_name)
-    new_form = apply_recipe(config.get('recipe', None), base)
-    if isinstance(new_form, list):
-        new_form = shape.List(new_form)
-    store.add_shape(name, new_form)

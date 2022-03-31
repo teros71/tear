@@ -5,8 +5,9 @@ import os
 import json
 import sys
 import getopt
-from tear import default, form, pg, goldenratio, svg
+from tear import default, form, pg, goldenratio
 from tear.model import store
+from tear.svg import writer
 
 log = logging.getLogger(__name__)
 
@@ -59,7 +60,7 @@ def process(data, fname):
         return
     if not isinstance(op, dict):
         raise ValueError("invalid output configuration")
-    svg.write(fname, pg.HEIGHT, pg.WIDTH, pg.HEIGHT, pg.WIDTH, op)
+    writer.write(fname, pg.HEIGHT, pg.WIDTH, pg.HEIGHT, pg.WIDTH, op)
 
 
 def main(argv):

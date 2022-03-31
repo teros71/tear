@@ -104,10 +104,10 @@ def rotate(r, base):
 #    bp = base.position
 
     def do_it(s):
-#        if leaf:
-#            p = s.position
-#        else:
-#            p = bp
+        #        if leaf:
+        #            p = s.position
+        #        else:
+        #            p = bp
         s.rotate(a.next)
     return apply_recursive(r, base, do_it)
 #    base.rotate(p.x, p.y, a.next)
@@ -267,9 +267,11 @@ def set_appearance(config, shap, opacity, stroke, strokew, shad, blur):
         opacity.reset()
         stroke.reset()
         strokew.reset()
+        # leave blur on the upper level, will be applied for the whole group
+        shap.appearance.blur = blur
         for inner_shape in shap.shapes:
             set_appearance(config, inner_shape,
-                           opacity, stroke, strokew, shad, blur)
+                           opacity, stroke, strokew, shad, False)
         return
     shap.appearance.set(opacity.next,
                         stroke.next, strokew.next, shad, blur)

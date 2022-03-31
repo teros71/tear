@@ -318,7 +318,6 @@ class PathGenerator:
     def __next__(self):
         s = self.start.next
         e = self.end.next
-        log.info(f"path generator;s={s};e={e}")
         if self.curve_type == 'cubic':
             return Shape(path.random_path_cubic(s, e,
                                                 self.count, self.av, 2.0))

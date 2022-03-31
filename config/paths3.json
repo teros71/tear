@@ -16,8 +16,7 @@
   "templates": [
     {
       "name": "path",
-      "base": "generator",
-      "type": "path",
+      "generator": "path",
       "start": {"origo": "$ORIGO", "t":"$START_T", "r":"300"},
       "end": {"origo": "$ORIGO", "t":"$END_T", "r":"300"},
       "count": 3,
@@ -39,8 +38,7 @@
     },
     {
       "name": "stacked",
-      "base": "generator",
-      "type": "ellipse",
+      "generator": "ellipse",
       "rx": "?:110.0:190.0",
       "ry": "?:60.0:120.0",
       "recipe": [
@@ -80,8 +78,7 @@
     },
     {
       "name": "black-c",
-      "base": "new",
-      "type": "circle",
+      "new": "circle",
       "r": 200,
       "recipe": [
         {
@@ -102,8 +99,7 @@
   "forms": [
     {
       "name": "frame",
-      "base": "new",
-      "type": "ellipse",
+      "new": "ellipse",
       "rx": 600,
       "ry": 400,
       "recipe": [
@@ -146,8 +142,7 @@
     },
     {
       "name": "black-c",
-      "base": "generator",
-      "type": "circle",
+      "generator": "circle",
       "r": 200,
       "recipe": [
         {
@@ -206,8 +201,7 @@
     },
     {
       "name": "gr-rect",
-      "base": "generator",
-      "type": "rectangle",
+      "generator": "rectangle",
       "w": 25,
       "h": 50,
       "recipe": [
