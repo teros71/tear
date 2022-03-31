@@ -4,7 +4,7 @@ import logging
 from tear import algo
 from tear.value import reader, points
 from tear.model import store, shape
-from tear.geometry import geom, path
+from tear.geometry import geom, path, image
 
 log = logging.getLogger(__name__)
 
@@ -52,6 +52,9 @@ def get_base_shape(config):
         log.info("from template;name=%s", base_name)
         conf = config.get('params')
         return create_shape(store.get_template(base_name, conf))
+    base_name = config.get('png')
+    if base_name is not None:
+        return make_png_shape(base_name, config)
     return None
 
 
@@ -114,6 +117,12 @@ def make_new_shape(t, r):
     log.info(f"new shape;type={t};x={x};y={y}")
     log.debug(f"shape={s}")
     return s
+
+
+def make_png_shape(fname, config):
+    w = config.get('width', 100)
+    h = config.get('height', 100)
+    return shape.Shape(image.Image(fname, w, h))
 
 
 def apply_recipe(recipe, base):

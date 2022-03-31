@@ -283,7 +283,7 @@ def appearance(config, base):
     """appearance algorithm"""
     opacity = reader.read(config, 'opacity', d=1.0)
     colour = reader.read_colour(config, 'colours')
-    stroke = reader.read(config, 'stroke', d="none")
+    stroke = reader.read_colour(config, 'stroke')
     strokew = reader.read(config, 'strokeWidth', d=0)
     shad = config.get('shadow', False)
     blur = config.get('blur', False)

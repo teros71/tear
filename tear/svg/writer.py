@@ -2,7 +2,7 @@
 
 import logging
 from tear.model import shape
-from tear.geometry import geom, path
+from tear.geometry import geom, path, image
 from tear.model import store
 
 log = logging.getLogger(__name__)
@@ -20,7 +20,8 @@ def write(fname, height, width, wbh, wbw, config):
             f'<svg style="background-color:{bg}" '
             f'viewBox="0 0 {wbw} {wbh}" '
             f'height="{height}" width="{width}" '
-            f'xmlns="http://www.w3.org/2000/svg">\n')
+            'xmlns="http://www.w3.org/2000/svg" '
+            'xmlns:xlink="http://www.w3.org/1999/xlink">\n')
         write_clips(file)
         for ss in shapes:
             sn, s = get_shape(ss)
@@ -109,6 +110,8 @@ def write_geom(file, shap):
         write_polygon(file, shap.g)
     elif isinstance(shap.g, path.Path):
         write_path(file, shap.g)
+    elif isinstance(shap.g, image.Image):
+        write_image(file, shap.g)
 
 
 def write_rect(file, g):
@@ -194,6 +197,14 @@ def write_svg_path_debug(file, path):
             wp(s.p0, "black")
             wp(s.p1, "white")
             wp(s.cp, "green")
+
+
+def write_image(file, img):
+    x = img.position.x - img.width / 2
+    y = img.position.y - img.height / 2
+    file.write(f'<image href="{img.path}" '
+               f'x="{x}" y="{y}" '
+               f'height="{img.height}" width="{img.width}" ')
 
 
 def write_style(file, app):
