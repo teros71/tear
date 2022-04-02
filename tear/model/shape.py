@@ -3,6 +3,7 @@ import logging
 import math
 import random
 import copy
+import itertools
 from tear.geometry import geom, path
 
 log = logging.getLogger(__name__)
@@ -305,12 +306,13 @@ def random_polygon(r, count):
 
 
 class PathGenerator:
-    def __init__(self, curve_type, start, end, count, av):
+    def __init__(self, curve_type, start, end, count, av, mode):
         self.curve_type = curve_type
         self.start = start
         self.end = end
         self.count = count
         self.av = av
+        self.mode = path.Path.str2mode(mode)
 
     def __iter__(self):
         return self
@@ -320,6 +322,19 @@ class PathGenerator:
         e = self.end.next
         if self.curve_type == 'cubic':
             return Shape(path.random_path_cubic(s, e,
-                                                self.count, self.av, 2.0))
+                                                self.count, self.av, 2.0,
+                                                self.mode))
         return Shape(path.random_path_quadratic(s, e,
-                                                self.count, self.av, 2.0))
+                                                self.count, self.av, 2.0,
+                                                self.mode))
+
+class PathGenerator2:
+    def __init__(self, ps, count, av):
+        self.points = list(itertools.islice(ps, count))
+        self.av = av
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        return Shape(path.path_around(self.points, self.av))

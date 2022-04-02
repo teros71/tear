@@ -17,10 +17,10 @@
     {
       "name": "path",
       "generator": "path",
-      "start": {"path": "frame", "count": "$COUNT"},
-      "end": {"origo": "$ORIGO_E", "t":"$END_T", "r":"200"},
+      "start": {"x": "$START_X", "y": "$START_Y"},
+      "end": {"x": "$END_X", "y":"$END_Y"},
       "count": 3,
-      "av": 0.2,
+      "av": 0.4,
       "curve": "quad",
       "recipe": [
         {
@@ -31,8 +31,8 @@
           "algorithm": "appearance",
           "opacity": "1",
           "colours": "$COLOURS",
-          "stroke": "?:#ffffff:#bfffbf",
-          "strokeWidth": 0.5
+          "stroke": "white",
+          "strokeWidth": 1
         }
       ]
     }
@@ -40,9 +40,9 @@
   "forms": [
     {
       "name": "frame",
-      "new": "ellipse",
-      "rx": 600,
-      "ry": 400,
+      "new": "rectangle",
+      "rx": 400,
+      "ry": 300,
       "recipe": [
         {
           "algorithm": "position",
@@ -60,26 +60,30 @@
       ]
     },
     {
-      "name": "mypath-circle",
+      "name": "mypath-vert",
       "template": "path",
       "params": {
-        "$ORIGO_S": "$CX,$CY",
-        "$ORIGO_E": "$(1.0*$CX),$CY",
-        "$START_T": "0:$(math.pi*2)/280",
-        "$END_T": "$(math.pi/2):$(math.pi/2 + math.pi*2)/280",
-        "$COUNT": "280",
+        "$1START_X": "475:875/150",
+        "$START_X": "300:1050/150",
+        "$START_Y": "100",
+        "$END_X": "300:1050/150",
+        "$END_Y": "800",
+        "$COUNT": "150",
         "$COLOURS": "none"
-      }
+      },
+      "recipe": [
+        { "algorithm": "position", "x": "$CX", "y": "$CY" }
+      ]
     },
     {
-      "name": "mypath-circle2",
+      "name": "mypath-hor",
       "template": "path",
       "params": {
-        "$ORIGO_S": "$CX,$CY",
-        "$ORIGO_E": "$(1.0*$CX),$CY",
-        "$START_T": "0:$(math.pi*2)/280",
-        "$END_T": "$(math.pi/2):$(math.pi/2 + math.pi*2)/280",
-        "$COUNT": "280",
+        "$START_X": "300",
+        "$START_Y": "200:700/100",
+        "$END_X": "1050",
+        "$END_Y": "200:700/100",
+        "$COUNT": "100",
         "$COLOURS": "none"
       }
     },
@@ -112,10 +116,10 @@
     "background": "#333d00",
     "shapes": [
       "frame",
-      "myimagex",
-      "mytext",
-      "mypath-circle",
-      "mypath-circle2",
+      "myimage",
+      "mytext2",
+      "mypath-vert",
+      "mypath-hor",
       "black-c",
       "black-c22"
     ]

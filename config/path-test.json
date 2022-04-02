@@ -1,0 +1,98 @@
+{
+  "defaults": {
+    "tear": {
+      "iterations": 18,
+      "minDistance": 2.0,
+      "minDistanceFactor": 0,
+      "angleVar": 4,
+      "count": 6,
+      "opacity": 0.2
+    }
+  },
+  "playground": {
+    "w": 900,
+    "h": 900
+  },
+  "templates": [
+    {
+      "name": "rand-path",
+      "generator": "path2",
+      "points": {"origo":"$ORIGO", "t": "0.0:$(math.pi*2)/$SEG_COUNT", "r": "$RAD"},
+      "count": "$SEG_COUNT",
+      "av": 0.2,
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": "$COUNT"
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "0.4",
+          "colours": "$COLOURS",
+          "stroke": "$STROKE",
+          "strokeWidth": "$STROKE_W"
+        }
+      ]
+    }
+  ],
+  "forms": [
+    {
+      "name": "mypath2",
+      "template": "rand-path",
+      "params": {
+        "$ORIGOs": "$CX,$CY",
+        "$ORIGO": "90.0,90.0",
+        "$SEG_COUNT": "6",
+        "$RAD": "?:500.0:700.0",
+        "$COUNT": "8",
+        "$COLOURS": "#a03000:#802060/11",
+        "$STROKE": "black",
+        "$STROKE_W": "0.5"
+      }
+    },
+    {
+      "name": "mypath3",
+      "template": "rand-path",
+      "params": {
+        "$ORIGO": "400,400",
+        "$SEG_COUNT": "5",
+        "$RAD": "?:100.0:200.0",
+        "$COUNT": "32",
+        "$COLOURS": "none",
+        "$STROKE": "white",
+        "$STROKE_W": "1"
+      }
+    },
+    {
+      "name": "mypath",
+      "generator": "path",
+      "start": {"x": 300, "y": 300},
+      "end": {"x": 600, "y": 600},
+      "count": 2,
+      "av": 0.9,
+      "curve": "quad",
+      "mode": "closed-round",
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": 1
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "0.2",
+          "colours": "red",
+          "stroke": "black",
+          "strokeWidth": 1
+        }
+      ]
+    }
+  ],
+  "output": {
+    "background": "#a56427",
+    "background2": "#0f5233",
+    "shapes": [
+      "mypath2",
+      "mypath3"
+    ]
+  }
+}

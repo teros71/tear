@@ -34,6 +34,21 @@ class Path:
     Only curve object is supported, plus it is assumed to have absolute
     coordinates, not relative to 0,0.
     """
+    OPEN_END = 0
+    CLOSED_SHARP = 1
+    CLOSED_PETAL = 2
+    CLOSED_ROUND = 3
+
+    @classmethod
+    def str2mode(cls, s):
+        if s == "closed-round":
+            return Path.CLOSED_ROUND
+        if s == "closed-sharp":
+            return Path.CLOSED_SHARP
+        if s == "closed-petal":
+            return Path.CLOSED_PETAL
+        else:
+            return Path.OPEN_END
 
     def __init__(self, s):
         self.segments = s
@@ -92,7 +107,8 @@ class Path:
         return f'Path[{self.segments}]'
 
 
-def random_path_quadratic(startpoint, endpoint, count, av, min_d):
+def random_path_quadratic(startpoint, endpoint, count, av, min_d,
+                          mode=Path.OPEN_END):
     """Generate random path from curves
     Args:
         startpoint
@@ -100,31 +116,61 @@ def random_path_quadratic(startpoint, endpoint, count, av, min_d):
         count : how many segments
         av : anglevariation for randomizing
         min_d : minimum distance between segment start and end points
+        mode :
+            OPEN_END = only start -> end
+            CLOSED_SHARP = start -> end -> start, with an independent control
+                point when starting end -> start segments, thus giving sharp
+                points on both ends
+            CLOSED_PETAL = same as CLOSED_SHARP except that control point
+                follows the mirroring pattern all the way giving round path
+                with sharp point at start
+            CLOSED_ROUND = same as CLOSED_PETAL except that the last segment
+                is fitted to make the control point mirroring perfectly circular
+                giving fully rounded path with no sharp points
     """
     cl = []
-    p0 = startpoint
-    cp = None
-    for i in range(count - 1):
-        p = generate_point(p0, endpoint, av, min_d, 0, (i+1) / count)
-        if p is not None:
-            if cp is None:
-                # new control point
-                cp = generate_point(p0, p, av, min_d, 0, 1)
-            if cp is not None:
-                cl.append(geom.QuadraticCurve(p0, cp, p))
-                # next cp is mirror of previous
-                cp = p.mirror(cp)
-            p0 = p
-    # last to the end
-    if p0 is not None:
+    def make_segment(p0, end, p1, cp, max_df):
+        if p1 is None:
+            p1 = generate_point(p0, end, av, min_d, 0, max_df)
         if cp is None:
-            cp = generate_point(p0, endpoint, av, min_d, 0, 1)
-        if cp is not None:
-            cl.append(geom.QuadraticCurve(p0, cp, endpoint))
+            cp = generate_point(p0, p1, av, min_d, 0, 1)
+        return geom.QuadraticCurve(p0, cp, p1)
+
+    def make_round(start, end, cp):
+        p0 = start
+#        cp = None
+        for i in range(count - 1):
+            seg = make_segment(p0, end, None, cp, (i+1) / count)
+            cp = seg.p1.mirror(seg.cp)
+            p0 = seg.p1
+            cl.append(seg)
+        # last to the end
+        seg = make_segment(p0, end, end, cp, 1)
+        cl.append(seg)
+
+    make_round(startpoint, endpoint, None)
+    if mode != Path.OPEN_END:
+        if mode == Path.CLOSED_SHARP:
+            # independent end -> start path
+            make_round(endpoint, startpoint, None)
+        elif mode == Path.CLOSED_PETAL:
+            # end -> start with first control point mirrored from previous
+            make_round(endpoint, startpoint, cl[-1].p1.mirror(cl[-1].cp))
+        else:
+            # end -> start with first control point mirrored from previous
+            make_round(endpoint, startpoint, cl[-1].p1.mirror(cl[-1].cp))
+            # adjust the last segment start point so that control points
+            # are symmetrical
+            ncp = cl[0].p0.mirror(cl[0].cp)
+            cl[-1].p0 = geom.mid_point(ncp, cl[-1].p0.mirror(cl[-1].cp))
+            cl[-2].p1 = cl[-1].p0
+            cl[-1].cp = ncp
+
     return Path(cl)
 
 
-def random_path_cubic(startpoint, endpoint, count, av, min_d):
+def random_path_cubic(startpoint, endpoint, count, av, min_d,
+                      mode=Path.OPEN_END):
     """Generate random path from curves
     Args:
         startpoint
@@ -134,27 +180,55 @@ def random_path_cubic(startpoint, endpoint, count, av, min_d):
         min_d : minimum distance between segment start and end points
     """
     cl = []
-    p0 = startpoint
-    c0 = None
-    c1 = None
-    for i in range(count - 1):
-        p1 = generate_point(p0, endpoint, av, min_d, 0, (i+1) / count)
-        if p1 is not None:
-            if c0 is None:
-                # new control point
-                c0 = generate_point(p0, p1, av, min_d, 0, 1)
-            c1 = generate_point(p1, p0, av, min_d, 0, 1)
-            if c0 is not None and c1 is not None:
-                cl.append(geom.CubicCurve(p0, c0, c1, p1))
-                # next cp is mirror of previous
-                c0 = p1.mirror(c1)
-            p0 = p1
-    # last to the end
-    if p0 is not None:
+    def make_segment(p0, end, p1, c0, c1, max_df):
+        if p1 is None:
+            p1 = generate_point(p0, end, av, min_d, 0, max_df)
         if c0 is None:
-            # new control point
-            c0 = generate_point(p0, endpoint, av, min_d, 0, 1)
-        c1 = generate_point(endpoint, p0, av, min_d, 0, 1)
-        if c0 is not None and c1 is not None:
-            cl.append(geom.CubicCurve(p0, c0, c1, endpoint))
+            c0 = generate_point(p0, p1, av, min_d, 0, 1)
+        if c1 is None:
+            c1 = generate_point(p1, p0, av, min_d, 0, 1)
+        return geom.CubicCurve(p0, c0, c1, p1)
+
+    def make_round(start, end, c0, c1):
+        p0 = start
+        for i in range(count - 1):
+            seg = make_segment(p0, end, None, c0, None, (i+1) / count)
+            c0 = seg.p1.mirror(seg.c1)
+            p0 = seg.p1
+            cl.append(seg)
+        # last to the end
+        seg = make_segment(p0, end, end, c0, c1, 1)
+        cl.append(seg)
+
+    make_round(startpoint, endpoint, None, None)
+    if mode != Path.OPEN_END:
+        if mode == Path.CLOSED_SHARP:
+            # independent end -> start path
+            make_round(endpoint, startpoint, None, None)
+        elif mode == Path.CLOSED_PETAL:
+            # end -> start with first control point mirrored from previous
+            make_round(endpoint, startpoint, cl[-1].p1.mirror(cl[-1].c1), None)
+        else:
+            # end -> start with first control point mirrored from previous,
+            # last control point mirrored from first
+            make_round(endpoint, startpoint,
+                       cl[-1].p1.mirror(cl[-1].c1), cl[0].p0.mirror(cl[0].c0))
+
+    return Path(cl)
+
+
+def path_around(points, av):
+    cl = []
+    p0 = points[-1]
+    c0 = None
+    last_c1 = None
+    for p1 in points:
+        if c0 is None:
+            c0 = generate_point(p0, p1, av, 2, 0, 1)
+        c1 = generate_point(p1, p0, av, 2, 0, 1)
+        seg = geom.CubicCurve(p0, c0, c1, p1)
+        c0 = p1.mirror(c1)
+        p0 = p1
+        cl.append(seg)
+    cl[0].c0 = cl[-1].p1.mirror(cl[-1].c1)
     return Path(cl)

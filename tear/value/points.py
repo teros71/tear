@@ -48,6 +48,18 @@ class Cartesian:
         self.last = geom.Point(self.x.next, self.y.next)
         return self.last
 
+    def reset(self):
+        self.x.reset()
+        self.y.reset()
+        self.last = geom.Point(self.x.current, self.y.current)
+
+    def __iter__(self):
+        self.reset()
+        return self
+
+    def __next__(self):
+        return self.next
+
     def __repr__(self):
         return f'Cartesian[{self.x}, {self.y}]'
 
@@ -60,6 +72,7 @@ class Polar:
         self.t = t
         self.r = r
         o = origo.current
+        print("polar", self.t.current, self.r.current, o)
         self.last = geom.Point.fromtuple(
             geom.polar2cartesian(t.current, r.current, o.x, o.y))
 
@@ -73,6 +86,24 @@ class Polar:
         self.last = geom.Point.fromtuple(
             geom.polar2cartesian(self.t.next, self.r.next, o.x, o.y))
         return self.last
+
+    def reset(self):
+        self.origo.reset()
+        self.t.reset()
+        self.r.reset()
+        o = self.origo.current
+        self.last = geom.Point.fromtuple(
+            geom.polar2cartesian(self.t.current, self.r.current, o.x, o.y))
+
+    def __iter__(self):
+        self.reset()
+        return self
+
+    def __next__(self):
+        return self.next
+
+    def __repr__(self):
+        return f'Polar[{self.origo}, {self.t}, {self.r}]'
 
 
 class Relative:

@@ -84,7 +84,13 @@ def make_generator_shape(t, config):
         count = config.get("count")
         av = config.get("av")
         typ = config.get("curve")
-        return shape.PathGenerator(typ, sp, ep, count, av)
+        mod = config.get("mode", "-")
+        return shape.PathGenerator(typ, sp, ep, count, av, mod)
+    if t == 'path2':
+        ps = points.read(config, "points")
+        count = reader.read(config, "count", 1)
+        av = reader.read(config, "av", 1.0)
+        return shape.PathGenerator2(ps, count.next, av.next)
     raise ValueError("unkown generator type", t)
 
 

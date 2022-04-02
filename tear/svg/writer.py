@@ -75,8 +75,8 @@ def write_shape(file, shap):
     if app.mask is not None:
         file.write(f' mask="url(#{app.mask})"')
     file.write(' />\n')
-    #if isinstance(single.base, path.Path):
-    #    write_svg_path_debug(file, single.base)
+#    if isinstance(shap.g, path.Path):
+#        write_svg_path_debug(file, shap.g)
 
 
 def write_list(file, lst):
@@ -194,13 +194,13 @@ def write_svg_path_debug(file, path):
             f'<circle cx="{p.x}" cy="{p.y}" r="10" fill="{c}" opacity="0.5"/>')
     for s in path.segments:
         if isinstance(s, geom.CubicCurve):
-            wp(s.p0, "black")
-            wp(s.p1, "white")
+            wp(s.p0, "blue")
+            wp(s.p1, "red")
             wp(s.c0, "green")
-            wp(s.c1, "blue")
+            wp(s.c1, "yellow")
         else:
-            wp(s.p0, "black")
-            wp(s.p1, "white")
+            wp(s.p0, "blue")
+            wp(s.p1, "red")
             wp(s.cp, "green")
 
 

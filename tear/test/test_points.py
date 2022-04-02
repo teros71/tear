@@ -13,7 +13,9 @@ data = {
     "p4": {"origo":[10,20],"t":0.0,"r":10},
     "p5": {"origo":[30,20],"t":"$(math.pi)","r":10},
     "p6": {"origo":[20,10],"t":"$(math.pi/2)","r":10},
-    "trps": "u:points.Relative(points.read([100,100]),10,10,points.triangular_matrix(5))"
+    "trps": "u:points.Relative(points.read([100,100]),10,10,points.triangular_matrix(5))",
+    "cpr": {"x": "10:20:1", "y": "20:40:2"},
+    "ppr": {"origo":[10,20],"t": "0.0:$(math.pi)/10", "r": "10:20:1"}
 }
 
 
@@ -32,6 +34,15 @@ def test_basic():
         assert v.x == 20
         assert v.y == 20
 
+
+def test_iter():
+    p = points.read(data, "cpr")
+    assert isinstance(p, points.Cartesian)
+    print(list(itertools.islice(p, 10)))
+    p = points.read(data, "ppr")
+    assert isinstance(p, points.Polar)
+    print(list(itertools.islice(p, 10)))
+    
 
 def test_matrix():
     n = 5

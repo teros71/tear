@@ -170,7 +170,7 @@ class Random:
     def __init__(self, range):
         self.range = range
         self.method = 0
-        self.last = None
+        self.last = self.next
 
     def __iter__(self):
         return self
