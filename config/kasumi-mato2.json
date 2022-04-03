@@ -8,12 +8,12 @@
       "count": 6,
       "opacity": 0.2,
       "kasumi-mato": {
-        "nakashiro": "r = 3.6 cm",
-        "ichi no kuro": "r=2*3.6 cm",
-        "ni no shiro": "r=2*3.6+3.0 cm",
-        "ni no kuro": "r=2*3.6+3.0+1.5 cm",
-        "san no shiro": "r=2*3.6+3.0+1.5+3.0 cm",
-        "sotokuro": "r=2*3.6+3.0+1.5+3.0+3.3 cm",
+        "nakashiro": "r = 3.6 cm ",
+        "ichi no kuro": "r=2*3.6 cm -> 7.2 -> 7.2-3.6/2 3.6/2 => r=5.4 sw=1.8",
+        "ni no shiro": "r=7.2+3.0 cm -> 10.2",
+        "ni no kuro": "r=10.2+1.5 cm -> 11.7 -> 11.7-1.5/2 => r=10.95 sw=0.75",
+        "san no shiro": "r=11.7+3.0 cm -> 14.7",
+        "sotokuro": "r=14.7+3.3 cm -> 18 -> 18-3.3/2 => r=16.35 sw=1.65",
         "seikoku o eru": "hit the bull's-eye"
       }
     }
@@ -26,12 +26,12 @@
     {
       "name": "path",
       "generator": "path",
-      "start": {"origo": "$($CX-45),$CY", "t":"$START_T", "r":"90"},
-      "end": {"origo": "$CX,$CY", "t":"$END_T", "r":"420"},
+      "start": {"origo": "$($CX+45),$CY", "t":"$START_T", "r":"144"},
+      "end": {"origo": "$CX,$CY", "t":"$END_T", "r":"840"},
       "count": 3,
-      "av": 0.9,
-      "curve": "quad",
-      "mode": "open-end",
+      "av": 0.5,
+      "curve": "cubic",
+      "mode": "closed-petal",
       "recipe": [
         {
           "algorithm": "generate",
@@ -39,7 +39,7 @@
         },
         {
           "algorithm": "appearance",
-          "opacity": "0.3",
+          "opacity": "0.4",
           "colours": "$COLOURS",
           "stroke": "black",
           "strokeWidth": 0.5
@@ -75,29 +75,24 @@
       "params": {
         "$START_T": "0.0:$(2 * math.pi)/20",
         "$END_T": "$(math.pi/2):$(math.pi/2 + 2*math.pi)/20",
-        "$COLOURS": "yellow,green,green,yellow"
-      }
-    },
-    {
-      "disable": true,
-      "name": "mypath3",
-      "template": "path",
-      "params": {
-        "$STARTX": "550",
-        "$STARTY": "575",
-        "$ENDX": "550",
-        "$COLOURS": "yellow,khaki,orange,orange"
+        "$COLOURS": "?:#00ffff:#8040a0/20",
+        "$COLOURS3": "?:#ffff00:#40ff20/20",
+        "$COLOURS2": "yellow,green,green,yellow"
       }
     },
     {
       "name": "target-c",
       "new": "circle",
-      "r": "75",
+      "r": 75.0,
       "recipe": [
         {
           "algorithm": "position",
           "x": "$CX",
           "y": "$CY"
+        },
+        {
+          "algorithm": "scaler",
+          "fx": 2.0
         },
         {
           "algorithm": "appearance",
@@ -111,20 +106,20 @@
       "name": "target-foo",
       "template": "kasumi",
       "params": {
-        "$SCALE": "0.5"
+        "$SCALE": "2"
       },
       "recipe": [
         {
           "algorithm": "position",
-          "x": "$($CX-45)",
+          "x": "$($CX-205)",
           "y": "$CY"
         }
       ]
     }
   ],
   "output": {
-    "background2": "#224149",
-    "background": "#0f5233",
+    "background2": "#45e8d5",
+    "background": "#319eb4",
     "shapes": [
       "target-c",
       "target-foo",
