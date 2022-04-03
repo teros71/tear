@@ -1,3 +1,8 @@
-svg
+/svg/
+/png/
+__pycache__
+.pytest_cache
 *.svg
 *.pyc
+*.png
+.DS_Store
