@@ -405,7 +405,7 @@ def b_voronoi(r, base):
         print(count, len(ps))
         ns = voronoi.all_polygons(ps)
         for pol in ns:
-            pol.shrink_to_inside(s.base)
+            pol.shrink_to_inside(s.g)
 
         shaps = [shape.Shape(p) for p in ns]
         if res is None:
