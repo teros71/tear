@@ -22,6 +22,7 @@
       "count": 3,
       "av": 0.2,
       "curve": "quad",
+      "mode": "open-end",
       "recipe": [
         {
           "algorithm": "generate",
@@ -29,9 +30,9 @@
         },
         {
           "algorithm": "appearance",
-          "opacity": "1",
+          "opacity": "0.7",
           "colours": "$COLOURS",
-          "stroke": "?:#ffffff:#bfffbf",
+          "stroke": "?:#800000:#400000",
           "strokeWidth": 0.5
         }
       ]
@@ -52,9 +53,9 @@
         {
           "algorithm": "appearance",
           "opacity": 1,
-          "colours": "#200608",
-          "stroke": "#6f4f3f",
-          "strokeWidth": 5,
+          "colours": "#9c9c9c",
+          "stroke": "#af4f3f",
+          "strokeWidth": 2,
           "shadow": true
         }
       ]
@@ -84,40 +85,78 @@
       }
     },
     {
-      "name": "myimage",
-      "png": "../images/sisilia.png",
-      "width": 640,
-      "height": 480,
-      "recipe": [
-        { "algorithm": "position", "x": "$CX", "y": "$CY" }
-      ]
-    },
-    {
       "name": "mytext",
-      "text": "This is a test",
-      "size": 48,
+      "text": "!",
+      "size": 92,
       "recipe": [
         { "algorithm": "position", "x": "$CX", "y": "$CY" },
         {
           "algorithm": "appearance",
           "opacity": 1.00,
-          "colours": "red",
-          "stroke": "white",
-          "strokeWidth": 1
+          "colours": "black",
+          "stroke": "black",
+          "strokeWidth": 0
         }
+      ]
+    },
+    {
+      "name": "centerb",
+      "new": "circle",
+      "r": 162,
+      "recipe": [
+        { "algorithm": "position", "x": "$CX", "y": "$CY" }
+      ]
+    },
+    {
+      "name": "center",
+      "generator": "circle",
+      "r": 200,
+      "recipe": [
+        {
+          "disable": false,
+          "algorithm": "generate",
+          "count": 1
+        },
+        { "algorithm": "position", "x": "$CX", "y": "$CY" },
+        { "algorithm": "poly" },
+        {
+          "algorithm": "voronoi-b",
+          "count": 40,
+          "disable": false
+        },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 8,
+            "angleVar": "0.17",
+            "count": 4,
+            "randomizeBase": 0.0
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": 0.2,
+          "colours2": "#ff8000:#a080a1/40",
+          "colours": "red,blue,orange",
+          "stroke": "black",
+          "strokeWidth": 1
+        },
+        {"algorithm": "clip", "shape": "centerb"}
       ]
     }
   ],
   "output": {
-    "background": "#333d00",
+    "background": "#a75892",
     "shapes": [
       "frame",
       "myimagex",
-      "mytext",
+      "xmytext",
       "mypath-circle",
       "mypath-circle2",
       "black-c",
-      "black-c22"
+      "black-c22",
+      "center"
     ]
   }
 }
