@@ -15,8 +15,7 @@
   "forms": [
     {
       "name": "gr-rect",
-      "base": "generator",
-      "type": "rectangle",
+      "generator": "rectangle",
       "w": 80,
       "h": 110,
       "recipe": [
@@ -66,8 +65,7 @@
     },
     {
       "name": "bot",
-      "base": "generator",
-      "type": "circle",
+      "generator": "circle",
       "r": 300,
       "w": 400,
       "h": 1400,
@@ -108,8 +106,7 @@
     },
     {
       "name": "frame",
-      "base": "new",
-      "type": "ellipse",
+      "new": "ellipse",
       "rx": 1200,
       "ry": 800,
       "recipe": [

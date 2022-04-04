@@ -16,8 +16,7 @@
   "forms": [
     {
       "name": "centerarea",
-      "base": "new",
-      "type": "circle",
+      "new": "circle",
       "r": 250.0,
       "recipe": [
         {
@@ -36,8 +35,7 @@
     },
     {
       "name": "circles",
-      "base": "generator",
-      "type": "circle",
+      "generator": "circle",
       "r": "312.0:350.0:30",
       "recipe": [
         {
@@ -60,8 +58,7 @@
     },
     {
       "name": "rounds",
-      "base": "generator",
-      "type": "circle",
+      "generator": "circle",
       "r": "?:8.0:18.0",
       "recipe": [
         {
@@ -83,8 +80,7 @@
     },
     {
       "name": "poly1",
-      "base": "generator",
-      "type": "polygon",
+      "generator": "polygon",
       "r": "?:20.0:35.0",
       "c": "?:3:12",
       "recipe": [

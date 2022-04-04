@@ -35,65 +35,6 @@
           "strokeWidth": 0
         }
       ]
-    },
-    {
-      "name": "stacked",
-      "generator": "ellipse",
-      "rx": "?:110.0:190.0",
-      "ry": "?:60.0:120.0",
-      "recipe": [
-        {
-          "algorithm": "generate",
-          "count": "$COUNT"
-        },
-        {
-          "algorithm": "poly"
-        },
-        {
-          "algorithm": "rotate",
-          "angle": "0:360/26",
-          "around-leaf": true
-        },
-        {
-          "algorithm": "position",
-          "point": "$POSITION"
-        },
-        {
-          "algorithm": "tear",
-          "params": {
-            "iterations": 8,
-            "angleVar": 0.72,
-            "count": 1,
-            "randomizeBase": -0.47
-          }
-        },
-        {
-          "algorithm": "appearance",
-          "opacity": "0.05",
-          "colours": "$COLOURS",
-          "stroke": "black",
-          "strokeWidth": 0
-        }
-      ]
-    },
-    {
-      "name": "black-c",
-      "new": "circle",
-      "r": 200,
-      "recipe": [
-        {
-          "algorithm": "position",
-          "point": "$POSITION"
-        },
-        {
-          "algorithm": "appearance",
-          "opacity": "1",
-          "colours": "#302040",
-          "stroke": "black",
-          "strokeWidth": 0,
-          "blur": true
-        }
-      ]
     }
   ],
   "forms": [
@@ -157,7 +98,7 @@
         {
           "algorithm": "appearance",
           "opacity": "1",
-          "colours": "#302040",
+          "colours": "black",
           "stroke": "black",
           "strokeWidth": 0,
           "blur": true
@@ -165,108 +106,67 @@
       ]
     },
     {
-      "name": "black-c1",
-      "template": "black-c",
-      "params": {
-        "$POSITION": "490,$CY"
-      }
+      "name": "centerb",
+      "new": "circle",
+      "r": 162,
+      "recipe": [
+        { "algorithm": "position", "x": "520", "y": "$CY" },
+        {
+          "algorithm": "appearance",
+          "opacity": "1",
+          "colours": "#704080",
+          "blur": true
+        }
+      ]
     },
     {
-      "name": "black-c2",
-      "template": "black-c",
-      "params": {
-        "$POSITION": "860,$CY"
-      }
-    },
-    {
-      "disable": true,
-      "name": "stacked-1",
-      "template": "stacked",
-      "params": {
-        "$COUNT": "100",
-        "$POSITION": "490,$CY",
-        "$COLOURS": "#404080,#4040ff,#606090"
-      }
-    },
-    {
-      "disable": true,
-      "name": "mypath3",
-      "template": "path",
-      "params": {
-        "$STARTX": "550",
-        "$STARTY": "575",
-        "$ENDX": "550",
-        "$COLOURS": "yellow,khaki,orange,orange"
-      }
-    },
-    {
-      "name": "gr-rect",
-      "generator": "rectangle",
-      "w": 25,
-      "h": 50,
+      "name": "center",
+      "generator": "circle",
+      "r": 200,
       "recipe": [
         {
+          "disable": false,
           "algorithm": "generate",
-          "count": 520
+          "count": 1
+        },
+        { "algorithm": "position", "x": "520", "y": "$CY" },
+        { "algorithm": "poly" },
+        {
+          "algorithm": "voronoi-b",
+          "count": 50,
+          "disable": false
         },
         {
-          "algorithm": "spread-matrix",
-          "x": "100:$W/25",
-          "y": "100:$H/20"
-        },
-        {
-          "algorithm": "vectorfield",
-          "fields": [
-            [490,450,"x/(x**2 + y**2 + 0.1),y/(x**2 + y**2 + 0.1)"],
-            [860,450,"x/(x**2 + y**2 + 0.1),y/(x**2 + y**2 + 0.1)"]
-          ]
-        },
-        {
-          "disable": true,
           "algorithm": "tear",
+          "disable": false,
           "params": {
             "iterations": 8,
-            "angleVar": 0.07,
-            "count": 1,
+            "angleVar": "0.17",
+            "count": 4,
             "randomizeBase": 0.0
           }
         },
         {
           "algorithm": "appearance",
-          "opacity": 0.30,
-          "colours": ["red", "white"],
+          "opacity": 0.2,
+          "colours2": "#ff8000:#a080a1/40",
+          "colours": "red,blue,orange",
           "stroke": "black",
           "strokeWidth": 1
         },
-        {
-          "disable": false,
-          "algorithm": "clip",
-          "shape": "black-c"
-        }
+        {"algorithm": "clip", "shape": "centerb"}
       ]
     }
   ],
   "output": {
     "background": "#333d00",
     "shapes": [
-      {
-        "name": "frame"
-      },
-      {
-        "name": "mypath-circle"
-      },
-      {
-        "name": "mypath-circle2"
-      },
-      {
-        "name": "black-c"
-      },
-      {
-        "name": "gr-rect"
-      },
-      {
-        "name": "stacked-1"
-      }
+      "frame",
+      "mypath-circle",
+      "mypath-circle2",
+      "black-c",
+      "centerb",
+      "center"
     ]
   }
 }
