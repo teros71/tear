@@ -16,8 +16,7 @@
   "forms": [
     {
       "name": "rects",
-      "base": "generator",
-      "type": "rectangle",
+      "generator": "rectangle",
       "w": 40,
       "h": 40,
       "r": "?:20.0:40.0",
@@ -70,8 +69,7 @@
     },
     {
       "name": "rects2",
-      "base": "generator",
-      "type": "rectangle",
+      "generator": "rectangle",
       "w": 40,
       "h": 40,
       "recipe": [
@@ -122,8 +120,7 @@
     },
     {
       "name": "circarea",
-      "base": "new",
-      "type": "circle",
+      "new": "circle",
       "r": 300,
       "recipe": [
         {
@@ -135,8 +132,7 @@
     },
     {
       "name": "circs",
-      "base": "new",
-      "type": "circle",
+      "new": "circle",
       "r": 10,
       "recipe": [
         {
@@ -155,8 +151,8 @@
     }
   ],
   "output": {
-    "background": "#0b0717",
-    "background2": "#f52439",
+    "background2": "#0b0717",
+    "background": "#f52439",
     "shapes": [
       {
         "name": "rects2"

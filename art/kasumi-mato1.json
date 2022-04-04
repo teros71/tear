@@ -1,0 +1,134 @@
+{
+  "defaults": {
+    "tear": {
+      "iterations": 18,
+      "minDistance": 2.0,
+      "minDistanceFactor": 0,
+      "angleVar": 4,
+      "count": 6,
+      "opacity": 0.2,
+      "kasumi-mato": {
+        "nakashiro": "r = 3.6 cm",
+        "ichi no kuro": "r=2*3.6 cm",
+        "ni no shiro": "r=2*3.6+3.0 cm",
+        "ni no kuro": "r=2*3.6+3.0+1.5 cm",
+        "san no shiro": "r=2*3.6+3.0+1.5+3.0 cm",
+        "sotokuro": "r=2*3.6+3.0+1.5+3.0+3.3 cm",
+        "seikoku o eru": "hit the bull's-eye"
+      }
+    }
+  },
+  "playground": {
+    "w": 900,
+    "h": 900
+  },
+  "templates": [
+    {
+      "name": "path",
+      "generator": "path",
+      "start": {"origo": "$($CX-45),$CY", "t":"$START_T", "r":"90"},
+      "end": {"origo": "$CX,$CY", "t":"$END_T", "r":"420"},
+      "count": 3,
+      "av": 0.9,
+      "curve": "quad",
+      "mode": "open-end",
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": 20
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "0.3",
+          "colours": "$COLOURS",
+          "stroke": "black",
+          "strokeWidth": 0.5
+        }
+      ]
+    },
+    {
+      "name": "kasumi",
+      "generator": "circle",
+      "r": "163.5,109.5,54.0",
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": 3
+        },
+        {
+          "algorithm": "scaler",
+          "fx": "$SCALE"
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "1",
+          "colours": "none",
+          "strokeWidth": "$($SCALE*33.0),$($SCALE*15.0),$($SCALE*36.0)"
+        }
+      ]
+    }
+  ],
+  "forms": [
+    {
+      "name": "mypath",
+      "template": "path",
+      "params": {
+        "$START_T": "0.0:$(2 * math.pi)/20",
+        "$END_T": "$(math.pi/2):$(math.pi/2 + 2*math.pi)/20",
+        "$COLOURS": "yellow,green,green,yellow"
+      }
+    },
+    {
+      "disable": true,
+      "name": "mypath3",
+      "template": "path",
+      "params": {
+        "$STARTX": "550",
+        "$STARTY": "575",
+        "$ENDX": "550",
+        "$COLOURS": "yellow,khaki,orange,orange"
+      }
+    },
+    {
+      "name": "target-c",
+      "new": "circle",
+      "r": "75",
+      "recipe": [
+        {
+          "algorithm": "position",
+          "x": "$CX",
+          "y": "$CY"
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "1",
+          "colours": "white",
+          "blur": true
+        }
+      ]
+    },
+    {
+      "name": "target-foo",
+      "template": "kasumi",
+      "params": {
+        "$SCALE": "0.5"
+      },
+      "recipe": [
+        {
+          "algorithm": "position",
+          "x": "$($CX-45)",
+          "y": "$CY"
+        }
+      ]
+    }
+  ],
+  "output": {
+    "background": "#0f5233",
+    "shapes": [
+      "target-c",
+      "target-foo",
+      "mypath3",
+      "mypath"
+    ]
+  }
+}
