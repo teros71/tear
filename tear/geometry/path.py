@@ -82,7 +82,7 @@ class Path:
         for s in self.segments:
             total += s.length
         i = 0
-        while t > self.segments[i].length / total:
+        while t > self.segments[i].length / total and i < len(self.segments)-1:
             t -= self.segments[i].length / total
             i += 1
         seg = self.segments[i]
@@ -94,7 +94,7 @@ class Path:
         return geom.BBox(self.startpoint.x, self.startpoint.y,
                          self.endpoint.x, self.endpoint.y)
 
-    def get_points(self, origo, count=25):
+    def get_points(self, count=25):
         """Get points that approximate the curve"""
         ps = [self.startpoint]
         ds = (1 / count * i for i in range(1, count + 1))
@@ -129,6 +129,7 @@ def random_path_quadratic(startpoint, endpoint, count, av, min_d,
                 giving fully rounded path with no sharp points
     """
     cl = []
+
     def make_segment(p0, end, p1, cp, max_df):
         if p1 is None:
             p1 = generate_point(p0, end, av, min_d, 0, max_df)
@@ -180,6 +181,7 @@ def random_path_cubic(startpoint, endpoint, count, av, min_d,
         min_d : minimum distance between segment start and end points
     """
     cl = []
+
     def make_segment(p0, end, p1, c0, c1, max_df):
         if p1 is None:
             p1 = generate_point(p0, end, av, min_d, 0, max_df)
