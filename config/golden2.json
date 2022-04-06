@@ -9,6 +9,10 @@
       "opacity": 0.2
     }
   },
+  "playground": {
+    "w": 2800,
+    "h": 1800
+  },
   "forms": [
     {
       "name": "shape-spiral",
