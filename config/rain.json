@@ -1,0 +1,113 @@
+{
+  "defaults": {
+    "unitSize": 800.0,
+    "tear": {
+      "iterations": 18,
+      "minDistance": 2.0,
+      "minDistanceFactor": 0,
+      "angleVar": 4,
+      "count": 6,
+      "opacity": 0.2
+    }
+  },
+  "playground": {
+    "w": 1350,
+    "h": 900
+  },
+  "templates": [
+    {
+      "name": "walker",
+      "generator": "path",
+      "start": {"x": "$($HEAD_X-400):$($HEAD_X+400)/20", "y": "900"},
+      "end": {"x": "$HEAD_X", "y": "200"},
+      "count": 3,
+      "av": 0.7,
+      "curve": "quad",
+      "mode": "open-end",
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": 20
+        },
+        { "algorithm": "poly" },
+        {
+          "algorithm": "tear",
+          "disable": false,
+          "params": {
+            "iterations": 20,
+            "angleVar": 0.10,
+            "count": 4,
+            "randomizeBase": 0.0
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": "0.15",
+          "colours": "$COLOURS",
+          "stroke": "black",
+          "strokeWidth": 0.5
+        }
+      ]
+    }
+  ],
+  "forms": [
+    {
+      "name": "drops",
+      "generator": "rectangle",
+      "w": "30",
+      "h": "?:600:900",
+      "recipe": [
+        {
+          "algorithm": "generate",
+          "count": 200
+        },
+        {
+          "algorithm": "spread",
+          "x": "?:0.0:1350.0",
+          "y": "$CY"
+        },
+        {
+          "algorithm": "tear",
+          "disable": true,
+          "params": {
+            "iterations": 20,
+            "angleVar": 0.05,
+            "count": 1,
+            "randomizeBase": 0.0
+          }
+        },
+        {
+          "algorithm": "appearance",
+          "opacity": 0.25,
+          "colours": "?:#0000d0:#4060ff/20",
+          "stroke": "black",
+          "strokeWidth": 0
+        }
+      ]
+    },
+    {
+      "name": "path1",
+      "template": "walker",
+      "params": {
+        "$HEAD_X": "300",
+        "$COLOURS": "red,orange"
+      }
+    },
+    {
+      "name": "path2",
+      "template": "walker",
+      "params": {
+        "$HEAD_X": "700",
+        "$COLOURS": "yellow,green"
+      }
+    }
+  ],
+  "output": {
+    "background": "#303080",
+    "shapes": [
+      "drops",
+      "path1",
+      "path2"
+    ]
+  }
+}
