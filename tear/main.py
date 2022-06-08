@@ -5,9 +5,10 @@ import os
 import json
 import sys
 import getopt
-from tear import default, form, pg, goldenratio
+from tear import default, pg, goldenratio
 from tear.model import store
 from tear.svg import writer
+from tear.model.factory import new_shape
 
 log = logging.getLogger(__name__)
 
@@ -52,7 +53,7 @@ def process(data, fname):
     form_data = data.get('forms')
     if form_data is not None:
         for fd in form_data:
-            form.generate_form(fd)
+            new_shape(fd)
     log.info("write output")
     op = data.get('output')
     if op is None:

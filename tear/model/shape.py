@@ -232,45 +232,17 @@ class Path:
         return cls(g, step, angle)
 
 
-class RectGenerator:
-    """Generator for rectangle shapes"""
-
-    def __init__(self, w, h):
-        self.w = w
-        self.h = h
+class Generator:
+    def __init__(self, cls, *args):
+        self.cls = cls
+        self.args = args
 
     def __iter__(self):
         return self
 
     def __next__(self):
-        return Shape(geom.Rect(self.w.next, self.h.next))
-
-
-class CircleGenerator:
-    """Generator for circle shapes"""
-
-    def __init__(self, r):
-        self.r = r
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        return Shape(geom.Circle(self.r.next))
-
-
-class EllipseGenerator:
-    """Generator for ellipse shapes"""
-
-    def __init__(self, rx, ry):
-        self.rx = rx
-        self.ry = ry
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        return Shape(geom.Ellipse(self.rx.next, self.ry.next))
+        t = tuple(v.next for v in self.args)
+        return Shape(self.cls(*t))
 
 
 class PolygonGenerator():

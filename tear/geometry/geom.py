@@ -619,7 +619,6 @@ class Polygon:
         # Count intersections of the above line with sides of polygon
         count = 0
         i = 0
-        next = 1
         po = 0
         n = len(self.points)
         while i < n:
@@ -709,7 +708,6 @@ class Polygon:
         p = self.points
         i = 0
         n = len(p)
-        j = 1
         p0 = p[0]
         p1 = p[1]
         d = distance(p0, p1)

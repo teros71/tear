@@ -1,4 +1,6 @@
 """For storing forms"""
+
+from typing import MutableMapping, Mapping, Union
 import logging
 from xml.dom import minidom
 import copy
@@ -9,15 +11,15 @@ from tear.geometry import geom
 
 log = logging.getLogger(__name__)
 
-_templates = {}
-_shapes = {}
+_templates: MutableMapping[str, str] = {}
+_shapes: MutableMapping[str, shape.Shape] = {}
 _clips = {}
 _masks = {}
 
 #image_table = {}
 
 
-def add_template(name, t):
+def add_template(name: str, t):
     """Add a template"""
     # store it in string format
     ts = json.dumps(t)
@@ -25,7 +27,7 @@ def add_template(name, t):
     log.info(f"added template {name}")
 
 
-def get_template(name, config):
+def get_template(name: str, config: Mapping[str, str]):
     """Get a template
     Args:
         name : name of the template
@@ -39,13 +41,13 @@ def get_template(name, config):
     return json.loads(t)
 
 
-def add_shape(name, s):
+def add_shape(name: str, s: shape.Shape):
     """Add shape"""
     _shapes[name] = s
     log.info(f"added shape {name}")
 
 
-def get_shape(name):
+def get_shape(name: str) -> Union[None, shape.Shape]:
     """Get shape"""
     s = _shapes.get(name)
     if s is not None:
