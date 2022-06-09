@@ -244,7 +244,7 @@ class Generator:
         return self
 
     def __next__(self):
-        t = tuple(v.next for v in self.args)
+        t = tuple(next(v) for v in self.args)
         return Shape(self.cls(*t))
 
 

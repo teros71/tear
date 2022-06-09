@@ -65,5 +65,5 @@ def test_matrix():
 
     pp = reader.read(data, "trps")
     assert isinstance(pp, points.Relative)
-    for i in range(len(pp.base)):
+    for i in range(10):
         print(pp.next)
