@@ -1,28 +1,27 @@
 """Handle new shape generation according the instructions"""
-
 import logging
+
+from tear.model import shape, store
 from tear import algo
-from tear.value import reader, points
-from tear.model import store, shape
 from tear.geometry import geom, path, image, text
+from tear.value import reader, points
 
 log = logging.getLogger(__name__)
 
 
-def xgenerate_form(config):
+def new_shape(config):
     """Generate a new shape according to the config"""
     if config.get('disable', False):
         return
-    name = config.get('name')
-    shap = create_shape(config)
-    store.add_shape(name, shap)
+    if not (name := config.get('name', '')):
+        return
+    store.add_shape(name, create_shape(config))
 
 
 def create_shape(config):
     """Create a new shape based on config"""
-    base = get_base_shape(config)
-    if base is None:
-        raise ValueError("no base for shape")
+    if not (base := get_base_shape(config)):
+        raise ValueError("no base available")
     recipe = config.get('recipe')
     if recipe is not None:
         new_form = apply_recipe(recipe, base)
@@ -35,30 +34,26 @@ def create_shape(config):
 
 def get_base_shape(config):
     """Get base shape for a new shape"""
-    base_name = config.get('base')
-    if base_name is not None:
-        log.info("base shape;name=%s", base_name)
-        return store.get_shape(base_name)
-    base_name = config.get('generator')
-    if base_name is not None:
-        log.info("generator shape;type=%s", base_name)
-        return make_generator_shape(base_name, config)
-    base_name = config.get('new')
-    if base_name is not None:
-        log.info("new shape;type=%s", base_name)
-        return make_new_shape(base_name, config)
-    base_name = config.get('template')
-    if base_name is not None:
-        log.info("from template;name=%s", base_name)
-        conf = config.get('params')
-        return create_shape(store.get_template(base_name, conf))
-    base_name = config.get('png')
-    if base_name is not None:
-        return make_png_shape(base_name, config)
-    base_name = config.get('text')
-    if base_name is not None:
-        return make_text_shape(base_name, config)
-    return None
+    match config:
+        case {"base": base_name}:
+            log.info("base shape;name=%s", base_name)
+            return store.get_shape(base_name)
+        case {"generator": base_name}:
+            log.info("generator shape;type=%s", base_name)
+            return make_generator_shape(base_name, config)
+        case {"new": base_name}:
+            log.info("new shape;type=%s", base_name)
+            return make_new_shape(base_name, config)
+        case {"template": base_name}:
+            log.info("from template;name=%s", base_name)
+            conf = config.get('params')
+            return create_shape(store.get_template(base_name, conf))
+        case {"png": base_name}:
+            return make_png_shape(base_name, config)
+        case {"text": base_name}:
+            return make_text_shape(base_name, config)
+        case _:
+            raise ValueError("no data for base available")
 
 
 def make_generator_shape(t, config):
@@ -66,14 +61,14 @@ def make_generator_shape(t, config):
     if t == 'rectangle':
         rw = reader.read(config, "w")
         rh = reader.read(config, "h")
-        return shape.RectGenerator(rw, rh)
+        return shape.Generator(geom.Rect, rw, rh)
     if t == 'circle':
         rr = reader.read(config, "r")
-        return shape.CircleGenerator(rr)
+        return shape.Generator(geom.Circle, rr)
     if t == 'ellipse':
         rx = reader.read(config, "rx")
         ry = reader.read(config, "ry")
-        return shape.EllipseGenerator(rx, ry)
+        return shape.Generator(geom.Ellipse, rx, ry)
     if t == 'polygon':
         rar = reader.read(config, "r")
         rap = reader.read(config, "c")
@@ -91,14 +86,13 @@ def make_generator_shape(t, config):
         count = reader.read(config, "count", 1)
         av = reader.read(config, "av", 1.0)
         return shape.PathGenerator2(ps, count.next, av.next)
-    raise ValueError("unkown generator type", t)
+    raise ValueError("unknown generator type", t)
 
 
 def make_new_shape(t, r):
     """Make a new shape"""
     x = r.get("x", 0.0)
     y = r.get("y", 0.0)
-    base = None
     if t == 'rectangle':
         base = geom.Rect(r.get("w", 10.0), r.get("h", 10.0))
     elif t == 'circle':
@@ -109,7 +103,6 @@ def make_new_shape(t, r):
         base = geom.Polygon.fromstr(
             r.get("points", "0.0 0.0, 10.0 5.0, 5.0 10.0"))
     elif t == 'path':
-        #        segs = r.get("segments")
         sp = points.read(r, "start")
         ep = points.read(r, "end")
         count = r.get("count")

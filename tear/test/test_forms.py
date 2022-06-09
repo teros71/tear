@@ -1,6 +1,6 @@
 import unittest
 
-from tear import form
+from tear.model import factory
 from tear.geometry import geom
 from tear.model import store, shape
 
@@ -8,7 +8,7 @@ from tear.model import store, shape
 class TestForms(unittest.TestCase):
 
     def test_generate(self):
-        form.generate_form(tf)
+        factory.new_shape(tf)
         s = store.get_shape("gr-rect")
         self.assertIsInstance(s, shape.Shape)
         self.assertIsInstance(s.g, geom.Rect)
@@ -52,8 +52,7 @@ class TestForms(unittest.TestCase):
 
 tf = {
     "name": "gr-rect",
-    "base": "new",
-    "type": "rectangle",
+    "new": "rectangle",
     "h": 400,
     "w": 2800,
     "recipe": [
@@ -65,7 +64,7 @@ tf = {
       ]
     }
 
-if __name__ == '__main__':
-    form.initFormTable()
-    print("initialized form table")
-    unittest.main()
+#if __name__ == '__main__':
+ #   form.initFormTable()
+  #  print("initialized form table")
+   # unittest.main()

@@ -10,15 +10,15 @@
     }
   },
   "playground": {
-    "w": 1350,
-    "h": 900
+    "w": 900,
+    "h": 1350
   },
   "templates": [
     {
       "name": "path",
       "generator": "path",
       "start": {"path": "frame", "count": "$COUNT"},
-      "end": {"origo": "$ORIGO_E", "t":"$END_T", "r":"200"},
+      "end": {"origo": "$ORIGO_E", "t":"$END_T", "r":"268"},
       "count": 3,
       "av": 0.2,
       "curve": "quad",
@@ -42,8 +42,8 @@
     {
       "name": "frame",
       "new": "ellipse",
-      "rx": 600,
-      "ry": 400,
+      "rx": 400,
+      "ry": 600,
       "recipe": [
         {
           "algorithm": "position",
@@ -52,8 +52,8 @@
         },
         {
           "algorithm": "appearance",
-          "opacity": 1,
-          "colours": "#9c9c9c",
+          "opacity": 0.3,
+          "colours": "#3c5c5c",
           "stroke": "#af4f3f",
           "strokeWidth": 2,
           "shadow": true
@@ -102,7 +102,7 @@
     {
       "name": "centerb",
       "new": "circle",
-      "r": 162,
+      "r": 262,
       "recipe": [
         { "algorithm": "position", "x": "$CX", "y": "$CY" }
       ]
@@ -110,7 +110,7 @@
     {
       "name": "center",
       "generator": "circle",
-      "r": 200,
+      "r": 350,
       "recipe": [
         {
           "disable": false,
@@ -147,7 +147,7 @@
     }
   ],
   "output": {
-    "background": "#a75892",
+    "background": "#0e0033",
     "shapes": [
       "frame",
       "myimagex",
