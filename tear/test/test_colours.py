@@ -29,10 +29,11 @@ def test_colours():
   #          print(next(c).str())
     c = reader.read_colour(tf, "colours")
     v1 = next(c)
-    v2 = next(v1)
-    v2 = next(v1)
-    assert isinstance(v2, Colour)
+    assert Colour("red") == v1
+    v2 = next(c)
     assert Colour("blue") == v2
+    v2 = next(c)
+    assert isinstance(v2, Colour)
 #        self.assertIsInstance(c, value.List)
 #        self.assertIsInstance(c[0], value.List)
 #        self.assertIsInstance(c[0][0], colours.Colour)
@@ -67,7 +68,7 @@ def test_colourranges():
 
 
 tf = {
-    "colours": [["red", "blue"], ["#0011ff:#ff0000"]]
+    "colours": ["red", "blue", "#0011ff:#ff0000"]
 }
 
 if __name__ == '__main__':
