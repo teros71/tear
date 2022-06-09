@@ -70,7 +70,7 @@ from tear.value import value
 from tear.value.valf import Function
 from tear.value import ev
 from tear import pg
-from tear.value.colours import read_single_colour
+from tear.value.colours import read_single_colour, read_colour_list
 
 
 log = logging.getLogger(__name__)
@@ -114,7 +114,7 @@ def read_colour(config, name):
                 return value.single(r)
             return value.lst(r.range)
         if isinstance(c, list):
-            return value.lst([read_col(s) for s in c])
+            return value.lst(read_colour_list(c).range)
         raise ValueError("invalid colour")
     return read_col(v)
 
