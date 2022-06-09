@@ -66,10 +66,11 @@ f:str = function where str is evaluated with parameter x (depending no the algor
 """
 import logging
 from tear.colours import Colour, ColourRange
-from tear.value.value import Single, Range, Random, List
+from tear.value import value
 from tear.value.valf import Function
 from tear.value import ev
 from tear import pg
+from tear.value.colours import read_single_colour
 
 
 log = logging.getLogger(__name__)
@@ -105,11 +106,52 @@ def read_colour(config, name):
 
     def read_col(c):
         if isinstance(c, str):
-            return read_single_colour(c)
+            if c.startswith('?:'):
+                r = read_single_colour(c[2:])
+                return value.random_colour(r.begin, r.end)
+            r = read_single_colour(c)
+            if isinstance(r, Colour):
+                return value.single(r)
+            return value.lst(r.range)
         if isinstance(c, list):
-            return List([read_col(s) for s in c])
+            return value.lst([read_col(s) for s in c])
         raise ValueError("invalid colour")
     return read_col(v)
+
+
+def convert(obj):
+    match obj:
+        case float() | int():
+            return obj
+        case list():
+            return convert_list(obj)
+        case dict():
+            return {key: convert(v) for key, v in obj.items()}
+        case str():
+            return convert_str(obj)
+        case _:
+            log.warning(f"WARNING: unknown value type {obj}")
+            raise ValueError("WARNING: unknown value type", obj)
+
+
+def convert_str(s):
+    if ',' in s:
+        lst = convert_list(s.split(','))
+        return lst
+    if ':' in s:
+        lst = s.split(':')
+        if len(lst) == 3:
+            return tuple(convert_list(lst))
+        if len(lst) != 2:
+            raise ValueError("WARNING: invalid range syntax", s)
+        if '/' in lst[1]:
+            lst2 = lst[1].split('/')
+            minv = convert_value(lst[0])
+            maxv = convert_value(lst2[0])
+            step = (maxv - minv) / convert_value(lst2[1])
+            return minv, maxv, step
+        return tuple(convert_list(lst))
+    return convert_value(s)
 
 
 def isfloat(num):
@@ -137,7 +179,7 @@ def convert_list(lst):
     elif isfloat(lst[0]):
         lst = [float(x) for x in lst]
     else:
-        lst = [convert_value(x) for x in lst]
+        lst = [convert(x) for x in lst]
     return lst
 
 
@@ -159,57 +201,11 @@ def read_percent_value(s):
     return (float(ls[0]) / 100) * v
 
 
-def read_str_value(s):
-    if ',' in s:
-        lst = convert_list(s.split(','))
-        return List(lst)
-    if ':' in s:
-        lst = s.split(':')
-        if len(lst) == 3:
-            return Range.fromlist(convert_list(lst))
-        if len(lst) != 2:
-            raise ValueError("WARNING: invalid range syntax", s)
-        if '/' in lst[1]:
-            lst2 = lst[1].split('/')
-            minv = convert_value(lst[0])
-            maxv = convert_value(lst2[0])
-            step = (maxv - minv) / convert_value(lst2[1])
-            return Range(minv, maxv, step)
-        return Range.fromlist(convert_list(lst))
-    return Single(convert_value(s))
-
-
-def read_colour_transition(s):
-    ran = s.split('->')
-    rc = ran[1].split('*')
-    from_c = read_single_colour(ran[0])
-    to_c = read_single_colour(rc[0])
-    count = int(rc[1])
-    return List(ColourRange.fromranges(from_c, to_c, count))
-
-
-def read_single_colour(s):
-    if '->' in s:
-        return read_colour_transition(s)
-    if s.startswith('?:'):
-        return Random(read_single_colour(s[2:]))
-    if ',' in s:
-        lst = s.split(',')
-        return ColourRange.fromlist([Colour.fromstr(c) for c in lst])
-    if ':' in s:
-        lst = s.split(':')
-        if len(lst) != 2:
-            raise ValueError("invalid colour")
-        if '/' in lst[1]:
-            lst2 = lst[1].split('/')
-            return ColourRange(Colour.fromstr(lst[0]), Colour.fromstr(lst2[0]), int(lst2[1]))
-        return ColourRange(Colour(lst[0]), Colour(lst[1]), 0)
-    return Colour.fromstr(s)
 
 
 def make_from_list(obj, js):
     """Make a list of values from a list of whatever"""
-    return List([make(x, js) for x in obj])
+    return value.lst([make(x, js) for x in obj])
 
 
 def make_from_dict(obj, js):
@@ -251,36 +247,43 @@ def make_from_str(obj, js):
         obj = substitute_evaluations(obj)
     # random value
     if obj.startswith('?:'):
-        val = read_str_value(obj[2:])
-        if isinstance(val, List):
-            return Random(val.lst)
-        if isinstance(val, Range):
-            return Random(val)
+        val = convert_str(obj[2:])
+        if isinstance(val, list):
+            return value.random_seq(val)
+        if isinstance(val, tuple):
+            if isinstance(val[0], int):
+                return value.random_irange(*val)
+            return value.random_arange(*val)
         # only one value
-        return Random([val.value])
+        return value.random_seq([val])
     # function
     if obj.startswith('f:'):
         args = make_from_dict(js.get("args", {}), js)
         return Function(obj[2:], args)
     # eval TODO: fix
     if obj.startswith('e:'):
-        return ev.Eval(obj[2:])
+        return ev.ev_source(obj[2:])
     if obj.startswith('u:'):
         return ev.evaluate(obj[2:])
     # percent
     if obj.startswith('%'):
-        return Single(read_percent_value(obj[1:]))
+        return value.single(read_percent_value(obj[1:]))
 #    if obj.startswith('!:'):
 #        return Series(obj[2:])
     # generic string
-    return read_str_value(obj)
+    val = convert_str(obj)
+    if isinstance(val, list):
+        return value.lst(val)
+    if isinstance(val, tuple):
+        return value.list2range(val)
+    return value.single(val)
 
 
 def make(obj, js=None):
     """make a generic value object"""
     if isinstance(obj, (float, int)):
         # float or int -> single value
-        return Single(obj)
+        return value.single(obj)
     if isinstance(obj, list):
         # list -> list of whatever values
         return make_from_list(obj, js)
@@ -292,4 +295,4 @@ def make(obj, js=None):
         return make_from_str(obj, js)
     log.warning(f"WARNING: unknown value type {obj}")
     raise ValueError("WARNING: unknown value type", obj)
-    return obj
+#    return obj

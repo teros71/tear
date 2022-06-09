@@ -9,6 +9,7 @@ from tear import goldenratio, tear, area, voronoi
 from tear.value import value, reader, points, ev
 from tear.geometry import geom
 from tear.model import store, shape
+from tear import colours
 
 log = logging.getLogger(__name__)
 
@@ -60,7 +61,7 @@ def position(config, base):
         raise ValueError("position: not enough data")
 
     def do_it(base):
-        p = ps.next
+        p = next(ps)
         base.set_position(p.x, p.y)
     if config.get('leaf', True):
         apply_recursive(config, base, do_it)
@@ -83,8 +84,8 @@ def scaler(r, base):
     ry = reader.read(r, "fy", d=0)
 
     def do_it(s):
-        fx = rx.next
-        fy = ry.next
+        fx = next(rx)
+        fy = next(ry)
         s.scale(fx, fy)
         return s
     return apply_recursive(r, base, do_it)
@@ -108,7 +109,7 @@ def rotate(r, base):
         #            p = s.position
         #        else:
         #            p = bp
-        s.rotate(a.next)
+        s.rotate(next(a))
     return apply_recursive(r, base, do_it)
 #    base.rotate(p.x, p.y, a.next)
 #    return base
@@ -137,17 +138,17 @@ def spread_matrix(config, base):
     rx = reader.read(config, "x")
     ry = reader.read(config, "y")
     if rx is not None:
-        pos = value.List([geom.Point(x, y) for y in ry for x in rx])
+        pos = value.lst([geom.Point(x, y) for y in ry for x in rx])
     else:
-        o = points.read(config, 'origo').next
+        o = next(points.read(config, 'origo'))
         rt = reader.read(config, "t")
         rr = reader.read(config, "r")
-        pos = value.List(
+        pos = value.lst(
             [geom.Point.fromtuple(geom.polar2cartesian(t, r, o.x, o.y))
                 for r in rr for t in rt])
 
     def do_it(s):
-        p = pos.next
+        p = next(pos)
         s.set_position(p.x, p.y)
         return s
     return apply_recursive(config, base, do_it)
@@ -161,7 +162,7 @@ def spread_area(config, base):
     a = area.RandomInArea(shap, out)
 
     def do_it(s):
-        p = a.next
+        p = next(a)
         if p is not None:
             s.set_position(p.x, p.y)
         return s
@@ -174,10 +175,10 @@ def spread_path(config, base):
         return None
     count = reader.read(config, "count")
     rot = config.get("rotate", False)
-    a = shape.Path.fromshape(shap, count.next, rotate)
+    a = shape.Path.fromshape(shap, next(count), rotate)
 
     def do_it(s):
-        p = a.next
+        p = next(a)
         if p is not None:
             if rot:
                 s.set_position(p[0].x, p[0].y)
@@ -200,7 +201,7 @@ def spread_f(config, base):
             p = fx(s)
         else:
             p = fx()
-        o = origo.next
+        o = next(origo)
         s.set_position(p.x + o.x, p.y + o.y)
         return s
     return apply_recursive(config, base, do_it)
@@ -214,11 +215,11 @@ def x_spread_polar(config, base):
     rt = reader.read(config, "t")
 
     def do_it(shap):
-        r = rr.next
-        t = rt.next
+        r = next(rr)
+        t = next(rt)
         x = r * math.cos(t)
         y = r * math.sin(t)
-        o = origo.next
+        o = next(origo)
         if isinstance(shap, shape.List):
             for s in shap:
                 apply_recursive(config, s, do_it)
@@ -234,29 +235,29 @@ def x_spread_polar(config, base):
 def spread(config, base):
     """base is a list of shapes, they are spread"""
     ps = points.read(config)
-    point = ps.next
+    point = next(ps)
 
     def do_it(shap):
         shap.set_position(point.x, point.y)
         return shap
     for s in base.shapes:
         apply_recursive(config, s, do_it)
-        point = ps.next
+        point = next(ps)
     return base
 
 
 # ===========================================================================
 
-def set_appearance_colour(config, shap, colour):
+def set_appearance_colour(config, shap, col):
     if isinstance(shap, shape.Shape):
-        c = colour.next.str()
+        c = next(col).str()
         shap.appearance.colour = c
     else:
         for s in shap.shapes:
-            if isinstance(colour, value.List):
-                c = colour.next
+            if isinstance(col, colours.Colour):
+                c = col
             else:
-                c = colour
+                c = next(col)
             set_appearance_colour(config, s, c)
         c.reset()
 
@@ -264,17 +265,17 @@ def set_appearance_colour(config, shap, colour):
 def set_appearance(config, shap, opacity, stroke, strokew, shad, blur):
     """Set appearance of a shape"""
     if isinstance(shap, shape.List):
-        opacity.reset()
-        stroke.reset()
-        strokew.reset()
+        value.reset(opacity)
+        value.reset(stroke)
+        value.reset(strokew)
         # leave blur on the upper level, will be applied for the whole group
         shap.appearance.blur = blur
         for inner_shape in shap.shapes:
             set_appearance(config, inner_shape,
                            opacity, stroke, strokew, shad, False)
         return
-    shap.appearance.set(opacity.next,
-                        stroke.next, strokew.next, shad, blur)
+    shap.appearance.set(next(opacity),
+                        next(stroke), next(strokew), shad, blur)
 
 # ===========================================================================
 
@@ -289,11 +290,12 @@ def appearance(config, base):
     blur = config.get('blur', False)
 
     def pit(col):
-        if isinstance(col, value.List):
+        if isinstance(col, colour.Colour):
+            print(col)
+        else:
             for c in col:
                 pit(c)
-            return
-        print(col)
+
 #    pit(colour)
     set_appearance_colour(config, base, colour)
     set_appearance(config, base, opacity, stroke, strokew, shad, blur)

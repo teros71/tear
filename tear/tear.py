@@ -115,12 +115,12 @@ def generate(points, it, min_d, min_df, av, rb):
 
 
 def generate_shape(base, params):
-    it = params.iterations.next
-    min_d = params.minDistance.next
-    min_df = params.minDistanceFactor.next
-    av = params.angleVar.next
-    rb = params.randomizeBase.next
-    count = params.count.next
+    it = next(params.iterations)
+    min_d = next(params.minDistance)
+    min_df = next(params.minDistanceFactor)
+    av = next(params.angleVar)
+    rb = next(params.randomizeBase)
+    count = next(params.count)
     if count == 1:
         points = generate(base.get_points(), it, min_d, min_df, av, rb)
         s = shape.Shape(geom.Polygon(points))
