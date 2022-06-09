@@ -42,24 +42,18 @@ class Function:
         return self.f(**args)
 
 
-class Triangular:
-    def __init__(self):
-        self.n = 0
-
-    @property
-    def next(self):
-        self.n += 1
-        return self.n * (self.n + 1) / 2
+def triangular():
+    n = 0
+    while True:
+        n += 1
+        yield n * (n + 1) / 2
 
 
-class InverseTriangular:
-    def __init__(self):
-        self.n = 0
-
-    @property
-    def next(self):
-        self.n += 1
-        return math.floor(math.sqrt(2 * self.n) + 0.5)
+def inverse_triangular():
+    n = 0
+    while True:
+        n += 1
+        yield math.floor(math.sqrt(2 * n) + 0.5)
 
 
 class Class:

@@ -31,81 +31,6 @@ from tear.model import store
 from tear.model.shape import Path
 
 
-class Cartesian:
-    """Cartesian points, defined by x and y"""
-
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        self.last = geom.Point(x.current, y.current)
-
-    @property
-    def current(self):
-        return self.last
-
-    @property
-    def next(self):
-        self.last = geom.Point(self.x.next, self.y.next)
-        return self.last
-
-    def reset(self):
-        self.x.reset()
-        self.y.reset()
-        self.last = geom.Point(self.x.current, self.y.current)
-
-    def __iter__(self):
-        self.reset()
-        return self
-
-    def __next__(self):
-        return self.next
-
-    def __repr__(self):
-        return f'Cartesian[{self.x}, {self.y}]'
-
-
-class Polar:
-    """Polar points defined by origo, t and r"""
-
-    def __init__(self, origo, t, r):
-        self.origo = origo
-        self.t = t
-        self.r = r
-        o = origo.current
-        print("polar", self.t.current, self.r.current, o)
-        self.last = geom.Point.fromtuple(
-            geom.polar2cartesian(t.current, r.current, o.x, o.y))
-
-    @property
-    def current(self):
-        return self.last
-
-    @property
-    def next(self):
-        o = self.origo.next
-        self.last = geom.Point.fromtuple(
-            geom.polar2cartesian(self.t.next, self.r.next, o.x, o.y))
-        return self.last
-
-    def reset(self):
-        self.origo.reset()
-        self.t.reset()
-        self.r.reset()
-        o = self.origo.current
-        self.last = geom.Point.fromtuple(
-            geom.polar2cartesian(self.t.current, self.r.current, o.x, o.y))
-
-    def __iter__(self):
-        self.reset()
-        return self
-
-    def __next__(self):
-        return self.next
-
-    def __repr__(self):
-        return f'Polar[{self.origo}, {self.t}, {self.r}]'
-
-
 class Relative:
     """Relative points defined by origo and factors xf and yf
     applied to base points
@@ -119,14 +44,14 @@ class Relative:
 
     @property
     def next(self):
-        p = self.base.next
-        o = self.origo.next
+        p = next(self.base)
+        o = next(self.origo)
         return geom.Point(o.x + (p.x * self.fx), o.y + (p.y * self.fy))
 
 
 def triangular_matrix(n, add=-0.5):
     """Simple list of triangular positions"""
-    return value.List([geom.Point(x+(y-1)*add, y-1) for y in range(n+1) for x in range(y)])
+    return [geom.Point(x+(y-1)*add, y-1) for y in range(n+1) for x in range(y)]
 
 
 # functions to read points from dict
@@ -138,7 +63,7 @@ def read_point_data(p):
         raise ValueError("invalid point")
     x = reader.make(p[0])
     y = reader.make(p[1])
-    return Cartesian(x, y)
+    return value.value_source(geom.Point, x, y)
 
 
 def read_cartesian(config, name=None):
@@ -153,7 +78,7 @@ def read_cartesian(config, name=None):
         vy = reader.read(config, 'y')
         if vy is None:
             return None
-        return Cartesian(vx, vy)
+        return value.value_source(geom.Point, vx, vy)
     return read_point_data(config)
 
 
@@ -167,7 +92,10 @@ def read_polar(config):
     r = reader.read(config, 'r')
     if r is None:
         return None
-    return Polar(origo, t, r)
+    def make_point(o, t, r):
+        return geom.Point.fromtuple(
+            geom.polar2cartesian(t, r, o.x, o.y))
+    return value.value_source(make_point, origo, t, r)
 
 
 def read_path(config):
